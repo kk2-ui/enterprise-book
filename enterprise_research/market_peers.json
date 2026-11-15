@@ -1,0 +1,333 @@
+{
+  "version": "market-peers-20261109-v2",
+  "profiles": {
+    "000651.SZ": {
+      "label": "白电与制冷同行",
+      "scope": "A股同市场白电公司；空调、冰洗与海外业务占比各异。",
+      "peers": [
+        {
+          "code": "000333.SZ",
+          "name": "美的集团",
+          "reason": "白电与空调共同需求；美的另有楼宇、工业与机器人业务。",
+          "source": "https://static.cninfo.com.cn/finalpage/2024-10-31/1221570980.PDF"
+        },
+        {
+          "code": "600690.SH",
+          "name": "海尔智家",
+          "reason": "同为白电制造；冰洗、海外及高端品牌权重较高。",
+          "source": "https://smart-home.haier.com/cn/"
+        },
+        {
+          "code": "000921.SZ",
+          "name": "海信家电",
+          "reason": "暖通空调和冰洗为主要业务；汽车热管理也影响股价。",
+          "source": "https://static.cninfo.com.cn/finalpage/2026-03-31/1225050277.PDF"
+        }
+      ],
+      "excluded": [
+        {
+          "name": "三花智控",
+          "reason": "零部件供应商，汽车热管理等业务使定价因素与白电整机不同。"
+        }
+      ]
+    },
+    "00506.HK": {
+      "label": "饮料行业参照",
+      "scope": "中国食品以授权装瓶与分销为主，港股缺少同业务纯上市公司；以下只作饮料需求与市场定价参照。",
+      "peers": [
+        {
+          "code": "00322.HK",
+          "name": "康师傅控股",
+          "reason": "饮料制造与分销共同暴露；另有方便面业务。",
+          "source": "https://www.masterkong.com.cn/"
+        },
+        {
+          "code": "00220.HK",
+          "name": "统一企业中国",
+          "reason": "饮料与渠道有共同需求；包含方便面，品牌所有权不同。",
+          "source": "https://www.uni-president.com.cn/"
+        },
+        {
+          "code": "09633.HK",
+          "name": "农夫山泉",
+          "reason": "包装水、茶与其他饮料；品牌、产品组合和估值属性有差异。",
+          "source": "https://static.cninfo.com.cn/finalpage/2026-04-17/1225121774.PDF"
+        },
+        {
+          "code": "00345.HK",
+          "name": "维他奶国际",
+          "reason": "植物蛋白饮料与茶饮；产品、市场地域及恢复周期不同。",
+          "source": "https://www.vitasoy.com/"
+        }
+      ],
+      "excluded": [
+        {
+          "name": "太古股份公司",
+          "reason": "太古可口可乐业务可比，但上市公司还包含地产、航空等业务，集团股价不作为装瓶商纯参照。"
+        }
+      ]
+    },
+    "02314.HK": {
+      "label": "包装纸同行",
+      "scope": "港股包装原纸生产商；理文另有生活用纸、制浆等业务。可比上市样本较少。",
+      "peers": [
+        {
+          "code": "02689.HK",
+          "name": "玖龙纸业",
+          "reason": "箱板纸、瓦楞纸等包装纸需求和成本有共同暴露；浆及其他纸种占比不同。",
+          "source": "https://doc.irasia.com/listco/hk/ndpaper/annual/2025/ar2025.pdf"
+        },
+        {
+          "code": "02002.HK",
+          "name": "阳光纸业",
+          "reason": "白面牛卡纸、纸管原纸和瓦楞纸；规模和股票成交活跃度明显不同。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0427/2026042702479_c.pdf"
+        }
+      ],
+      "excluded": [
+        {
+          "name": "晨鸣纸业",
+          "reason": "文化纸与浆纸业务、财务困境等共同影响价格，当前不作为包装纸核心参照。"
+        }
+      ]
+    },
+    "06049.HK": {
+      "label": "基础物业广样本",
+      "scope": "基础物业共32家公司（含保利及4家已停牌/退出），按业务纳入；商管3家、混合业务4家另列。当前模型剔除本股、日期不齐和成交稀疏成员，使用每日同行涨跌中位数降低单一小盘股影响。股东背景、住宅/公共物业和关联方风险仍有差异。",
+      "peers": [
+        {
+          "code": "02669.HK",
+          "name": "中海物业",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.copl.com.hk/sc/news/detail/338"
+        },
+        {
+          "code": "02869.HK",
+          "name": "绿城服务",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.greentownservice.com/"
+        },
+        {
+          "code": "06098.HK",
+          "name": "碧桂园服务",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0424/2026042403194_c.pdf"
+        },
+        {
+          "code": "03319.HK",
+          "name": "雅生活服务",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0428/2026042801545_c.pdf"
+        },
+        {
+          "code": "01995.HK",
+          "name": "永升服务",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2025/0429/2025042903328_c.pdf"
+        },
+        {
+          "code": "01755.HK",
+          "name": "新城悦服务",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0121/2026012100002_c.pdf"
+        },
+        {
+          "code": "03316.HK",
+          "name": "滨江服务",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0424/2026042403062_c.pdf"
+        },
+        {
+          "code": "01516.HK",
+          "name": "融创服务",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0429/2026042903394_c.pdf"
+        },
+        {
+          "code": "00873.HK",
+          "name": "世茂服务",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0428/2026042801886_c.pdf"
+        },
+        {
+          "code": "03913.HK",
+          "name": "合景悠活",
+          "reason": "2025年住宅、商业物业及公建基础物管合计88.8%；商业营运服务仅1.6%，不因服务商业物业就归为商管。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0424/2026042402095_c.pdf"
+        },
+        {
+          "code": "06666.HK",
+          "name": "恒大物业",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0327/2026032701437_c.pdf"
+        },
+        {
+          "code": "09928.HK",
+          "name": "时代邻里",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0428/2026042804283.pdf"
+        },
+        {
+          "code": "09983.HK",
+          "name": "建业新生活",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0420/2026042001931_c.pdf"
+        },
+        {
+          "code": "06989.HK",
+          "name": "卓越商企服务",
+          "reason": "办公及企业物业服务为主，2025年基础物业服务收入占92%；商企物业服务不等于商场招商运营。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0428/2026042800555_c.pdf"
+        },
+        {
+          "code": "01502.HK",
+          "name": "金融街物业",
+          "reason": "2025年物业管理服务收入80.42%；写字楼等非住宅服务仍按物管收费纳入，不等同购物中心招商运营。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0416/2026041601917_c.pdf"
+        },
+        {
+          "code": "02156.HK",
+          "name": "建发物业",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0430/2026043002001_c.pdf"
+        },
+        {
+          "code": "06677.HK",
+          "name": "远洋服务",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0427/2026042702225_c.pdf"
+        },
+        {
+          "code": "02107.HK",
+          "name": "第一服务控股",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0424/2026042404107_c.pdf"
+        },
+        {
+          "code": "01778.HK",
+          "name": "彩生活",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0429/2026042905335_c.pdf"
+        },
+        {
+          "code": "02168.HK",
+          "name": "佳兆业美好",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0430/2026043003205_c.pdf"
+        },
+        {
+          "code": "01971.HK",
+          "name": "弘阳服务",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0424/2026042402698_c.pdf"
+        },
+        {
+          "code": "01941.HK",
+          "name": "烨星集团",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0430/2026043003330.pdf"
+        },
+        {
+          "code": "06093.HK",
+          "name": "和泓服务",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0427/2026042700669_c.pdf"
+        },
+        {
+          "code": "01417.HK",
+          "name": "浦江中国",
+          "reason": "2025年包干制物业服务收入69.2%、环卫25.8%、转租1.0%；属公共物业/城市服务，保留微盘股及极端行情标注。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0424/2026042401111_c.pdf"
+        },
+        {
+          "code": "01538.HK",
+          "name": "中奥到家",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0429/2026042900018_c.pdf"
+        },
+        {
+          "code": "01895.HK",
+          "name": "鑫苑服务",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0423/2026042303101_c.pdf"
+        },
+        {
+          "code": "01153.HK",
+          "name": "佳源服务",
+          "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0331/2026033101805.pdf"
+        },
+        {
+          "code": "02606.HK",
+          "name": "蓝光嘉宝服务",
+          "reason": "历史基础物业样本，2021年被碧桂园服务收购并私有化；保留退出轨迹。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2022/0329/2022032900366_c.pdf"
+        },
+        {
+          "code": "09666.HK",
+          "name": "金科服务",
+          "reason": "空间物业服务为主要收入，后私有化；保留退出轨迹。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2024/0927/2024092702290_c.pdf"
+        },
+        {
+          "code": "02602.HK",
+          "name": "万物云",
+          "reason": "住宅社区服务与商企、城市空间服务；2022年上市，不补入2021年起点。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0416/2026041601146_c.pdf"
+        },
+        {
+          "code": "03658.HK",
+          "name": "新希望服务",
+          "reason": "2025年物管收入61.6%，另有生活服务；商业运营收入7.0%、分部毛利13.5%，仍纳入基础服务并标注商管暴露。",
+          "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0330/2026033003637_c.pdf"
+        }
+      ],
+      "excluded": [
+        {
+          "code": "09916.HK",
+          "name": "兴业物联",
+          "reason": "2023年收购开发项目，2026H1开发收入零但开发中物业182.448百万元，另有酒店建设资产；按资本暴露单列混合。",
+          "source": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0909/2026090900279_c.pdf"
+        },
+        {
+          "code": "03662.HK",
+          "name": "星悦康旅",
+          "reason": "2026H1商业收入11.33%，估算毛利约12.4%，不是主要利润驱动。保留本批混合历史参照，标注商管重要性下降。",
+          "source": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0917/2026091700650_c.pdf"
+        },
+        {
+          "code": "01209.HK",
+          "name": "华润万象生活",
+          "reason": "2026H1商管毛利占70.57%，商管单列；不作基础物业均值。",
+          "source": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0924/2026092400004_c.pdf"
+        },
+        {
+          "code": "09909.HK",
+          "name": "宝龙商业",
+          "reason": "2026H1商业运营收入78.8%、毛利89.17%；含整租运营风险。",
+          "source": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0929/2026092900443_c.pdf"
+        },
+        {
+          "code": "06668.HK",
+          "name": "星盛商业",
+          "reason": "商业运营含委托、品牌及整租，整租收入25.9%，非全部纯管理费。",
+          "source": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0917/2026091700429_c.pdf"
+        },
+        {
+          "code": "00606.HK",
+          "name": "中骏商管",
+          "reason": "2026H1住宅物业收入75.05%，并有独立商业运营；按混合单列，不按公司名称分组。",
+          "source": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0930/2026093001025_c.pdf"
+        },
+        {
+          "code": "06626.HK",
+          "name": "越秀服务",
+          "reason": "2026H1商业收入17.69%、毛利21.46%；保留商业与非商业业务差异。",
+          "source": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0924/2026092400505_c.pdf"
+        }
+      ],
+      "aggregation": "daily_median",
+      "sector_history": "property"
+    }
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "acquired_on": "2026-11-15",
+  "documents": [
+    {
+      "id": "annual2025",
+      "title": "中国石油2025年度报告",
+      "issuer": "中国石油",
+      "fact_period": "2025",
+      "published_on": "2026-04-23",
+      "url": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0423/2026042301797.pdf",
+      "nature": "company_disclosure",
+      "file": "annual2025.pdf"
+    },
+    {
+      "id": "q32026",
+      "title": "中国石油2026年第三季度报告",
+      "issuer": "中国石油",
+      "fact_period": "2026年1—9月",
+      "published_on": "2026-10-28",
+      "url": "https://www.petrochina.com.cn/petrochina/jdbg/202610/ed4e45a0d81149dab4549bd4cc570db4/files/e054e03d628b46588536bf47673d167f.pdf",
+      "nature": "company_disclosure",
+      "file": "q32026.pdf"
+    },
+    {
+      "id": "h12026",
+      "title": "中国石油2026年中期报告",
+      "issuer": "中国石油",
+      "fact_period": "2026年1—6月",
+      "published_on": "2026-09-18",
+      "url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0918/2026091800441.pdf",
+      "nature": "company_disclosure",
+      "file": "h12026.pdf"
+    },
+    {
+      "id": "annual2020",
+      "title": "中国石油2020年度报告",
+      "issuer": "中国石油",
+      "fact_period": "2020",
+      "published_on": "2021-04-21",
+      "url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2021/0421/2021042100427_c.pdf",
+      "nature": "company_disclosure",
+      "file": "annual2020.pdf"
+    },
+    {
+      "id": "annual2016",
+      "title": "中国石油2016年Form 20-F",
+      "issuer": "中国石油",
+      "fact_period": "2012—2016",
+      "published_on": "2017-04-27",
+      "url": "https://www.sec.gov/Archives/edgar/data/1108329/000119312517141187/d369285d20f.htm",
+      "nature": "company_disclosure",
+      "file": "annual2016.html"
+    },
+    {
+      "id": "storage2025",
+      "title": "中国石油储气库关联交易补充公告",
+      "issuer": "中国石油",
+      "fact_period": "2025年储气库方案修订",
+      "published_on": "2025-12-04",
+      "url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2025/1204/2025120402102.pdf",
+      "nature": "company_disclosure",
+      "file": "storage2025.pdf"
+    },
+    {
+      "id": "related2027",
+      "title": "中国石油2027—2029年续签关联交易及新金融服务协议",
+      "issuer": "中国石油",
+      "fact_period": "2027—2029年合同",
+      "published_on": "2026-03-29",
+      "url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0329/2026032900155.pdf",
+      "nature": "company_disclosure",
+      "file": "related2027.pdf"
+    },
+    {
+      "id": "div2026",
+      "title": "中国石油2026年中期股息及税务安排",
+      "issuer": "中国石油",
+      "fact_period": "2026年1—6月",
+      "published_on": "2026-08-30",
+      "url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0830/2026083000031.pdf",
+      "nature": "company_disclosure",
+      "file": "div2026.pdf"
+    },
+    {
+      "id": "snp2025",
+      "title": "中国石化2025年年度报告摘要",
+      "issuer": "中国石化",
+      "fact_period": "2025",
+      "published_on": "2026-03-23",
+      "url": "https://static.cninfo.com.cn/finalpage/2026-03-23/1225024100.PDF",
+      "nature": "company_disclosure",
+      "file": "snp2025.pdf"
+    },
+    {
+      "id": "cnooc2025",
+      "title": "中国海油2025年度报告",
+      "issuer": "中国海油",
+      "fact_period": "2025",
+      "published_on": "2026-03-26",
+      "url": "https://www.cnoocltd.com/tzzgx/dqbg/nb/material/c00883-2025AnnualResults-cn.pdf",
+      "nature": "company_disclosure",
+      "file": "cnooc2025.pdf"
+    },
+    {
+      "id": "oilfloor",
+      "title": "发改价格〔2016〕64号成品油价格形成机制",
+      "issuer": "国家发展改革委",
+      "fact_period": "2016年成品油价格机制",
+      "published_on": "2016-01-13",
+      "url": "https://zfxxgk.ndrc.gov.cn/upload/images/202210/202210239453391.pdf",
+      "nature": "public_reporting",
+      "file": "oilfloor.pdf"
+    },
+    {
+      "id": "reservefund",
+      "title": "财税〔2016〕137号油价调控风险准备金征收管理办法",
+      "issuer": "财政部、国家发展改革委",
+      "fact_period": "2016年风险准备金",
+      "published_on": "2016-12-15",
+      "url": "https://www.mof.gov.cn/gkml/caizhengwengao/2017wg/wg201703/201707/t20170707_2641255.htm",
+      "nature": "public_reporting",
+      "file": "reservefund.html"
+    },
+    {
+      "id": "gasprice",
+      "title": "发改价格规〔2018〕794号居民用气门站价格",
+      "issuer": "国家发展改革委",
+      "fact_period": "2018年居民用气门站机制",
+      "published_on": "2018-05-25",
+      "url": "https://zfxxgk.ndrc.gov.cn/upload/images/202210/202210910455060.pdf",
+      "nature": "public_reporting",
+      "file": "gasprice.pdf"
+    },
+    {
+      "id": "gassupply",
+      "title": "2026年能源保供中长期合同管理办法（试行）",
+      "issuer": "国家发展改革委",
+      "fact_period": "2026年12月1日起施行",
+      "published_on": "2026-10-23",
+      "url": "https://zfxxgk.ndrc.gov.cn/web/iteminfo.jsp?id=20668",
+      "nature": "public_reporting",
+      "file": "gassupply.html"
+    },
+    {
+      "id": "pipeaccess",
+      "title": "油气管网设施公平开放监管办法",
+      "issuer": "国家发展改革委",
+      "fact_period": "2025年11月1日起施行",
+      "published_on": "2025-09-29",
+      "url": "https://zfxxgk.ndrc.gov.cn/web/iteminfo.jsp?id=20553",
+      "nature": "public_reporting",
+      "file": "pipeaccess.html"
+    },
+    {
+      "id": "annual2024",
+      "title": "中国石油2024年度报告",
+      "issuer": "中国石油",
+      "fact_period": "2024",
+      "published_on": "2025-04-23",
+      "url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2025/0423/2025042301248.pdf",
+      "nature": "company_disclosure",
+      "file": "annual2024.pdf"
+    },
+    {
+      "id": "annual2017summary",
+      "title": "中国石油2017年年度报告摘要（含2016比较）",
+      "issuer": "中国石油",
+      "fact_period": "2015—2017",
+      "published_on": "2018-03-22",
+      "url": "https://www.petrochina.com.cn/petrochina/rdxx/201803/69e5169a692649249b6cd59bcf88da9d/files/842dcf83384246258e4b425a8afbfdf0.pdf",
+      "nature": "company_disclosure",
+      "file": "annual2017summary.pdf"
+    }
+  ]
+}

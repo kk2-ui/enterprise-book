@@ -1,0 +1,1641 @@
+{
+  "as_of": "2026-11-13",
+  "rows": [
+    {
+      "id": "wc_receivables",
+      "label": "Accounts receivable, prepayments and other current assets",
+      "pages": [
+        220
+      ],
+      "pattern": "^Accounts\\ receivable,\\ prepayments\\ and\\ other\\ current\\ assets(?:\\s+|$)",
+      "columns": [
+        "2025",
+        "2024"
+      ],
+      "number_format": "financial",
+      "pdf_page": 220,
+      "source_excerpt": "      Accounts receivable, prepayments and other current assets                                  (1,150)     (12,400)",
+      "values": {
+        "2025": "-1150",
+        "2024": "-12400"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "wc_inventory",
+      "label": "Inventories",
+      "pages": [
+        220
+      ],
+      "pattern": "^Inventories(?:\\s+|$)",
+      "columns": [
+        "2025",
+        "2024"
+      ],
+      "number_format": "financial",
+      "pdf_page": 220,
+      "source_excerpt": "      Inventories                                                                                15,196        9,934",
+      "values": {
+        "2025": "15196",
+        "2024": "9934"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "wc_payables",
+      "label": "Accounts payable and accrued liabilities",
+      "pages": [
+        220
+      ],
+      "pattern": "^Accounts\\ payable\\ and\\ accrued\\ liabilities(?:\\s+|$)",
+      "columns": [
+        "2025",
+        "2024"
+      ],
+      "number_format": "financial",
+      "pdf_page": 220,
+      "source_excerpt": "      Accounts payable and accrued liabilities                                                 (42,071)      (25,108)",
+      "values": {
+        "2025": "-42071",
+        "2024": "-25108"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "wc_contract",
+      "label": "Contract liabilities",
+      "pages": [
+        220
+      ],
+      "pattern": "^Contract\\ liabilities(?:\\s+|$)",
+      "columns": [
+        "2025",
+        "2024"
+      ],
+      "number_format": "financial",
+      "pdf_page": 220,
+      "source_excerpt": "      Contract liabilities                                                                        4,333       (3,674)",
+      "values": {
+        "2025": "4333",
+        "2024": "-3674"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "ocf",
+      "label": "NET CASH FLOWS FROM OPERATING ACTIVITIES",
+      "pages": [
+        220
+      ],
+      "pattern": "^NET\\ CASH\\ FLOWS\\ FROM\\ OPERATING\\ ACTIVITIES(?:\\s+|$)",
+      "columns": [
+        "2025",
+        "2024"
+      ],
+      "number_format": "financial",
+      "pdf_page": 220,
+      "source_excerpt": " NET CASH FLOWS FROM OPERATING ACTIVITIES                                                      412,510       406,532",
+      "values": {
+        "2025": "412510",
+        "2024": "406532"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "capex",
+      "label": "Capital expenditures",
+      "pages": [
+        221
+      ],
+      "pattern": "^Capital\\ expenditures(?:\\s+|$)",
+      "columns": [
+        "2025",
+        "2024"
+      ],
+      "number_format": "financial",
+      "pdf_page": 221,
+      "source_excerpt": " Capital expenditures                                                                            (292,321)               (302,180)",
+      "values": {
+        "2025": "-292321",
+        "2024": "-302180"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "lease_paid",
+      "label": "Repayments of lease liabilities",
+      "pages": [
+        221
+      ],
+      "pattern": "^Repayments\\ of\\ lease\\ liabilities(?:\\s+|$)",
+      "columns": [
+        "2025",
+        "2024"
+      ],
+      "number_format": "financial",
+      "pdf_page": 221,
+      "source_excerpt": " Repayments of lease liabilities                                                                  (10,748)                (11,987)",
+      "values": {
+        "2025": "-10748",
+        "2024": "-11987"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "interest_paid",
+      "label": "Interest paid",
+      "pages": [
+        221
+      ],
+      "pattern": "^Interest\\ paid(?:\\s+|$)",
+      "columns": [
+        "2025",
+        "2024"
+      ],
+      "number_format": "financial",
+      "pdf_page": 221,
+      "source_excerpt": " Interest paid                                                                                    (14,384)                (12,760)",
+      "values": {
+        "2025": "-14384",
+        "2024": "-12760"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "div_received",
+      "label": "Dividends received",
+      "pages": [
+        221
+      ],
+      "pattern": "^Dividends\\ received(?:\\s+|$)",
+      "columns": [
+        "2025",
+        "2024"
+      ],
+      "number_format": "financial",
+      "pdf_page": 221,
+      "source_excerpt": " Dividends received                                                                                 16,500                  13,591",
+      "values": {
+        "2025": "16500",
+        "2024": "13591"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "nci_div",
+      "label": "Dividends paid to non-controlling interests",
+      "pages": [
+        221
+      ],
+      "pattern": "^Dividends\\ paid\\ to\\ non\\-controlling\\ interests(?:\\s+|$)",
+      "columns": [
+        "2025",
+        "2024"
+      ],
+      "number_format": "financial",
+      "pdf_page": 221,
+      "source_excerpt": " Dividends paid to non-controlling interests                                                      (10,795)                (11,139)",
+      "values": {
+        "2025": "-10795",
+        "2024": "-11139"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "owner_div",
+      "label": "Dividends paid to owners of the Company",
+      "pages": [
+        221
+      ],
+      "pattern": "^Dividends\\ paid\\ to\\ owners\\ of\\ the\\ Company(?:\\s+|$)",
+      "columns": [
+        "2025",
+        "2024"
+      ],
+      "number_format": "financial",
+      "pdf_page": 221,
+      "source_excerpt": " Dividends paid to owners of the Company                                                          (86,020)                (82,360)",
+      "values": {
+        "2025": "-86020",
+        "2024": "-82360"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "profit_ops",
+      "label": "Profit from operations",
+      "pages": [
+        8
+      ],
+      "pattern": "^Profit\\ from\\ operations(?:\\s+|$)",
+      "columns": [
+        "2025",
+        "2024",
+        "2023",
+        "2022",
+        "2021"
+      ],
+      "number_format": "financial",
+      "pdf_page": 8,
+      "source_excerpt": "       Profit from operations                    219,241           233,954         235,862           216,888           161,241",
+      "values": {
+        "2025": "219241",
+        "2024": "233954",
+        "2023": "235862",
+        "2022": "216888",
+        "2021": "161241"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "profit_owner",
+      "label": "Owners of the Company",
+      "pages": [
+        8
+      ],
+      "pattern": "^Owners\\ of\\ the\\ Company(?:\\s+|$)",
+      "columns": [
+        "2025",
+        "2024",
+        "2023",
+        "2022",
+        "2021"
+      ],
+      "number_format": "financial",
+      "occurrence": 0,
+      "pdf_page": 8,
+      "source_excerpt": "        Owners of the Company                    157,318           164,684         161,416           148,888             92,129",
+      "values": {
+        "2025": "157318",
+        "2024": "164684",
+        "2023": "161416",
+        "2022": "148888",
+        "2021": "92129"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "profit_nci",
+      "label": "Non-controlling interest",
+      "pages": [
+        8
+      ],
+      "pattern": "^Non\\-controlling\\ interest(?:\\s+|$)",
+      "columns": [
+        "2025",
+        "2024",
+        "2023",
+        "2022",
+        "2021"
+      ],
+      "number_format": "financial",
+      "occurrence": 0,
+      "pdf_page": 8,
+      "source_excerpt": "        Non-controlling interest                  14,703            19,071           19,147            14,605            22,529",
+      "values": {
+        "2025": "14703",
+        "2024": "19071",
+        "2023": "19147",
+        "2022": "14605",
+        "2021": "22529"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "capex_management",
+      "label": "Capital expenditures",
+      "pages": [
+        8
+      ],
+      "pattern": "^Capital\\ expenditures(?:\\s+|$)",
+      "columns": [
+        "2025",
+        "2024",
+        "2023",
+        "2022",
+        "2021"
+      ],
+      "number_format": "financial",
+      "pdf_page": 8,
+      "source_excerpt": "       Capital expenditures                      269,089           275,849         275,393           274,494           251,323",
+      "values": {
+        "2025": "269089",
+        "2024": "275849",
+        "2023": "275393",
+        "2022": "274494",
+        "2021": "251323"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "ocf_history",
+      "label": "Net cash flows from operating",
+      "pages": [
+        8
+      ],
+      "pattern": "^Net\\ cash\\ flows\\ from\\ operating(?:\\s+|$)",
+      "columns": [
+        "2025",
+        "2024",
+        "2023",
+        "2022",
+        "2021"
+      ],
+      "number_format": "financial",
+      "following_lines": 1,
+      "pdf_page": 8,
+      "source_excerpt": "       Net cash flows from operating\n        activities                               412,510           406,532         456,847           393,246           341,424",
+      "values": {
+        "2025": "412510",
+        "2024": "406532",
+        "2023": "456847",
+        "2022": "393246",
+        "2021": "341424"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "retirement_settled",
+      "label": "Liabilities settled",
+      "pages": [
+        277
+      ],
+      "pattern": "^Liabilities\\ settled(?:\\s+|$)",
+      "columns": [
+        "2025",
+        "2024"
+      ],
+      "number_format": "financial",
+      "pdf_page": 277,
+      "source_excerpt": "  Liabilities settled                                                                   (5,339)                                (5,660)",
+      "values": {
+        "2025": "-5339",
+        "2024": "-5660"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "depletion",
+      "label": "Depreciation, depletion and amortisation",
+      "pages": [
+        220
+      ],
+      "pattern": "^Depreciation,\\ depletion\\ and\\ amortisation(?:\\s+|$)",
+      "columns": [
+        "2025",
+        "2024"
+      ],
+      "number_format": "financial",
+      "pdf_page": 220,
+      "source_excerpt": "      Depreciation, depletion and amortisation                                                 248,125       243,209",
+      "values": {
+        "2025": "248125",
+        "2024": "243209"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "reserves",
+      "label": "Reserves as of December 31, 2025 (the basis date)",
+      "pages": [
+        106
+      ],
+      "pattern": "^Reserves\\ as\\ of\\ December\\ 31,\\ 2025\\ \\(the\\ basis\\ date\\)(?:\\s+|$)",
+      "columns": [
+        "oil_reserves",
+        "gas_reserves",
+        "boe_reserves"
+      ],
+      "number_format": "financial",
+      "unit": "按三项列定义",
+      "skip_amounts": 2,
+      "pdf_page": 106,
+      "source_excerpt": " Reserves as of December 31, 2025 (the basis date)              6,049.0              73,120.7                  18,235.8",
+      "values": {
+        "oil_reserves": "6049.0",
+        "gas_reserves": "73120.7",
+        "boe_reserves": "18235.8"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "production",
+      "label": "Production for the year",
+      "pages": [
+        106
+      ],
+      "pattern": "^Production\\ for\\ the\\ year(?:\\s+|$)",
+      "columns": [
+        "oil_reserves",
+        "gas_reserves",
+        "boe_reserves"
+      ],
+      "number_format": "financial",
+      "occurrence": 1,
+      "unit": "按三项列定义",
+      "pdf_page": 106,
+      "source_excerpt": " Production for the year                                        (948.0)              (5,363.2)                 (1,841.9)",
+      "values": {
+        "oil_reserves": "-948.0",
+        "gas_reserves": "-5363.2",
+        "boe_reserves": "-1841.9"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "pipe_carry",
+      "label": "Carrying amount of interest in associates",
+      "pages": [
+        163
+      ],
+      "pattern": "^Carrying\\ amount\\ of\\ interest\\ in\\ associates(?:\\s+|$)",
+      "columns": [
+        "pipe_2025",
+        "pipe_2024",
+        "finance_2025",
+        "finance_2024",
+        "2025"
+      ],
+      "number_format": "financial",
+      "pdf_page": 163,
+      "source_excerpt": " Carrying amount of interest in associates         167,589            163,997                29,348                28,221                        11,052",
+      "values": {
+        "pipe_2025": "167589",
+        "pipe_2024": "163997",
+        "finance_2025": "29348",
+        "finance_2024": "28221",
+        "2025": "11052"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "pipe_div",
+      "label": "Dividends received by the Group",
+      "pages": [
+        163
+      ],
+      "pattern": "^Dividends\\ received\\ by\\ the\\ Group(?:\\s+|$)",
+      "columns": [
+        "pipe_2025",
+        "pipe_2024",
+        "finance_2025",
+        "finance_2024"
+      ],
+      "number_format": "financial",
+      "pdf_page": 163,
+      "source_excerpt": " Dividends received by the Group                  5,628            5,452              473              2,277                                            -",
+      "values": {
+        "pipe_2025": "5628",
+        "pipe_2024": "5452",
+        "finance_2025": "473",
+        "finance_2024": "2277"
+      },
+      "document": "annual2025",
+      "text_path": "sources/annual2025.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "wc_receivables",
+      "label": "Accounts receivable, prepayments and other current assets",
+      "pages": [
+        229
+      ],
+      "pattern": "^Accounts\\ receivable,\\ prepayments\\ and\\ other\\ current\\ assets(?:\\s+|$)",
+      "columns": [
+        "2024",
+        "2023"
+      ],
+      "number_format": "financial",
+      "pdf_page": 229,
+      "source_excerpt": " Accounts receivable, prepayments and other current assets                                       (12,400)                (15,002)",
+      "values": {
+        "2024": "-12400",
+        "2023": "-15002"
+      },
+      "document": "annual2024",
+      "text_path": "sources/annual2024.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "wc_inventory",
+      "label": "Inventories",
+      "pages": [
+        229
+      ],
+      "pattern": "^Inventories(?:\\s+|$)",
+      "columns": [
+        "2024",
+        "2023"
+      ],
+      "number_format": "financial",
+      "pdf_page": 229,
+      "source_excerpt": " Inventories                                                                                       9,934                 (19,182)",
+      "values": {
+        "2024": "9934",
+        "2023": "-19182"
+      },
+      "document": "annual2024",
+      "text_path": "sources/annual2024.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "wc_payables",
+      "label": "Accounts payable and accrued liabilities",
+      "pages": [
+        229
+      ],
+      "pattern": "^Accounts\\ payable\\ and\\ accrued\\ liabilities(?:\\s+|$)",
+      "columns": [
+        "2024",
+        "2023"
+      ],
+      "number_format": "financial",
+      "pdf_page": 229,
+      "source_excerpt": " Accounts payable and accrued liabilities                                                        (25,108)                 40,374",
+      "values": {
+        "2024": "-25108",
+        "2023": "40374"
+      },
+      "document": "annual2024",
+      "text_path": "sources/annual2024.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "wc_contract",
+      "label": "Contract liabilities",
+      "pages": [
+        229
+      ],
+      "pattern": "^Contract\\ liabilities(?:\\s+|$)",
+      "columns": [
+        "2024",
+        "2023"
+      ],
+      "number_format": "financial",
+      "pdf_page": 229,
+      "source_excerpt": " Contract liabilities                                                                             (3,674)                      6,589",
+      "values": {
+        "2024": "-3674",
+        "2023": "6589"
+      },
+      "document": "annual2024",
+      "text_path": "sources/annual2024.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "ocf",
+      "label": "NET CASH FLOWS FROM OPERATING ACTIVITIES",
+      "pages": [
+        229
+      ],
+      "pattern": "^NET\\ CASH\\ FLOWS\\ FROM\\ OPERATING\\ ACTIVITIES(?:\\s+|$)",
+      "columns": [
+        "2024",
+        "2023"
+      ],
+      "number_format": "financial",
+      "pdf_page": 229,
+      "source_excerpt": "NET CASH FLOWS FROM OPERATING ACTIVITIES                                                         406,532                 456,847",
+      "values": {
+        "2024": "406532",
+        "2023": "456847"
+      },
+      "document": "annual2024",
+      "text_path": "sources/annual2024.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "capex",
+      "label": "Capital expenditures",
+      "pages": [
+        230
+      ],
+      "pattern": "^Capital\\ expenditures(?:\\s+|$)",
+      "columns": [
+        "2024",
+        "2023"
+      ],
+      "number_format": "financial",
+      "pdf_page": 230,
+      "source_excerpt": "      Capital expenditures                                                                           (302,180)       (280,463)",
+      "values": {
+        "2024": "-302180",
+        "2023": "-280463"
+      },
+      "document": "annual2024",
+      "text_path": "sources/annual2024.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "lease_paid",
+      "label": "Repayments of lease liabilities",
+      "pages": [
+        230
+      ],
+      "pattern": "^Repayments\\ of\\ lease\\ liabilities(?:\\s+|$)",
+      "columns": [
+        "2024",
+        "2023"
+      ],
+      "number_format": "financial",
+      "pdf_page": 230,
+      "source_excerpt": "      Repayments of lease liabilities                                                                  (11,987)        (8,956)",
+      "values": {
+        "2024": "-11987",
+        "2023": "-8956"
+      },
+      "document": "annual2024",
+      "text_path": "sources/annual2024.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "interest_paid",
+      "label": "Interest paid",
+      "pages": [
+        230
+      ],
+      "pattern": "^Interest\\ paid(?:\\s+|$)",
+      "columns": [
+        "2024",
+        "2023"
+      ],
+      "number_format": "financial",
+      "pdf_page": 230,
+      "source_excerpt": "      Interest paid                                                                                    (12,760)       (18,520)",
+      "values": {
+        "2024": "-12760",
+        "2023": "-18520"
+      },
+      "document": "annual2024",
+      "text_path": "sources/annual2024.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "div_received",
+      "label": "Dividends received",
+      "pages": [
+        230
+      ],
+      "pattern": "^Dividends\\ received(?:\\s+|$)",
+      "columns": [
+        "2024",
+        "2023"
+      ],
+      "number_format": "financial",
+      "pdf_page": 230,
+      "source_excerpt": "      Dividends received                                                                                13,591          9,666",
+      "values": {
+        "2024": "13591",
+        "2023": "9666"
+      },
+      "document": "annual2024",
+      "text_path": "sources/annual2024.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "nci_div",
+      "label": "Dividends paid to non-controlling interests",
+      "pages": [
+        230
+      ],
+      "pattern": "^Dividends\\ paid\\ to\\ non\\-controlling\\ interests(?:\\s+|$)",
+      "columns": [
+        "2024",
+        "2023"
+      ],
+      "number_format": "financial",
+      "pdf_page": 230,
+      "source_excerpt": "      Dividends paid to non-controlling interests                                                      (11,139)        (9,085)",
+      "values": {
+        "2024": "-11139",
+        "2023": "-9085"
+      },
+      "document": "annual2024",
+      "text_path": "sources/annual2024.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "owner_div",
+      "label": "Dividends paid to owners of the Company",
+      "pages": [
+        230
+      ],
+      "pattern": "^Dividends\\ paid\\ to\\ owners\\ of\\ the\\ Company(?:\\s+|$)",
+      "columns": [
+        "2024",
+        "2023"
+      ],
+      "number_format": "financial",
+      "pdf_page": 230,
+      "source_excerpt": "      Dividends paid to owners of the Company                                                          (82,360)       (78,982)",
+      "values": {
+        "2024": "-82360",
+        "2023": "-78982"
+      },
+      "document": "annual2024",
+      "text_path": "sources/annual2024.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "wc_receivables",
+      "label": "应收账款、预付款和其他流动资产",
+      "pages": [
+        21
+      ],
+      "pattern": "^应收账款、预付款和其他流动资产(?:\\s+|$)",
+      "columns": [
+        "2026",
+        "2025"
+      ],
+      "number_format": "financial",
+      "pdf_page": 21,
+      "source_excerpt": " 应收账款、预付款和其他流动资产                    (84,485)        (42,549)",
+      "values": {
+        "2026": "-84485",
+        "2025": "-42549"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "wc_inventory",
+      "label": "存货",
+      "pages": [
+        21
+      ],
+      "pattern": "^存货(?:\\s+|$)",
+      "columns": [
+        "2026",
+        "2025"
+      ],
+      "number_format": "financial",
+      "pdf_page": 21,
+      "source_excerpt": " 存货                                 (40,751)              2,523",
+      "values": {
+        "2026": "-40751",
+        "2025": "2523"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "wc_payables",
+      "label": "应付账款和应计负债",
+      "pages": [
+        21
+      ],
+      "pattern": "^应付账款和应计负债(?:\\s+|$)",
+      "columns": [
+        "2026",
+        "2025"
+      ],
+      "number_format": "financial",
+      "pdf_page": 21,
+      "source_excerpt": " 应付账款和应计负债                          128,509              53,112",
+      "values": {
+        "2026": "128509",
+        "2025": "53112"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "wc_contract",
+      "label": "合同负债",
+      "pages": [
+        21
+      ],
+      "pattern": "^合同负债(?:\\s+|$)",
+      "columns": [
+        "2026",
+        "2025"
+      ],
+      "number_format": "financial",
+      "pdf_page": 21,
+      "source_excerpt": " 合同负债                                11,010               8,480",
+      "values": {
+        "2026": "11010",
+        "2025": "8480"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "ocf",
+      "label": "经营活动产生的现金流量净额",
+      "pages": [
+        21
+      ],
+      "pattern": "^经营活动产生的现金流量净额(?:\\s+|$)",
+      "columns": [
+        "2026",
+        "2025"
+      ],
+      "number_format": "financial",
+      "pdf_page": 21,
+      "source_excerpt": "经营活动产生的现金流量净额                       373,539             343,366",
+      "values": {
+        "2026": "373539",
+        "2025": "343366"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "capex",
+      "label": "资本性支出",
+      "pages": [
+        22
+      ],
+      "pattern": "^资本性支出(?:\\s+|$)",
+      "columns": [
+        "2026",
+        "2025"
+      ],
+      "number_format": "financial",
+      "pdf_page": 22,
+      "source_excerpt": " 资本性支出                              (159,440)       (177,505)",
+      "values": {
+        "2026": "-159440",
+        "2025": "-177505"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "lease_paid",
+      "label": "偿还租赁负债",
+      "pages": [
+        22
+      ],
+      "pattern": "^偿还租赁负债(?:\\s+|$)",
+      "columns": [
+        "2026",
+        "2025"
+      ],
+      "number_format": "financial",
+      "pdf_page": 22,
+      "source_excerpt": " 偿还租赁负债                              (13,393)            (8,725)",
+      "values": {
+        "2026": "-13393",
+        "2025": "-8725"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "interest_paid",
+      "label": "已付利息",
+      "pages": [
+        22
+      ],
+      "pattern": "^已付利息(?:\\s+|$)",
+      "columns": [
+        "2026",
+        "2025"
+      ],
+      "number_format": "financial",
+      "pdf_page": 22,
+      "source_excerpt": " 已付利息                                (11,505)           (10,943)",
+      "values": {
+        "2026": "-11505",
+        "2025": "-10943"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "div_received",
+      "label": "已收股息",
+      "pages": [
+        22
+      ],
+      "pattern": "^已收股息(?:\\s+|$)",
+      "columns": [
+        "2026",
+        "2025"
+      ],
+      "number_format": "financial",
+      "pdf_page": 22,
+      "source_excerpt": " 已收股息                                  4,171             13,122",
+      "values": {
+        "2026": "4171",
+        "2025": "13122"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "nci_div",
+      "label": "支付非控制性权益股息",
+      "pages": [
+        22
+      ],
+      "pattern": "^支付非控制性权益股息(?:\\s+|$)",
+      "columns": [
+        "2026",
+        "2025"
+      ],
+      "number_format": "financial",
+      "pdf_page": 22,
+      "source_excerpt": " 支付非控制性权益股息                           (8,251)            (7,433)",
+      "values": {
+        "2026": "-8251",
+        "2025": "-7433"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "owner_div",
+      "label": "支付母公司股东股息",
+      "pages": [
+        22
+      ],
+      "pattern": "^支付母公司股东股息(?:\\s+|$)",
+      "columns": [
+        "2026",
+        "2025"
+      ],
+      "number_format": "financial",
+      "pdf_page": 22,
+      "source_excerpt": " 支付母公司股东股息                           (87,855)           (81,687)",
+      "values": {
+        "2026": "-87855",
+        "2025": "-81687"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "storage_paid",
+      "label": "同一控制下企业合并支付的对价",
+      "pages": [
+        22
+      ],
+      "pattern": "^同一控制下企业合并支付的对价(?:\\s+|$)",
+      "columns": [
+        "2026"
+      ],
+      "number_format": "financial",
+      "pdf_page": 22,
+      "source_excerpt": " 同一控制下企业合并支付的对价                      (39,733)                  -",
+      "values": {
+        "2026": "-39733"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "ppe",
+      "label": "物业、厂房及机器设备",
+      "pages": [
+        20
+      ],
+      "pattern": "^物业、厂房及机器设备(?:\\s+|$)",
+      "columns": [
+        "2026-BS",
+        "2025-BS"
+      ],
+      "number_format": "financial",
+      "pdf_page": 20,
+      "source_excerpt": " 物业、厂房及机器设备                           1,600,318             1,641,599",
+      "values": {
+        "2026-BS": "1600318",
+        "2025-BS": "1641599"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "equity_investments",
+      "label": "联营公司及合营公司的投资",
+      "pages": [
+        20
+      ],
+      "pattern": "^联营公司及合营公司的投资(?:\\s+|$)",
+      "columns": [
+        "2026-BS",
+        "2025-BS"
+      ],
+      "number_format": "financial",
+      "pdf_page": 20,
+      "source_excerpt": " 联营公司及合营公司的投资                           315,690               303,452",
+      "values": {
+        "2026-BS": "315690",
+        "2025-BS": "303452"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "rou",
+      "label": "使用权资产",
+      "pages": [
+        20
+      ],
+      "pattern": "^使用权资产(?:\\s+|$)",
+      "columns": [
+        "2026-BS",
+        "2025-BS"
+      ],
+      "number_format": "financial",
+      "pdf_page": 20,
+      "source_excerpt": " 使用权资产                                  234,050               196,460",
+      "values": {
+        "2026-BS": "234050",
+        "2025-BS": "196460"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "cash",
+      "label": "现金及现金等价物",
+      "pages": [
+        20
+      ],
+      "pattern": "^现金及现金等价物(?:\\s+|$)",
+      "columns": [
+        "2026-BS",
+        "2025-BS"
+      ],
+      "number_format": "financial",
+      "pdf_page": 20,
+      "source_excerpt": " 现金及现金等价物                              263,862                206,163",
+      "values": {
+        "2026-BS": "263862",
+        "2025-BS": "206163"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "short_deposit",
+      "label": "到期日为三个月以上一年以内的定期存款",
+      "pages": [
+        20
+      ],
+      "pattern": "^到期日为三个月以上一年以内的定期存款(?:\\s+|$)",
+      "columns": [
+        "2026-BS",
+        "2025-BS"
+      ],
+      "number_format": "financial",
+      "pdf_page": 20,
+      "source_excerpt": " 到期日为三个月以上一年以内的定期存款                     41,704                 32,306",
+      "values": {
+        "2026-BS": "41704",
+        "2025-BS": "32306"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "long_deposit",
+      "label": "到期日为一年以上的定期存款",
+      "pages": [
+        20
+      ],
+      "pattern": "^到期日为一年以上的定期存款(?:\\s+|$)",
+      "columns": [
+        "2026-BS",
+        "2025-BS"
+      ],
+      "number_format": "financial",
+      "pdf_page": 20,
+      "source_excerpt": " 到期日为一年以上的定期存款                            6,096                 2,868",
+      "values": {
+        "2026-BS": "6096",
+        "2025-BS": "2868"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "short_debt",
+      "label": "短期借款",
+      "pages": [
+        20
+      ],
+      "pattern": "^短期借款(?:\\s+|$)",
+      "columns": [
+        "2026-BS",
+        "2025-BS"
+      ],
+      "number_format": "financial",
+      "pdf_page": 20,
+      "source_excerpt": " 短期借款                                    63,086                64,103",
+      "values": {
+        "2026-BS": "63086",
+        "2025-BS": "64103"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "long_debt",
+      "label": "长期借款",
+      "pages": [
+        20
+      ],
+      "pattern": "^长期借款(?:\\s+|$)",
+      "columns": [
+        "2026-BS",
+        "2025-BS"
+      ],
+      "number_format": "financial",
+      "pdf_page": 20,
+      "source_excerpt": " 长期借款                                   178,771               166,062",
+      "values": {
+        "2026-BS": "178771",
+        "2025-BS": "166062"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "nci_equity",
+      "label": "非控制性权益",
+      "pages": [
+        20
+      ],
+      "pattern": "^非控制性权益(?:\\s+|$)",
+      "columns": [
+        "2026-BS",
+        "2025-BS"
+      ],
+      "number_format": "financial",
+      "pdf_page": 20,
+      "source_excerpt": "非控制性权益                                  213,695               213,487",
+      "values": {
+        "2026-BS": "213695",
+        "2025-BS": "213487"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "owner_equity",
+      "label": "归属于母公司股东权益总额",
+      "pages": [
+        20
+      ],
+      "pattern": "^归属于母公司股东权益总额(?:\\s+|$)",
+      "columns": [
+        "2026-BS",
+        "2025-BS"
+      ],
+      "number_format": "financial",
+      "pdf_page": 20,
+      "source_excerpt": "归属于母公司股东权益总额                          1,632,057             1,617,063",
+      "values": {
+        "2026-BS": "1632057",
+        "2025-BS": "1617063"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "end_retirement",
+      "label": "资产弃置义务",
+      "pages": [
+        20
+      ],
+      "pattern": "^资产弃置义务(?:\\s+|$)",
+      "columns": [
+        "2026-BS",
+        "2025-BS"
+      ],
+      "number_format": "financial",
+      "pdf_page": 20,
+      "source_excerpt": " 资产弃置义务                                 176,016               173,503",
+      "values": {
+        "2026-BS": "176016",
+        "2025-BS": "173503"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "current_assets",
+      "label": "流动资产总额",
+      "pages": [
+        20
+      ],
+      "pattern": "^流动资产总额(?:\\s+|$)",
+      "columns": [
+        "2026-BS",
+        "2025-BS"
+      ],
+      "number_format": "financial",
+      "pdf_page": 20,
+      "source_excerpt": "流动资产总额                                 809,193                599,269",
+      "values": {
+        "2026-BS": "809193",
+        "2025-BS": "599269"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "current_liab",
+      "label": "流动负债总额",
+      "pages": [
+        20
+      ],
+      "pattern": "^流动负债总额(?:\\s+|$)",
+      "columns": [
+        "2026-BS",
+        "2025-BS"
+      ],
+      "number_format": "financial",
+      "pdf_page": 20,
+      "source_excerpt": "流动负债总额                                  716,549               540,229",
+      "values": {
+        "2026-BS": "716549",
+        "2025-BS": "540229"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "noncurrent_liab",
+      "label": "非流动负债总额",
+      "pages": [
+        20
+      ],
+      "pattern": "^非流动负债总额(?:\\s+|$)",
+      "columns": [
+        "2026-BS",
+        "2025-BS"
+      ],
+      "number_format": "financial",
+      "pdf_page": 20,
+      "source_excerpt": "非流动负债总额                                 543,841               492,439",
+      "values": {
+        "2026-BS": "543841",
+        "2025-BS": "492439"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "noncurrent_assets",
+      "label": "非流动资产总额",
+      "pages": [
+        20
+      ],
+      "pattern": "^非流动资产总额(?:\\s+|$)",
+      "columns": [
+        "2026-BS",
+        "2025-BS"
+      ],
+      "number_format": "financial",
+      "pdf_page": 20,
+      "source_excerpt": "非流动资产总额                               2,296,949             2,263,949",
+      "values": {
+        "2026-BS": "2296949",
+        "2025-BS": "2263949"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "lease_current",
+      "label": "租赁负债",
+      "pages": [
+        20
+      ],
+      "pattern": "^租赁负债(?:\\s+|$)",
+      "columns": [
+        "2026-BS",
+        "2025-BS"
+      ],
+      "number_format": "financial",
+      "occurrence": 0,
+      "pdf_page": 20,
+      "source_excerpt": " 租赁负债                                    15,107                 9,552",
+      "values": {
+        "2026-BS": "15107",
+        "2025-BS": "9552"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "lease_noncurrent",
+      "label": "租赁负债",
+      "pages": [
+        20
+      ],
+      "pattern": "^租赁负债(?:\\s+|$)",
+      "columns": [
+        "2026-BS",
+        "2025-BS"
+      ],
+      "number_format": "financial",
+      "occurrence": 1,
+      "pdf_page": 20,
+      "source_excerpt": " 租赁负债                                   148,751               116,365",
+      "values": {
+        "2026-BS": "148751",
+        "2025-BS": "116365"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "profit_ops",
+      "label": "经营利润",
+      "pages": [
+        19
+      ],
+      "pattern": "^经营利润(?:\\s+|$)",
+      "columns": [
+        "2026",
+        "2025"
+      ],
+      "number_format": "financial",
+      "pdf_page": 19,
+      "source_excerpt": "经营利润                                    208,340          176,959",
+      "values": {
+        "2026": "208340",
+        "2025": "176959"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "associate_profit",
+      "label": "应占联营公司及合营公司的利润",
+      "pages": [
+        19
+      ],
+      "pattern": "^应占联营公司及合营公司的利润(?:\\s+|$)",
+      "columns": [
+        "2026",
+        "2025"
+      ],
+      "number_format": "financial",
+      "pdf_page": 19,
+      "source_excerpt": "应占联营公司及合营公司的利润                           16,246           14,009",
+      "values": {
+        "2026": "16246",
+        "2025": "14009"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "oil_profit",
+      "label": "油气和新能源",
+      "pages": [
+        23
+      ],
+      "pattern": "^油气和新能源\\s+\\(?[\\d,]+\\)?\\s+",
+      "columns": [
+        "2026",
+        "2025"
+      ],
+      "number_format": "financial",
+      "pdf_page": 23,
+      "source_excerpt": " 油气和新能源                             152,023             127,009",
+      "values": {
+        "2026": "152023",
+        "2025": "127009"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "refining_profit",
+      "label": "炼油化工和新材料",
+      "pages": [
+        23
+      ],
+      "pattern": "^炼油化工和新材料\\s+\\(?[\\d,]+\\)?\\s+",
+      "columns": [
+        "2026",
+        "2025"
+      ],
+      "number_format": "financial",
+      "pdf_page": 23,
+      "source_excerpt": " 炼油化工和新材料                            23,132              16,240",
+      "values": {
+        "2026": "23132",
+        "2025": "16240"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "marketing_profit",
+      "label": "销售",
+      "pages": [
+        23
+      ],
+      "pattern": "^销售\\s+\\(?[\\d,]+\\)?\\s+",
+      "columns": [
+        "2026",
+        "2025"
+      ],
+      "number_format": "financial",
+      "pdf_page": 23,
+      "source_excerpt": " 销售                                  14,500              11,626",
+      "values": {
+        "2026": "14500",
+        "2025": "11626"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "gas_profit",
+      "label": "天然气销售",
+      "pages": [
+        23
+      ],
+      "pattern": "^天然气销售\\s+\\(?[\\d,]+\\)?\\s+",
+      "columns": [
+        "2026",
+        "2025"
+      ],
+      "number_format": "financial",
+      "pdf_page": 23,
+      "source_excerpt": " 天然气销售                               33,293              31,279",
+      "values": {
+        "2026": "33293",
+        "2025": "31279"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    },
+    {
+      "id": "hq_profit",
+      "label": "总部及其他",
+      "pages": [
+        23
+      ],
+      "pattern": "^总部及其他\\s+\\(?[\\d,]+\\)?\\s+",
+      "columns": [
+        "2026",
+        "2025"
+      ],
+      "number_format": "financial",
+      "pdf_page": 23,
+      "source_excerpt": " 总部及其他                              (14,608)             (9,195)",
+      "values": {
+        "2026": "-14608",
+        "2025": "-9195"
+      },
+      "document": "q32026",
+      "text_path": "sources/q32026.txt",
+      "unit": "人民币百万元",
+      "scope": "中国石油合并IFRS"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "date": "2026-11-13",
+  "a_cny": 12.39,
+  "h_hkd": 10.33,
+  "hkd_cny": 0.85604,
+  "usd_cny": 6.7152,
+  "sources": [
+    {"title": "上交所行情转报，601857不复权收盘", "url": "https://cn.investing.com/equities/petrochina-ss-historical-data"},
+    {"title": "港交所行情转报，00857不复权收盘", "url": "https://markets.ft.markitdigital.com/data/equities/tearsheet/historical?s=857%3AHKG.HS"},
+    {"title": "11月13日人民币汇率中间价，中国外汇交易中心", "url": "https://www.chinamoney.com.cn/chinese/bkccpr/index.html?tab=2"}
+  ]
+}

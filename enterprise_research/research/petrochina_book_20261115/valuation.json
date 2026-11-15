@@ -1,0 +1,234 @@
+{
+  "units": "RMB 100m except shares in 100m, and per-share and market price",
+  "shares_yi": 1830.20977818,
+  "price": {
+    "date": "2026-11-13",
+    "a_cny": 12.39,
+    "h_hkd": 10.33,
+    "hkd_cny": 0.85604,
+    "usd_cny": 6.7152,
+    "sources": [
+      {
+        "title": "上交所行情转报，601857不复权收盘",
+        "url": "https://cn.investing.com/equities/petrochina-ss-historical-data"
+      },
+      {
+        "title": "港交所行情转报，00857不复权收盘",
+        "url": "https://markets.ft.markitdigital.com/data/equities/tearsheet/historical?s=857%3AHKG.HS"
+      },
+      {
+        "title": "11月13日人民币汇率中间价，中国外汇交易中心",
+        "url": "https://www.chinamoney.com.cn/chinese/bkccpr/index.html?tab=2"
+      }
+    ],
+    "h_cny": 8.8428932,
+    "h_discount": 0.2862878773204197,
+    "h_needs_at_10": 1618.4349602041434,
+    "a_needs_at_10": 2267.62991516502,
+    "h_needs_at_8": 1294.7479681633145
+  },
+  "observed": {
+    "2023": {
+      "ocf": 4568.47,
+      "capex": -2804.63,
+      "lease_paid": -89.56,
+      "interest_paid": -185.2,
+      "div_received": 96.66,
+      "nci_div": -90.85,
+      "owner_div": -789.82,
+      "wc_contribution": 127.79,
+      "ocf_ex_wc": 4440.68,
+      "after_paid_capex": 1763.8400000000001,
+      "before_listed_payout": 1494.89,
+      "after_listed_payout": 705.07,
+      "storage_paid": null,
+      "after_listed_payout_and_storage": null
+    },
+    "2024": {
+      "ocf": 4065.32,
+      "capex": -3021.8,
+      "lease_paid": -119.87,
+      "interest_paid": -127.6,
+      "div_received": 135.91,
+      "nci_div": -111.39,
+      "owner_div": -823.6,
+      "wc_contribution": -312.48,
+      "ocf_ex_wc": 4377.8,
+      "after_paid_capex": 1043.52,
+      "before_listed_payout": 820.5699999999999,
+      "after_listed_payout": -3.0300000000000864,
+      "storage_paid": null,
+      "after_listed_payout_and_storage": null
+    },
+    "2025": {
+      "ocf": 4125.1,
+      "capex": -2923.21,
+      "lease_paid": -107.48,
+      "interest_paid": -143.84,
+      "div_received": 165.0,
+      "nci_div": -107.95,
+      "owner_div": -860.2,
+      "wc_contribution": -236.91999999999996,
+      "ocf_ex_wc": 4362.02,
+      "after_paid_capex": 1201.8900000000003,
+      "before_listed_payout": 1007.6200000000003,
+      "after_listed_payout": 147.4200000000003,
+      "storage_paid": null,
+      "after_listed_payout_and_storage": null
+    },
+    "2025Q3-recast": {
+      "ocf": 3433.66,
+      "capex": -1775.05,
+      "lease_paid": -87.25,
+      "interest_paid": -109.43,
+      "div_received": 131.22,
+      "nci_div": -74.33,
+      "owner_div": -816.87,
+      "wc_contribution": 215.66,
+      "ocf_ex_wc": 3218.0,
+      "after_paid_capex": 1658.61,
+      "before_listed_payout": 1518.82,
+      "after_listed_payout": 701.9499999999999,
+      "storage_paid": null,
+      "after_listed_payout_and_storage": null
+    },
+    "2026Q3": {
+      "ocf": 3735.39,
+      "capex": -1594.4,
+      "lease_paid": -133.93,
+      "interest_paid": -115.05,
+      "div_received": 41.71,
+      "nci_div": -82.51,
+      "owner_div": -878.55,
+      "wc_contribution": 142.8299999999999,
+      "ocf_ex_wc": 3592.56,
+      "after_paid_capex": 2140.99,
+      "before_listed_payout": 1851.2099999999998,
+      "after_listed_payout": 972.6599999999999,
+      "storage_paid": -397.33,
+      "after_listed_payout_and_storage": 575.3299999999999
+    }
+  },
+  "balances": {
+    "noncurrent_assets": 22969.49,
+    "current_assets": 8091.93,
+    "current_liab": 7165.49,
+    "noncurrent_liab": 5438.41,
+    "owner_equity": 16320.57,
+    "nci_equity": 2136.95,
+    "cash": 2638.62,
+    "short_deposit": 417.04,
+    "long_deposit": 60.96,
+    "short_debt": 630.86,
+    "long_debt": 1787.71,
+    "lease_current": 151.07,
+    "lease_noncurrent": 1487.51,
+    "end_retirement": 1760.16
+  },
+  "cash_including_term": 3116.62,
+  "debt_including_leases": 4057.15,
+  "balance_difference": -940.5300000000002,
+  "book_per_share": 8.917322043940517,
+  "pressure": {
+    "oil_loss": 763.921152,
+    "gas_loss": 148.5168,
+    "downstream_loss": 100,
+    "after_tax_loss": 769.45284352
+  },
+  "cases": {
+    "base": {
+      "ocf": 4200,
+      "capex": 2700,
+      "lease": 140,
+      "interest": 160,
+      "received": 120,
+      "nci": 170,
+      "cash": 1150,
+      "per_share": 0.6283432717442832,
+      "epv_cny": {
+        "0.08": 7.85429089680354,
+        "0.10": 6.283432717442832,
+        "0.12": 5.23619393120236
+      },
+      "epv_hkd": {
+        "0.08": 9.175144732493271,
+        "0.10": 7.340115785994617,
+        "0.12": 6.116763154995514
+      }
+    },
+    "full_spend": {
+      "ocf": 4200,
+      "capex": 2925,
+      "lease": 140,
+      "interest": 160,
+      "received": 120,
+      "nci": 170,
+      "cash": 925,
+      "per_share": 0.5054065446638799,
+      "epv_cny": {
+        "0.08": 6.317581808298499,
+        "0.10": 5.054065446638798,
+        "0.12": 4.211721205532332
+      },
+      "epv_hkd": {
+        "0.08": 7.380007719614152,
+        "0.10": 5.904006175691321,
+        "0.12": 4.9200051464094345
+      }
+    },
+    "better": {
+      "ocf": 4400,
+      "capex": 2500,
+      "lease": 120,
+      "interest": 140,
+      "received": 150,
+      "nci": 150,
+      "cash": 1640,
+      "per_share": 0.8960721440527168,
+      "epv_cny": {
+        "0.08": 11.20090180065896,
+        "0.10": 8.960721440527168,
+        "0.12": 7.467267867105974
+      },
+      "epv_hkd": {
+        "0.08": 13.084554227207793,
+        "0.10": 10.467643381766235,
+        "0.12": 8.723036151471863
+      }
+    },
+    "stress": {
+      "ocf": 3430.54715648,
+      "capex": 2700,
+      "lease": 150,
+      "interest": 175,
+      "received": 90,
+      "nci": 140,
+      "cash": 355.54715648,
+      "per_share": 0.19426579440175637,
+      "epv_cny": {
+        "0.08": 2.4283224300219546,
+        "0.10": 1.9426579440175635,
+        "0.12": 1.6188816200146365
+      },
+      "epv_hkd": {
+        "0.08": 2.836692712982985,
+        "0.10": 2.269354170386388,
+        "0.12": 1.8911284753219901
+      }
+    }
+  },
+  "h_investor": {
+    "required_with_full_payout_and_20pct_tax": 2023.0437002551791,
+    "favorable_hkd_after_20pct_tax": 8.374114705412989,
+    "gross_cash_headroom": 21.565039795856592,
+    "max_base_capex_for_gross_threshold": 2231.5650397958566,
+    "min_base_ocf_for_gross_threshold": 4668.434960204144
+  },
+  "two_stress_years_then_base_at_10": 5.530075112137618,
+  "h_5y_net_irr": {
+    "0.47-1": 0.042520020483793775,
+    "0.47-0.75": -0.008318809455496401,
+    "0.18-1": 0.016284263164005996,
+    "0.18-0.75": -0.037622131942167625
+  }
+}

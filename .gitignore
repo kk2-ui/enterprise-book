@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+.venv/
+.env
+.env.*
+enterprise_research/data/
+enterprise_research/research/petrochina_book_20261115/book_parts.json
+*.db
+*.db-*
+*.sqlite*

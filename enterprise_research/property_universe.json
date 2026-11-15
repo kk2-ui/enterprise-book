@@ -1,0 +1,1069 @@
+{
+  "version": "property-sample-20261109-v2",
+  "baseline": "2020-12-31",
+  "scope": "按业务选取的港股物业广样本，不是全市场穷尽名单；保留停牌、退市及后上市成员。分类依据截至本次已披露业务，仅用于回顾，不是历史时点可交易回测。",
+  "members": [
+    {
+      "code": "06049.HK",
+      "name": "保利物业",
+      "group": "basic",
+      "source": "https://www.polywuye.com/",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-16",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0916/2026091600311_c.pdf",
+        "document_id": "12333737",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0916/2026091600311_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "02669.HK",
+      "name": "中海物业",
+      "group": "basic",
+      "source": "https://www.copl.com.hk/sc/news/detail/338",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-04",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0904/2026090400242_c.pdf",
+        "document_id": "12319923",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0904/2026090400242_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "02869.HK",
+      "name": "绿城服务",
+      "group": "basic",
+      "source": "https://www.greentownservice.com/",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-17",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0917/2026091700944_c.pdf",
+        "document_id": "12335832",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0917/2026091700944_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "06098.HK",
+      "name": "碧桂园服务",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0424/2026042403194_c.pdf",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-16",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0916/2026091600507_c.pdf",
+        "document_id": "12333933",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0916/2026091600507_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "03319.HK",
+      "name": "雅生活服务",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0428/2026042801545_c.pdf",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-21",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0921/2026092100920_c.pdf",
+        "document_id": "12339673",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0921/2026092100920_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "01995.HK",
+      "name": "永升服务",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2025/0429/2025042903328_c.pdf",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-30",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0930/2026093000833_c.pdf",
+        "document_id": "12352717",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0930/2026093000833_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "01755.HK",
+      "name": "新城悦服务",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0121/2026012100002_c.pdf",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "suspended",
+      "status_source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0330/2026033001769_c.pdf",
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-02",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0902/2026090202561_c.pdf",
+        "document_id": "12317167",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0902/2026090202561_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "03316.HK",
+      "name": "滨江服务",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0424/2026042403062_c.pdf",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-08-31",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0831/2026083101110_c.pdf",
+        "document_id": "12308481",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0831/2026083101110_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "01516.HK",
+      "name": "融创服务",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0429/2026042903394_c.pdf",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-29",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0929/2026092901174_c.pdf",
+        "document_id": "12350841",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0929/2026092901174_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "00873.HK",
+      "name": "世茂服务",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0428/2026042801886_c.pdf",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-29",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0929/2026092900701_c.pdf",
+        "document_id": "12350492",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0929/2026092900701_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "03913.HK",
+      "name": "合景悠活",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0424/2026042402095_c.pdf",
+      "reason": "2025年住宅、商业物业及公建基础物管合计88.8%；商业营运服务仅1.6%，不因服务商业物业就归为商管。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-25",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0925/2026092500569_c.pdf",
+        "document_id": "12347023",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0925/2026092500569_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "06666.HK",
+      "name": "恒大物业",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0327/2026032701437_c.pdf",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-22",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0922/2026092200194_c.pdf",
+        "document_id": "12340738",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0922/2026092200194_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "09928.HK",
+      "name": "时代邻里",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0428/2026042804283.pdf",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-24",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0924/2026092400324_c.pdf",
+        "document_id": "12344503",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0924/2026092400324_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "09983.HK",
+      "name": "建业新生活",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0420/2026042001931_c.pdf",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-23",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0923/2026092300295_c.pdf",
+        "document_id": "12342426",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0923/2026092300295_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "06989.HK",
+      "name": "卓越商企服务",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0428/2026042800555_c.pdf",
+      "reason": "办公及企业物业服务为主，2025年基础物业服务收入占92%；商企物业服务不等于商场招商运营。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-23",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0923/2026092300357_c.pdf",
+        "document_id": "12342488",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0923/2026092300357_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "01502.HK",
+      "name": "金融街物业",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0416/2026041601917_c.pdf",
+      "reason": "2025年物业管理服务收入80.42%；写字楼等非住宅服务仍按物管收费纳入，不等同购物中心招商运营。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-18",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0918/2026091800895_c.pdf",
+        "document_id": "12337762",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0918/2026091800895_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "09916.HK",
+      "name": "兴业物联",
+      "group": "mixed",
+      "source": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0909/2026090900279_c.pdf",
+      "reason": "2023年收购开发项目，2026H1开发收入零但开发中物业182.448百万元，另有酒店建设资产；按资本暴露单列混合。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-09",
+        "effective_from": "2026-06-30",
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0909/2026090900279_c.pdf",
+        "document_id": "12325798",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0909/2026090900279_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "02156.HK",
+      "name": "建发物业",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0430/2026043002001_c.pdf",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-22",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0922/2026092201016_c.pdf",
+        "document_id": "12341640",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0922/2026092201016_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "06677.HK",
+      "name": "远洋服务",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0427/2026042702225_c.pdf",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-21",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0921/2026092100677_c.pdf",
+        "document_id": "12339428",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0921/2026092100677_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "02107.HK",
+      "name": "第一服务控股",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0424/2026042404107_c.pdf",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-23",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0923/2026092300305_c.pdf",
+        "document_id": "12342436",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0923/2026092300305_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "01778.HK",
+      "name": "彩生活",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0429/2026042905335_c.pdf",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-29",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0929/2026092902072_c.pdf",
+        "document_id": "12351707",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0929/2026092902072_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "02168.HK",
+      "name": "佳兆业美好",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0430/2026043003205_c.pdf",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-28",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0928/2026092801717_c.pdf",
+        "document_id": "12349372",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0928/2026092801717_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "03662.HK",
+      "name": "星悦康旅",
+      "group": "mixed",
+      "source": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0917/2026091700650_c.pdf",
+      "reason": "2026H1商业收入11.33%，估算毛利约12.4%，不是主要利润驱动。保留本批混合历史参照，标注商管重要性下降。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-17",
+        "effective_from": "2026-06-30",
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0917/2026091700650_c.pdf",
+        "document_id": "12335556",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0917/2026091700650_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "01971.HK",
+      "name": "弘阳服务",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0424/2026042402698_c.pdf",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-28",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0928/2026092800950_c.pdf",
+        "document_id": "12348609",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0928/2026092800950_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "01941.HK",
+      "name": "烨星集团",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0430/2026043003330.pdf",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-28",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0928/2026092801204_c.pdf",
+        "document_id": "12348863",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0928/2026092801204_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "06093.HK",
+      "name": "和泓服务",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0427/2026042700669_c.pdf",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-18",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0918/2026091800764_c.pdf",
+        "document_id": "12337631",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0918/2026091800764_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "01417.HK",
+      "name": "浦江中国",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0424/2026042401111_c.pdf",
+      "reason": "2025年包干制物业服务收入69.2%、环卫25.8%、转租1.0%；属公共物业/城市服务，保留微盘股及极端行情标注。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-28",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0928/2026092800431_c.pdf",
+        "document_id": "12348090",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0928/2026092800431_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "01538.HK",
+      "name": "中奥到家",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0429/2026042900018_c.pdf",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-28",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0928/2026092800473_c.pdf",
+        "document_id": "12348132",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0928/2026092800473_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "01895.HK",
+      "name": "鑫苑服务",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0423/2026042303101_c.pdf",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "suspended",
+      "status_source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0626/2026062600324_c.htm",
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-04-23",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0423/2026042303101_c.pdf",
+        "document_id": "12119810",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0423/2026042303101_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "01153.HK",
+      "name": "佳源服务",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0331/2026033101805.pdf",
+      "reason": "持续物业管理及配套服务；住宅、非住宅、关联开发商风险和规模存在差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-29",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0929/2026092900539_c.pdf",
+        "document_id": "12350330",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0929/2026092900539_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "02606.HK",
+      "name": "蓝光嘉宝服务",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2022/0329/2022032900366_c.pdf",
+      "reason": "历史基础物业样本，2021年被碧桂园服务收购并私有化；保留退出轨迹。",
+      "status": "delisted",
+      "status_source": "https://www1.hkexnews.hk/listedco/listconews/sehk/2021/0812/2021081201431_c.pdf",
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2021-03-31",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2021/0331/2021033100929_c.pdf",
+        "document_id": "9685876",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": "2021-08-19",
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2021/0331/2021033100929_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建",
+        "exit_known_at": "2021-08-12",
+        "exit_source": "https://www1.hkexnews.hk/listedco/listconews/sehk/2021/0812/2021081201431_c.pdf"
+      },
+      "left": "2021-08-19"
+    },
+    {
+      "code": "09666.HK",
+      "name": "金科服务",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2024/0927/2024092702290_c.pdf",
+      "reason": "空间物业服务为主要收入，后私有化；保留退出轨迹。",
+      "status": "delisted",
+      "status_source": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0213/2026021301220_c.pdf",
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2025-09-25",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2025/0925/2025092500581_c.pdf",
+        "document_id": "11854181",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": "2026-02-20",
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2025/0925/2025092500581_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建",
+        "exit_known_at": "2026-02-13",
+        "exit_source": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0213/2026021301220_c.pdf"
+      },
+      "left": "2026-02-20"
+    },
+    {
+      "code": "01209.HK",
+      "name": "华润万象生活",
+      "group": "commercial",
+      "source": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0924/2026092400004_c.pdf",
+      "reason": "2026H1商管毛利占70.57%，商管单列；不作基础物业均值。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-24",
+        "effective_from": "2026-06-30",
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0924/2026092400004_c.pdf",
+        "document_id": "12343965",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0924/2026092400004_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "09909.HK",
+      "name": "宝龙商业",
+      "group": "commercial",
+      "source": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0929/2026092900443_c.pdf",
+      "reason": "2026H1商业运营收入78.8%、毛利89.17%；含整租运营风险。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": true,
+      "classification": {
+        "known_at": "2026-09-29",
+        "effective_from": "2026-06-30",
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0929/2026092900443_c.pdf",
+        "document_id": "12350234",
+        "historical_group_unverified": true
+      },
+      "joined": "2020-12-31",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2020-12-31",
+        "valid_to": null,
+        "date_basis": "2020年底回顾起点；不是首次上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0929/2026092900443_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "06668.HK",
+      "name": "星盛商业",
+      "group": "commercial",
+      "source": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0917/2026091700429_c.pdf",
+      "reason": "商业运营含委托、品牌及整租，整租收入25.9%，非全部纯管理费。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": false,
+      "classification": {
+        "known_at": "2026-09-17",
+        "effective_from": "2026-06-30",
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0917/2026091700429_c.pdf",
+        "document_id": "12335333",
+        "historical_group_unverified": true
+      },
+      "joined": "2021-01-26",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2021-01-26",
+        "valid_to": null,
+        "date_basis": "原件所述上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0917/2026091700429_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "00606.HK",
+      "name": "中骏商管",
+      "group": "mixed",
+      "source": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0930/2026093001025_c.pdf",
+      "reason": "2026H1住宅物业收入75.05%，并有独立商业运营；按混合单列，不按公司名称分组。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": false,
+      "classification": {
+        "known_at": "2026-09-30",
+        "effective_from": "2026-06-30",
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0930/2026093001025_c.pdf",
+        "document_id": "12352909",
+        "historical_group_unverified": true
+      },
+      "joined": "2021-07-02",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2021-07-02",
+        "valid_to": null,
+        "date_basis": "原件所述上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0930/2026093001025_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "02602.HK",
+      "name": "万物云",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0416/2026041601146_c.pdf",
+      "reason": "住宅社区服务与商企、城市空间服务；2022年上市，不补入2021年起点。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": false,
+      "classification": {
+        "known_at": "2026-09-10",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0910/2026091000493_c.pdf",
+        "document_id": "12327444",
+        "historical_group_unverified": true
+      },
+      "joined": "2022-09-29",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2022-09-29",
+        "valid_to": null,
+        "date_basis": "原件所述上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0910/2026091000493_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "06626.HK",
+      "name": "越秀服务",
+      "group": "mixed",
+      "source": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0924/2026092400505_c.pdf",
+      "reason": "2026H1商业收入17.69%、毛利21.46%；保留商业与非商业业务差异。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": false,
+      "classification": {
+        "known_at": "2026-09-24",
+        "effective_from": "2026-06-30",
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0924/2026092400505_c.pdf",
+        "document_id": "12344678",
+        "historical_group_unverified": true
+      },
+      "joined": "2021-06-28",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2021-06-28",
+        "valid_to": null,
+        "date_basis": "原件所述上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0924/2026092400505_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    },
+    {
+      "code": "03658.HK",
+      "name": "新希望服务",
+      "group": "basic",
+      "source": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0330/2026033003637_c.pdf",
+      "reason": "2025年物管收入61.6%，另有生活服务；商业运营收入7.0%、分部毛利13.5%，仍纳入基础服务并标注商管暴露。",
+      "status": "active",
+      "status_source": null,
+      "baseline_member": false,
+      "classification": {
+        "known_at": "2026-09-30",
+        "effective_from": null,
+        "research_adopted_on": "2026-11-09",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0930/2026093002812_c.pdf",
+        "document_id": "12354592",
+        "historical_group_unverified": true
+      },
+      "joined": "2021-05-25",
+      "membership": {
+        "research_known_at": "2026-11-09",
+        "valid_from": "2021-05-25",
+        "valid_to": null,
+        "date_basis": "原件所述上市日",
+        "source_url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0930/2026093002812_c.pdf",
+        "classification_validity": "仅当前业务已核；历史同组成员身份未逐期重建"
+      }
+    }
+  ],
+  "known_at": "2026-11-09",
+  "membership_basis": "retrospective_research_cohort",
+  "classification_report": "# 商管与混合参照的分类依据\n\n2026-11-09核验，采用各公司2026中报原件，金额人民币百万元。三家商管与四家混合按本批确认范围继续单列，不混入32家基础物业。分类不是质量评分，也不证明同组公司可以套相同经济估值倍数。32家基础物业的具体业务差异见各自已审研究；服务写字楼、园区的设施管理不自动变成购物中心招商运营。\n\n|公司|原件、可知日期及PDF页|本次核实事实与分组判断|\n|---|---|---|\n|华润万象生活01209|12343965，2026-09-24；32—33页|2026H1商业航道毛利2474.585/总3506.632=70.57%，其中购物中心2053.277；物管毛利973.979。商业航道毛利率66.9%，物管18.3%。保留商管组，不能让它在基础物业中用高毛利模式代表普通公司。商管组也不代表该公司没有住宅物管。|\n|宝龙商业09909|12350234，2026-09-29；5—6、9页|商业运营952.506、住宅物管约256.6，商业收入约78.8%；商业毛利283.873/总318.349=89.17%。服务包括定位招商、开业及运营管理和租赁，保留商管组。业务规模下降和信用问题须另研，不因商管分类认定质量与华润一样。|\n|星盛商业06668|12335333，2026-09-17；4—6、12—13页|购物中心、购物街等商业运营；委托管理174.305、品牌输出33.647、整租72.529，总280.481。整租收入25.9%，带来实际租赁承诺，与仅按收费输出品牌的合同不同；保留商管，不能给整个组套无租赁资产模式。|\n|中骏商管00606|12352909，2026-09-30；16、18页|名称含商管但住宅441.500/总588.279=75.05%，商业146.779；住宅毛利130.306、商业47.427。保留混合参照，不按名字归入商管、不直接混入基础物业。|\n|越秀服务06626|12344678，2026-09-24；10、13—14页|非商业管理及增值1575.993、商业338.599/总1914.592=17.69%；商管毛利88.428/总411.989=21.46%。商管含运营管理291.195、定位招商47.404；保留混合，收入占比和毛利重要性同时展示。|\n|星悦康旅03662|12335556，2026-09-17；19—24、56页|物管513.688、商业65.625/总579.313=11.33%；商业含运营56.546、租赁9.079。商业毛利率31.8%，以披露收入乘舍入毛利率估算毛利约20.87、占集团168.3约12.4%，不能继续笼统说当期利润主要由商管驱动。按本批范围保留混合历史参照，同时说明商管重要性已下降，是分类边界样本；不为固定组别夸大业务差异。|\n|兴业物联09916|12325798，2026-09-09；6—7、29、41—42页|物业管理及增值177.679/总200.278=88.72%，开发分部收入为零，但开发中物业182.448，另有酒店建设资产。2023收购河南正之悦，郑州正商中心为酒店及可售商业单位，预计2027年6月完工。单靠当期收入会漏掉资本风险，故保留混合。旧理由“2022起开发”应改为该原件所明确的2023收购，不把当前开发暴露倒填2021。|\n\n上述可知日期是所读原件的公开日期；进入收盘估值还按公告具体时间延至可用收盘日。它们用于当前分类的核验，不作为过去多年一直具有相同比例的证明。行业长期价格图是“本批研究名单的回顾”，保留后上市、停牌与退出，不能冒称当年可知且穷尽的可交易行业指数。单家公司历史PE/PB仍逐月严格使用当时已公开财务与股份。要做当年选股回测，必须另外补当时全市场候选名单及业务分类变更，不能用本批固定回顾名单替代。\n"
+}

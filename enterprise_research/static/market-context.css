@@ -1,0 +1,24 @@
+.market-context{margin:24px 0;padding:24px;color:var(--text,#23392b)}
+.market-context h2{font-size:21px;margin:0}.market-context h3{font-size:18px;line-height:1.5;margin:0 0 5px}
+.market-context p{margin:7px 0;line-height:1.7}.market-context .market-note{font-size:12px;color:#647366}
+.market-heading,.market-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.market-controls label{display:flex;align-items:center;gap:7px;font-size:13px}.market-controls select{width:auto;padding:7px 9px;font-size:13px}
+.market-verdict{display:flex;gap:16px;align-items:flex-start;background:#f2f5ed;border-left:3px solid #6e8c70;padding:17px 18px;margin:18px 0}
+.market-wind{display:inline-block;white-space:nowrap;border:1px solid #b6c6aa;border-radius:4px;padding:4px 7px;font-size:13px;color:#46664c}
+.market-wind[data-wind="逆风"]{color:#895630;border-color:#c8ac90}.market-wind[data-wind="证据较弱"]{color:#786e5d;border-color:#bbb3a1}
+.market-observations{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin:20px 0 5px}
+.market-observations>div>span{font-size:12px;color:#66775d}.market-observations strong{display:block;font-size:17px;font-weight:500;margin:5px 0}
+.market-observations p{font-size:12px;color:#6c7763}.market-plot{width:100%;min-width:0;margin-top:12px}
+.market-plot svg{display:block;width:100%;height:auto}.market-plot svg text{font-size:12px;fill:#62735b}
+.market-gridline{stroke:#dfe5d8;stroke-width:1}.market-zero{stroke:#aebaa5;stroke-width:1}.market-line{fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.market-line.market-color-stock{stroke-width:2.7}.market-color-stock{stroke:#355c45;background:#355c45}.market-color-industry{stroke:#bd8643;background:#bd8643}.market-color-market{stroke:#6a80a0;background:#6a80a0}.market-color-small{stroke:#a7809a;background:#a7809a}
+.market-guide{stroke:#a9b49e;stroke-dasharray:3 4;pointer-events:none}.market-hit{fill:transparent}
+.market-legend{display:flex;gap:10px 22px;flex-wrap:wrap;font-size:12px}.market-legend>span{display:flex;gap:6px;align-items:center}.market-legend i{width:18px;height:3px;display:inline-block}
+.market-chart-readout{min-height:38px}.market-table-wrap{overflow:auto;margin:10px 0 18px}.market-table{width:100%;font-size:12px;border-collapse:collapse}
+.market-table th,.market-table td{padding:9px 8px;border-bottom:1px solid #e1e7d9;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.market-table th:first-child,.market-table td:first-child{text-align:left}.market-table thead th{font-weight:500;color:#637557;background:transparent}.market-table tbody th{font-weight:400}.market-table .market-own{font-weight:500;background:#f3f6ee}.market-table .market-own th{font-weight:600}
+.market-detail-columns{border-top:1px solid #dfe5d6}.market-detail-columns>details{padding:12px 0;border-bottom:1px solid #e0e6d9}.market-detail-columns summary{font-size:14px;color:#465e3c;cursor:pointer}.market-detail-columns p{font-size:13px}.market-detail-columns a{color:#547149;text-decoration:underline;text-underline-offset:3px}.market-detail-columns small{display:block;color:#728067;margin-top:2px}
+.market-peer{border-top:1px solid #e1e6d9;padding:10px 0;margin-top:6px}.market-peer>div{display:flex;gap:10px;flex-wrap:wrap;font-size:13px}.market-peer b{font-weight:400;margin-left:auto;color:#637455}.market-peer a{font-size:12px}.market-notice{background:#fbf2e5;padding:10px 12px;border-radius:4px;color:#805830;font-size:13px}
+@media(max-width:650px){.market-context{padding:16px;margin:18px 0}.market-heading{align-items:flex-start}.market-controls{justify-content:flex-start;width:100%}.market-observations{grid-template-columns:1fr;gap:8px}.market-observations>div{border-bottom:1px solid #e3e8da;padding-bottom:7px}.market-observations strong{font-size:16px}.market-verdict{padding:12px;gap:9px}.market-verdict h3{font-size:16px}.market-table{min-width:540px}.market-detail-columns .market-table{min-width:0}.market-detail-columns .market-table td,.market-detail-columns .market-table th{white-space:normal}.market-context .btn{font-size:13px}.market-controls select{min-height:38px}.market-chart-readout{min-height:62px}}
+
+.market-monitor-method{border-top:1px solid #dfe5d6;border-bottom:1px solid #dfe5d6;padding:12px 0;margin:12px 0}.market-monitor-method summary{font-size:14px;color:#465e3c;cursor:pointer}.market-monitor-method p{font-size:13px}
