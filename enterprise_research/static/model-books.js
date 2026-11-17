@@ -34,7 +34,7 @@ function modelOverview(base,e,context){
  context.cover=frozenHTML(dCover(c),c,e);
  const content=dOverview(c,{
   analysis:modelPart(c,e,'overview'),current,
-  market:base.default_book_edition_id===e.id&&p.display&&!data.historical?marketContextShell(c):'',
+  market:base.default_book_edition_id===e.id&&(p.display||(typeof isPetroChinaMarketPilot==='function'&&isPetroChinaMarketPilot(base)))&&!data.historical?marketContextShell(c):'',
   gaps:`<section class="research-gaps"><div><span class="eyebrow">OPEN QUESTIONS</span><h2>还没有被材料解决的问题</h2></div><div class="document">${modelBody(e.parts.gaps.body,c,e.source_version)}</div></section>`
  });
  return frozenHTML(content,c,e);
