@@ -178,8 +178,8 @@ class QuoteCache:
         self._lock = Lock()
         self._locks = {}
 
-    def fetch(self, instrument, cutoff)
-        cutoff = instrument.get('cutoff') or cutoff:
+    def fetch(self, instrument, cutoff):
+        cutoff = instrument.get('cutoff') or cutoff
         code = instrument['code']
         with self._lock:
             lock = self._locks.setdefault(code, Lock())
