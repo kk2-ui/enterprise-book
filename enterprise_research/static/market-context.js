@@ -230,6 +230,35 @@ function buildBrokenSeriesSvg(rows, field, xFn, yFn) {
   return { path: segments.join(' '), dots: dots.join('') };
 }
 
+function petroChinaPilotControlsMarkup(activeCode, viewState, refreshHtml) {
+  return `<div class="market-controls">
+      <label>股票 <select data-pilot-listing>
+        <option value="601857.SH" ${activeCode === '601857.SH' ? 'selected' : ''}>A股 601857.SH（元/股）</option>
+        <option value="00857.HK" ${activeCode === '00857.HK' ? 'selected' : ''}>H股 00857.HK（港元/股）</option>
+      </select></label>
+      <label>窗口 <select data-market-window>
+        ${[60, 120, 252].map(n => `<option value="${n}" ${String(n) === String(viewState.days) ? 'selected' : ''}>${n} 个交易日</option>`).join('')}
+      </select></label>
+      <label>历史截止 <input type="date" data-pilot-as-of value="${esc(viewState.asOf || '')}" aria-label="历史截止日期"></label>
+      ${viewState.asOf ? '<button type="button" class="btn secondary" data-pilot-reset-cutoff>最新</button>' : ''}
+      ${refreshHtml}
+    </div>`;
+}
+
+function petroChinaPilotLoadingMarkup(viewState) {
+  const activeCode = viewState.listing || '601857.SH';
+  const targetLabel = viewState.asOf || '最新收盘';
+  const refresh = '<button class="btn secondary" data-market-refresh disabled>读取中…</button>';
+  return `<div class="market-heading">
+      <div>
+        <h2>市场观察</h2>
+        <p class="market-note">中国石油（601857.SH / 00857.HK） · 正在切换至观察截止 ${esc(targetLabel)}…</p>
+      </div>
+      ${petroChinaPilotControlsMarkup(activeCode, viewState, refresh)}
+    </div>
+    <p class="market-notice" role="status" data-pilot-loading="true">正在读取截至 ${esc(targetLabel)} 的行情、公告与披露状态，旧日期结果已清空…</p>`;
+}
+
 function petroChinaPilotMarkup(cid, data, viewState) {
   const refresh = `<button class="btn secondary" data-market-refresh ${data.refreshing ? 'disabled' : ''}>${data.refreshing ? '更新中…' : '更新行情'}</button>`;
   const trend = data.trend || {};
@@ -252,32 +281,43 @@ function petroChinaPilotMarkup(cid, data, viewState) {
   const windowAnns = windowStart ? anns.filter(a => a.published_on >= windowStart) : anns;
   const shownAnns = windowAnns.length ? windowAnns : anns.slice(-3);
 
+  const cutoffIso = data.requested_through || cost.requested_through || '';
+  const rawCostSources = Array.isArray(cost.sources)
+    ? cost.sources
+    : (cost.visible
+        ? [
+            ...(cost.source_url && (!cost.interim_report_published_on || !cutoffIso || cost.interim_report_published_on <= cutoffIso)
+              ? [{ published_on: cost.interim_report_published_on || '2026-09-18', title: `中报原文：中国石油2026年中期报告（PDF第25页，${cost.interim_report_published_on || '2026-09-18'}刊发）`, url: cost.source_url }]
+              : []),
+            ...(cost.first_disclosure_url
+              ? [{ published_on: cost.first_disclosed_on || '2026-08-30', title: `首次公开：2026年中期业绩公告（${cost.first_disclosed_on || '2026-08-30'}）`, url: cost.first_disclosure_url }]
+              : []),
+          ]
+        : []);
+  const costLinks = [
+    ...rawCostSources
+      .filter(s => s && s.url && (!s.published_on || !cutoffIso || s.published_on <= cutoffIso))
+      .map(s => `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)} ↗</a>`),
+    ...(cost.visible && cost.local_source_version && cost.local_doc_id && cost.local_doc_page && (!cost.interim_report_published_on || !cutoffIso || cost.interim_report_published_on <= cutoffIso)
+      ? [`<button type="button" class="text-btn inline-source" data-model-action="source" data-cid="${esc(cid)}" data-version="${esc(cost.local_source_version)}" data-doc="${esc(cost.local_doc_id)}" data-page="${cost.local_doc_page}">本库固定资料 · 第${cost.local_doc_page}页 ↗</button>`]
+      : []),
+  ];
+
   return `<div class="market-heading">
       <div>
         <h2>市场观察</h2>
-        <p class="market-note">中国石油（601857.SH / 00857.HK） · 观察截止 ${esc(data.requested_through || data.as_of || '-')}${data.as_of ? `（最近交易日 ${esc(data.as_of)}）` : ''}${data.custom_cutoff ? ' · 历史截止回看' : ''}</p>
+        <p class="market-note">中国石油（601857.SH / 00857.HK） · 观察截止 ${esc(data.requested_through || data.as_of || '-')}${data.as_of ? `（最近交易日 ${esc(data.as_of)}）` : ''}${data.brent_through && data.brent_through < (data.requested_through || '') ? ` · 布伦特已收盘截止 ${esc(data.brent_through)}` : ''}${data.custom_cutoff ? ' · 历史截止回看' : ''}</p>
       </div>
-      <div class="market-controls">
-        <label>股票 <select data-pilot-listing>
-          <option value="601857.SH" ${activeCode === '601857.SH' ? 'selected' : ''}>A股 601857.SH（元/股）</option>
-          <option value="00857.HK" ${activeCode === '00857.HK' ? 'selected' : ''}>H股 00857.HK（港元/股）</option>
-        </select></label>
-        <label>窗口 <select data-market-window>
-          ${[60, 120, 252].map(n => `<option value="${n}" ${String(n) === String(viewState.days) ? 'selected' : ''}>${n} 个交易日</option>`).join('')}
-        </select></label>
-        <label>历史截止 <input type="date" data-pilot-as-of value="${esc(viewState.asOf || '')}" aria-label="历史截止日期"></label>
-        ${viewState.asOf ? '<button type="button" class="btn secondary" data-pilot-reset-cutoff>最新</button>' : ''}
-        ${refresh}
-      </div>
+      ${petroChinaPilotControlsMarkup(activeCode, viewState, refresh)}
     </div>
     ${(data.errors || []).length || data.refresh_error ? `<p class="market-notice">${(data.errors || []).length ? '部分行情源暂未返回最新序列，缺失交易日已按断线或留空处理。' : ''}${esc(data.refresh_error || '')}</p>` : ''}
 
     <section class="pilot-block" data-pilot-section="trend" aria-label="1. 趋势">
       <div class="pilot-block-head">
         <h3>1. 趋势</h3>
-        <span class="pilot-meta">股价单位：${esc(stockMeta.unit)}（${esc(stockMeta.adjustment)}） · 油价单位：${esc(brentMeta.unit)}</span>
+        <span class="pilot-meta">股价单位：${esc(stockMeta.unit)}（${esc(stockMeta.adjustment)}） · 油价单位：${esc(brentMeta.unit)}（伦敦23:00收盘后收录）</span>
       </div>
-      <p class="market-note">复用现有行情入口展示可悬停的股价与布伦特原油期货连续走势；休市或缺失行情直接断线，不插值补齐。不在历史股价上倒铺当前估值线，也不把国产原油特别收益金 65 美元/桶起征点画成布伦特触发线；A/H 溢价暂省略。</p>
+      <p class="market-note">复用现有行情入口展示可悬停的股价与布伦特原油期货连续收盘走势（ICE 布伦特按伦敦时间 23:00 收盘截止，未收盘盘中价不进入日线）；休市或缺失行情直接断线，不插值补齐。不在历史股价上倒铺当前估值线，也不把国产原油特别收益金 65 美元/桶起征点画成布伦特触发线；A/H 溢价暂省略。</p>
       ${data.status === 'ready' && chartRows.length ? `
         <div class="market-plot pilot-trend-plot" aria-label="中国石油股价与布伦特油价趋势图"></div>
         <div class="market-legend">
@@ -322,11 +362,7 @@ function petroChinaPilotMarkup(cid, data, viewState) {
         <p class="market-notice">${esc(cost.blank_reason)}</p>
       `}
       <p class="market-note">${esc(cost.scope_note)}</p>
-      <p class="pilot-links">
-        <a href="${esc(cost.source_url)}" target="_blank" rel="noopener">中报原文：中国石油2026年中期报告（PDF第25页，${esc(cost.interim_report_published_on)}刊发） ↗</a>
-        · <a href="${esc(cost.first_disclosure_url)}" target="_blank" rel="noopener">首次公开：2026年半年度报告（${esc(cost.first_disclosed_on)}） ↗</a>
-        ${cost.local_source_version ? ` · <button type="button" class="text-btn inline-source" data-model-action="source" data-cid="${esc(cid)}" data-version="${esc(cost.local_source_version)}" data-doc="${esc(cost.local_doc_id)}" data-page="${cost.local_doc_page}">本库固定资料 · 第${cost.local_doc_page}页 ↗</button>` : ''}
-      </p>
+      ${costLinks.length ? `<p class="pilot-links">${costLinks.join(' · ')}</p>` : ''}
     </section>
 
     <section class="pilot-block" data-pilot-section="valuation" aria-label="3. 估值">
@@ -339,23 +375,23 @@ function petroChinaPilotMarkup(cid, data, viewState) {
       <div class="market-observations pilot-kpis">
         <div>
           <span>主情景普通股现金</span>
-          <strong>每年 ${Number(val.base_normal_cash_yi).toLocaleString('zh-CN')} 亿元</strong>
+          <strong>每年 ${ Number(val.base_normal_cash_yi).toLocaleString('zh-CN') } 亿元</strong>
           <p>10% 股权回报对应每股条件价值 ${val.base_epv_cny} 元 / ${val.base_epv_hkd} 港元</p>
         </div>
         <div>
           <span>H 股价格隐含年度现金门槛</span>
-          <strong>约 ${Number(val.h_implied_cash_yi).toLocaleString('zh-CN')} 亿元</strong>
+          <strong>约 ${ Number(val.h_implied_cash_yi).toLocaleString('zh-CN') } 亿元</strong>
           <p>正式版精确值 ${val.h_implied_cash_exact_yi} 亿元（按 ${val.h_close_hkd} 港元、汇率 ${val.hkd_cny} 反算）</p>
         </div>
         <div>
           <span>A 股价格隐含年度现金门槛</span>
-          <strong>约 ${Number(val.a_implied_cash_yi).toLocaleString('zh-CN')} 亿元</strong>
+          <strong>约 ${ Number(val.a_implied_cash_yi).toLocaleString('zh-CN') } 亿元</strong>
           <p>正式版精确值 ${val.a_implied_cash_exact_yi} 亿元（按 ${val.a_close_cny} 元人民币反算）</p>
         </div>
       </div>
       ${val.figure_url ? `<figure class="pilot-threshold-figure"><a href="${esc(val.figure_url)}" target="_blank" rel="noopener"><img src="${esc(val.figure_url)}" alt="${esc(val.figure_title)}" loading="lazy"></a><figcaption>${esc(val.figure_title)}（复用正式版企业书已有「年度现金门槛」配图 · 2026-11-13 快照）</figcaption></figure>` : ''}
       <div class="pilot-links">
-        ${val.edition_valuation_url ? `<a class="btn secondary" data-pilot-edition-link href="${esc(val.edition_valuation_url)}">打开正式版本 · 现金与估值（${esc(val.edition_title)}） →</a> <a class="text-link" data-pilot-edition-overview href="${esc(val.edition_overview_url)}">打开正式版本全景 →</a>` : `<span class="market-note">尚未安装正式版本快照；运行 <code>python3 enterprise_research/research/petrochina_book_20261115/install.py</code> 后即可直达对应正式版本。</span>`}
+        ${val.edition_valuation_url ? `<a class="btn secondary" data-pilot-edition-link href="${esc(val.edition_valuation_url)}">打开正式版本 · 现金与估值（${esc(val.edition_title)}） →</a> <a class="text-link" data-pilot-edition-overview href="${esc(val.edition_overview_url)}">打开正式版本全景 →</a>` : `<span class="market-note">尚未定位到匹配的 2026-11-13 正式版本快照（需同时匹配正式版标题、信息时点与固定资料版本）；运行 <code>python3 enterprise_research/research/petrochina_book_20261115/install.py</code> 后即可直达对应正式版本。</span>`}
         ${val.figure_url ? ` · <a href="${esc(val.figure_url)}" target="_blank" rel="noopener">独立打开年度现金门槛图 ↗</a>` : ''}
       </div>
     </section>
@@ -383,6 +419,7 @@ function drawPetroChinaTrendChart(root, data, viewState) {
     unit: activeCode === '00857.HK' ? '港元/股' : '元/股',
   };
   const brentMeta = trend.brent || { field: 'brent', name: '布伦特原油期货连续', unit: '美元/桶' };
+  const brentThrough = brentMeta.requested_through || data.brent_through || '';
   const stockField = stockMeta.field;
   const stockVals = rows.map(r => r[stockField]).filter(v => v != null && Number.isFinite(v));
   const brentVals = rows.map(r => r.brent).filter(v => v != null && Number.isFinite(v));
@@ -495,7 +532,9 @@ function drawPetroChinaTrendChart(root, data, viewState) {
       bDot.style.display = 'none';
     }
     const stockText = sv != null && Number.isFinite(sv) ? `${sv.toFixed(2)} ${stockMeta.unit}` : '无行情（断线）';
-    const brentText = bv != null && Number.isFinite(bv) ? `${bv.toFixed(2)} ${brentMeta.unit}` : '无行情（断线）';
+    const brentText = bv != null && Number.isFinite(bv)
+      ? `${bv.toFixed(2)} ${brentMeta.unit}`
+      : (brentThrough && row.date > brentThrough ? '当日未收盘（待伦敦23:00收盘）' : '无行情（断线）');
     const dayAnns = annByIdx.get(index);
     const annText = dayAnns ? ' · 公告：' + dayAnns.map(a => `${a.published_on} ${a.short_label}`).join('、') : '';
     if (readout) {
@@ -518,19 +557,30 @@ function bindMarketContext() {
   if (!root) return;
   const cid=root.dataset.marketCompany;
   const hashParams=new URLSearchParams(location.hash.split('?')[1]||'');
-  let data, days='20', pilotDays='120', pilotListing='', pilotAsOf=hashParams.get('market_as_of')||'', polling, resize, monitorRun='';
+  let data, days='20', pilotDays='120', pilotListing='', pilotAsOf=hashParams.get('market_as_of')||'';
+  let polling, resize, monitorRun='', requestSeq=0, loadingState=false;
+  function bindPilotControls() {
+    root.querySelector('[data-market-refresh]')?.addEventListener('click',()=>load(true));
+    root.querySelector('[data-market-window]')?.addEventListener('change',event=>{pilotDays=event.target.value;display();});
+    root.querySelector('[data-pilot-listing]')?.addEventListener('change',event=>{pilotListing=event.target.value;display();});
+    root.querySelector('[data-pilot-as-of]')?.addEventListener('change',event=>{pilotAsOf=event.target.value;load(false,true);});
+    root.querySelector('[data-pilot-reset-cutoff]')?.addEventListener('click',()=>{pilotAsOf='';load(false,true);});
+  }
   function display() {
     if (!root.isConnected) { resize?.disconnect(); clearTimeout(polling); return; }
     resize?.disconnect();
+    const isPetroShell = root.getAttribute('aria-label')==='市场观察' || data?.pilot==='petrochina_market_v1';
+    if (loadingState && isPetroShell) {
+      const viewState={days:pilotDays,listing:pilotListing||'601857.SH',asOf:pilotAsOf};
+      root.innerHTML=petroChinaPilotLoadingMarkup(viewState);
+      bindPilotControls();
+      return;
+    }
     if (data?.pilot==='petrochina_market_v1') {
       if (!pilotListing) pilotListing=data.trend?.default_listing||data.code||'601857.SH';
       const viewState={days:pilotDays,listing:pilotListing,asOf:pilotAsOf};
       root.innerHTML=petroChinaPilotMarkup(cid,data,viewState);
-      root.querySelector('[data-market-refresh]')?.addEventListener('click',()=>load(true));
-      root.querySelector('[data-market-window]')?.addEventListener('change',event=>{pilotDays=event.target.value;display();});
-      root.querySelector('[data-pilot-listing]')?.addEventListener('change',event=>{pilotListing=event.target.value;display();});
-      root.querySelector('[data-pilot-as-of]')?.addEventListener('change',event=>{pilotAsOf=event.target.value;load(false);});
-      root.querySelector('[data-pilot-reset-cutoff]')?.addEventListener('click',()=>{pilotAsOf='';load(false);});
+      bindPilotControls();
       const plotHost=root.querySelector('.pilot-trend-plot');
       if (data.status==='ready' && plotHost) {
         drawPetroChinaTrendChart(root,data,viewState);
@@ -557,10 +607,17 @@ function bindMarketContext() {
       resize.observe(root.querySelector('.market-current-plot'));
     }
   }
-  async function load(force=false) {
+  async function load(force=false, clearPrevious=false) {
+    const seq=++requestSeq;
     clearTimeout(polling);
     if (!root.isConnected) { resize?.disconnect(); return; }
-    const button=root.querySelector('[data-market-refresh]');if(button)button.disabled=true;
+    if (clearPrevious) {
+      data=undefined;
+      loadingState=true;
+      display();
+    } else {
+      const button=root.querySelector('[data-market-refresh]');if(button)button.disabled=true;
+    }
     try {
       if(force)monitorRun='';
       const qs=new URLSearchParams();
@@ -568,14 +625,19 @@ function bindMarketContext() {
       if(!force&&pilotAsOf)qs.set('as_of',pilotAsOf);
       const suffix=force?'/refresh':(qs.toString()?'?'+qs.toString():'');
       const opts=force?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(pilotAsOf?{as_of:pilotAsOf}:{})}:{};
-      data=await api(`/api/companies/${encodeURIComponent(cid)}/market-context${suffix}`,opts);
+      const next=await api(`/api/companies/${encodeURIComponent(cid)}/market-context${suffix}`,opts);
+      if(seq!==requestSeq || !root.isConnected)return;
+      loadingState=false;
+      data=next;
       display();
-      if(data.refreshing && root.isConnected)polling=setTimeout(()=>load(),3000);
+      if(data.refreshing && root.isConnected)polling=setTimeout(()=>{if(seq===requestSeq && root.isConnected)load();},3000);
     } catch(error) {
+      if(seq!==requestSeq || !root.isConnected)return;
+      loadingState=false;
       const heading=root.getAttribute('aria-label')==='市场观察'?'市场观察':'市场环境与主导力量';
-      if(root.isConnected)root.innerHTML=`<h2>${heading}</h2><p>${esc(error.message)}</p><button class="btn secondary" data-market-refresh>重新读取</button>`;
+      root.innerHTML=`<h2>${heading}</h2><p>${esc(error.message)}</p><button class="btn secondary" data-market-refresh>重新读取</button>`;
       root.querySelector('[data-market-refresh]')?.addEventListener('click',()=>load(true));
     }
   }
   load();
-        }
+}
