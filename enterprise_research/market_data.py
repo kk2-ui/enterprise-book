@@ -123,24 +123,30 @@ def parse_stock(payload, code, url, cutoff):
             'rows': rows, 'captured_at': now_iso()}
 
 
-def parse_index(payload, code, name, secid, url, cutoff):
+def parse_index(payload, code, name, secid, url, cutoff, source='东方财富指数日线',
+                adjustment='PRICE_INDEX', currency=None, unit=None):
     data = payload.get('data') or {}
-    if data.get('code') != secid.split('.')[1]:
+    if str(data.get('code') or '').upper() != secid.split('.')[1].upper():
         raise ValueError('指数代码与请求不符')
     rows = []
     for raw in data.get('klines', []):
         fields = raw.split(',')
         if fields[0] <= cutoff:
             rows.append({'date': fields[0], 'close': float(fields[2]), 'volume': None})
-    return {'code': code, 'name': name, 'provider_name': data.get('name'),
-            'source': '东方财富指数日线', 'source_url': url, 'adjustment': 'PRICE_INDEX',
+    result = {'code': code, 'name': name, 'provider_name': data.get('name'),
+            'source': source, 'source_url': url, 'adjustment': adjustment,
             'rows': checked_rows(rows), 'captured_at': now_iso()}
+    if currency:
+        result['currency'] = currency
+    if unit:
+        result['unit'] = unit
+    return result
 
 
 def parse_a_stock(payload, code, secid, url, cutoff):
     """Eastmoney adjusted equity bars; also the explicit HK fallback."""
     data = payload.get('data') or {}
-    if data.get('code') != secid.split('.')[1]:
+    if str(data.get('code') or '').upper() != secid.split('.')[1].upper():
         raise ValueError('股票代码与请求不符')
     rows = []
     for raw in data.get('klines', []):
@@ -185,7 +191,11 @@ class QuoteCache:
                     url = 'https://push2his.eastmoney.com/api/qt/stock/kline/get?' + query
                     payload = get_json(url)
                     result = (parse_a_stock(payload, code, secid, url, cutoff) if a_stock else
-                              parse_index(payload, code, instrument['name'], secid, url, cutoff))
+                              parse_index(payload, code, instrument['name'], secid, url, cutoff,
+                                          source=instrument.get('source', '东方财富指数日线'),
+                                          adjustment=instrument.get('adjustment', 'PRICE_INDEX'),
+                                          currency=instrument.get('currency'),
+                                          unit=instrument.get('unit')))
                 else:
                     key = symbol(code)
                     endpoint = 'hkfqkline' if key.startswith('hk') else 'fqkline'
@@ -208,6 +218,13 @@ class QuoteCache:
                 return result, None
             except (OSError, ValueError, TypeError, KeyError, IndexError) as error:
                 return cached, str(error)
+
+    def cached_through(self, code, cutoff):
+        cached = read_json(self.directory / (code + '.json'))
+        if not cached:
+            return None
+        rows = [row for row in cached.get('rows', []) if row['date'] <= cutoff]
+        return dict(cached, rows=rows) if rows else None
 
     def collect(self, instruments, cutoff):
         unique = {item['code']: item for item in instruments}
