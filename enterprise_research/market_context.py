@@ -1,9 +1,10 @@
 """Observed market context, with a prior-window factor model and visible peers."""
 from concurrent.futures import ThreadPoolExecutor
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 import json
 import math
 from pathlib import Path
+import re
 from statistics import mean, median, pstdev
 from threading import Lock
 
@@ -314,6 +315,319 @@ def build_context(code, profile, series, errors, cutoff, profile_version, sector
                         'industry': profile['label'], 'stock': own['name']})
 
 
+PETROCHINA_CODES = {'601857.SH', '00857.HK'}
+PILOT_METHOD_VERSION = 'petrochina-market-pilot-v1'
+BRENT_INSTRUMENT = {
+    'code': 'BRENT',
+    'name': '布伦特原油期货连续',
+    'secid': '112.B00Y',
+    'source': '东方财富期货连续日线',
+    'adjustment': 'CONTINUOUS_FUTURES',
+    'currency': 'USD',
+    'unit': '美元/桶',
+}
+PETROCHINA_ANNOUNCEMENTS = (
+    {
+        'id': 'storage2025',
+        'published_on': '2025-12-04',
+        'short_label': '储气库公告',
+        'title': '中国石油储气库关联交易补充公告',
+        'url': ('https://' + 'www1.hkexnews.hk/listedco/listconews/sehk/2025/1204/2025120402102.pdf'),
+    },
+    {
+        'id': 'related2027',
+        'published_on': '2026-03-29',
+        'short_label': '关联交易续签',
+        'title': '中国石油2027-2029年续签关联交易及新金融服务协议',
+        'url': ('https://' + 'www1.hkexnews.hk/listedco/listconews/sehk/2026/0329/2026032900155.pdf'),
+    },
+    {
+        'id': 'annual2025',
+        'published_on': '2026-04-23',
+        'short_label': '2025年报',
+        'title': '中国石油2025年度报告',
+        'url': ('https://' + 'www.hkexnews.hk/listedco/listconews/sehk/2026/0423/2026042301797.pdf'),
+    },
+    {
+        'id': 'div2026',
+        'published_on': '2026-08-30',
+        'short_label': '中期业绩及股息',
+        'title': '中国石油2026年中期业绩及股息税务安排公告',
+        'url': ('https://' + 'www1.hkexnews.hk/listedco/listconews/sehk/2026/0830/2026083000031.pdf'),
+    },
+    {
+        'id': 'h12026',
+        'published_on': '2026-09-18',
+        'short_label': '2026中报',
+        'title': '中国石油2026年中期报告（第25页披露单位操作成本）',
+        'url': 'https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0918/2026091800441.pdf#page=25',
+    },
+    {
+        'id': 'q32026',
+        'published_on': '2026-10-28',
+        'short_label': '2026三季报',
+        'title': '中国石油2026年第三季度报告',
+        'url': ('https://' + 'www.petrochina.com.cn/petrochina/jdbg/202610/ed4e45a0d81149dab4549bd4cc570db4/files/e054e03d628b46588536bf47673d167f.pdf'),
+    },
+)
+
+
+PETROCHINA_COST_SPEC = {
+    'metric': '单位油气操作成本',
+    'unit': '美元/桶',
+    'prior_period': '2025年上半年',
+    'current_period': '2026年上半年',
+    'prior_value': 10.14,
+    'current_value': 10.68,
+    'yoy_pct': 5.3,
+    'delta_value': 0.54,
+    'first_disclosed_on': '2026-08-30',
+    'interim_report_published_on': '2026-09-18',
+    'source_title': '中国石油2026年中期报告（PDF第25页）',
+    'source_url': 'https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0918/2026091800441.pdf#page=25',
+    'first_disclosure_url': ('https://' + 'www.petrochina.com.cn/petrochina/gsgg/202608/dc2e7f2cc90f48ad99b6ab3c95dde672/files/cc280cbd4b6745379dbd3cf96f7a6def.pdf'),
+    'local_doc_id': 'h12026',
+    'local_doc_page': 25,
+    'scope_note': '仅在同一半年度口径间对比，不拿全年数据与半年数据横比（半年度不含年末集中结算项）。单位油气操作成本仅反映油气生产现场操作付现支出，不含折旧折耗及摊销、勘探费用、税费、财务费用与维持性资本开支，不能当作完整盈亏线。',
+}
+PETROCHINA_VALUATION_SPEC = {
+    'snapshot_date': '2026-11-13',
+    'return_rate_pct': 10,
+    'tax_basis': '投资者个人税前',
+    'base_normal_cash_yi': 1150,
+    'h_implied_cash_yi': 1618,
+    'h_implied_cash_exact_yi': 1618.43,
+    'a_implied_cash_yi': 2268,
+    'a_implied_cash_exact_yi': 2267.63,
+    'base_epv_cny': 6.28,
+    'base_epv_hkd': 7.34,
+    'a_close_cny': 12.39,
+    'h_close_hkd': 10.33,
+    'hkd_cny': 0.85604,
+    'formal_edition_title': '中国石油企业书 · 修订版 v1',
+    'formal_figure_title': '中国石油A/H价格的年度现金要求',
+    'local_source_version': 'petrochina-sources-20261115-v1',
+}
+
+
+def validate_cutoff_date(as_of):
+    if as_of is None or str(as_of).strip() == '':
+        return None
+    value = str(as_of).strip()
+    if not re.fullmatch(r'\d{4}-\d{2}-\d{2}', value):
+        raise ValueError('观察截止日须使用 YYYY-MM-DD 格式')
+    date.fromisoformat(value)
+    return value
+
+
+def _weekday_calendar(start_iso, end_iso, observed_dates):
+    cur = date.fromisoformat(start_iso)
+    end = date.fromisoformat(end_iso)
+    days = []
+    while cur <= end:
+        iso = cur.isoformat()
+        is_jan1_closed = (cur.month == 1 and cur.day == 1 and iso not in observed_dates)
+        if iso in observed_dates or (cur.weekday() < 5 and not is_jan1_closed):
+            days.append(iso)
+        cur += timedelta(days=1)
+    return days
+
+
+def build_petrochina_cost(cutoff, company=None):
+    visible = cutoff >= PETROCHINA_COST_SPEC['first_disclosed_on']
+    editions = (company or {}).get('book_editions') or []
+    has_local_pkg = any(
+        e.get('source_version') == PETROCHINA_VALUATION_SPEC['local_source_version']
+        or e.get('title') == PETROCHINA_VALUATION_SPEC['formal_edition_title']
+        for e in editions
+    )
+    return {
+        'metric': PETROCHINA_COST_SPEC['metric'],
+        'unit': PETROCHINA_COST_SPEC['unit'],
+        'prior_period': PETROCHINA_COST_SPEC['prior_period'],
+        'current_period': PETROCHINA_COST_SPEC['current_period'],
+        'first_disclosed_on': PETROCHINA_COST_SPEC['first_disclosed_on'],
+        'interim_report_published_on': PETROCHINA_COST_SPEC['interim_report_published_on'],
+        'requested_through': cutoff,
+        'visible': visible,
+        'prior_value': PETROCHINA_COST_SPEC['prior_value'] if visible else None,
+        'current_value': PETROCHINA_COST_SPEC['current_value'] if visible else None,
+        'yoy_pct': PETROCHINA_COST_SPEC['yoy_pct'] if visible else None,
+        'delta_value': PETROCHINA_COST_SPEC['delta_value'] if visible else None,
+        'blank_reason': None if visible else (
+            f"历史截止日（{cutoff}）早于该数据首次公开日期（{PETROCHINA_COST_SPEC['first_disclosed_on']}），"
+            "此处按当时公开信息边界留空。"
+        ),
+        'source_title': PETROCHINA_COST_SPEC['source_title'],
+        'source_url': PETROCHINA_COST_SPEC['source_url'],
+        'first_disclosure_url': PETROCHINA_COST_SPEC['first_disclosure_url'],
+        'local_source_version': PETROCHINA_VALUATION_SPEC['local_source_version'] if has_local_pkg else None,
+        'local_doc_id': PETROCHINA_COST_SPEC['local_doc_id'] if has_local_pkg else None,
+        'local_doc_page': PETROCHINA_COST_SPEC['local_doc_page'] if has_local_pkg else None,
+        'scope_note': PETROCHINA_COST_SPEC['scope_note'],
+    }
+
+
+def build_petrochina_valuation(company, cutoff):
+    cid = (company or {}).get('id')
+    editions = (company or {}).get('book_editions') or []
+    target = next(
+        (e for e in editions
+         if e.get('title') == PETROCHINA_VALUATION_SPEC['formal_edition_title']
+         and e.get('information_cutoff') == PETROCHINA_VALUATION_SPEC['snapshot_date']),
+        None,
+    )
+    if not target:
+        target = next(
+            (e for e in editions if e.get('title') == PETROCHINA_VALUATION_SPEC['formal_edition_title']),
+            None,
+        )
+    if not target and (company or {}).get('default_book_edition_id'):
+        candidate = next((e for e in editions if e.get('id') == company['default_book_edition_id']), None)
+        if candidate and candidate.get('information_cutoff') == PETROCHINA_VALUATION_SPEC['snapshot_date']:
+            target = candidate
+    sources = (company or {}).get('sources') or []
+    fig_source = next(
+        (s for s in sources
+         if s.get('title') == PETROCHINA_VALUATION_SPEC['formal_figure_title'] and s.get('available', True)),
+        None,
+    )
+    edition_id = target['id'] if target else None
+    return {
+        'snapshot_date': PETROCHINA_VALUATION_SPEC['snapshot_date'],
+        'return_rate_pct': PETROCHINA_VALUATION_SPEC['return_rate_pct'],
+        'tax_basis': PETROCHINA_VALUATION_SPEC['tax_basis'],
+        'base_normal_cash_yi': PETROCHINA_VALUATION_SPEC['base_normal_cash_yi'],
+        'h_implied_cash_yi': PETROCHINA_VALUATION_SPEC['h_implied_cash_yi'],
+        'h_implied_cash_exact_yi': PETROCHINA_VALUATION_SPEC['h_implied_cash_exact_yi'],
+        'a_implied_cash_yi': PETROCHINA_VALUATION_SPEC['a_implied_cash_yi'],
+        'a_implied_cash_exact_yi': PETROCHINA_VALUATION_SPEC['a_implied_cash_exact_yi'],
+        'base_epv_cny': PETROCHINA_VALUATION_SPEC['base_epv_cny'],
+        'base_epv_hkd': PETROCHINA_VALUATION_SPEC['base_epv_hkd'],
+        'a_close_cny': PETROCHINA_VALUATION_SPEC['a_close_cny'],
+        'h_close_hkd': PETROCHINA_VALUATION_SPEC['h_close_hkd'],
+        'hkd_cny': PETROCHINA_VALUATION_SPEC['hkd_cny'],
+        'edition_id': edition_id,
+        'edition_title': target.get('title') if target else PETROCHINA_VALUATION_SPEC['formal_edition_title'],
+        'edition_valuation_url': f"#/company/{cid}/editions?edition={edition_id}&view=valuation" if cid and edition_id else None,
+        'edition_overview_url': f"#/company/{cid}/editions?edition={edition_id}&view=overview" if cid and edition_id else None,
+        'figure_title': PETROCHINA_VALUATION_SPEC['formal_figure_title'],
+        'figure_url': f"/api/sources/{fig_source['id']}/file" if fig_source else None,
+        'cutoff_precedes_snapshot': cutoff < PETROCHINA_VALUATION_SPEC['snapshot_date'],
+        'note': '沿用 2026-11-13 正式版企业书研究快照（按 10% 股权回报反算，投资者个人税前），不重新建模，亦不倒铺至历史股价。',
+    }
+
+
+def build_petrochina_pilot(code, series, errors, cutoff, company=None):
+    filtered = {}
+    for key in ('601857.SH', '00857.HK', 'BRENT'):
+        item = series.get(key)
+        if item:
+            rows = [row for row in item.get('rows', []) if row['date'] <= cutoff]
+            if rows:
+                filtered[key] = dict(item, rows=rows)
+    prices_a = {r['date']: r['close'] for r in filtered.get('601857.SH', {}).get('rows', [])}
+    prices_h = {r['date']: r['close'] for r in filtered.get('00857.HK', {}).get('rows', [])}
+    prices_brent = {r['date']: r['close'] for r in filtered.get('BRENT', {}).get('rows', [])}
+    observed = sorted(set(prices_a) | set(prices_h) | set(prices_brent))
+    visible_anns = [dict(a) for a in PETROCHINA_ANNOUNCEMENTS if a['published_on'] <= cutoff]
+
+    listings_meta = {
+        '601857.SH': {
+            'code': '601857.SH',
+            'field': 'a_stock',
+            'name': '中国石油 A股 (601857.SH)',
+            'unit': '元/股',
+            'adjustment': '前复权收盘',
+            'last_date': filtered['601857.SH']['rows'][-1]['date'] if '601857.SH' in filtered else None,
+        },
+        '00857.HK': {
+            'code': '00857.HK',
+            'field': 'h_stock',
+            'name': '中国石油股份 H股 (00857.HK)',
+            'unit': '港元/股',
+            'adjustment': '前复权收盘',
+            'last_date': filtered['00857.HK']['rows'][-1]['date'] if '00857.HK' in filtered else None,
+        },
+    }
+    brent_meta = {
+        'code': 'BRENT',
+        'field': 'brent',
+        'name': '布伦特原油期货连续',
+        'unit': '美元/桶',
+        'adjustment': '连续合约收盘',
+        'last_date': filtered['BRENT']['rows'][-1]['date'] if 'BRENT' in filtered else None,
+    }
+    default_listing = code if code in listings_meta and filtered.get(code) else (
+        '601857.SH' if '601857.SH' in filtered else ('00857.HK' if '00857.HK' in filtered else code)
+    )
+    sources = [
+        {k: data.get(k) for k in ('code', 'name', 'source', 'source_url', 'adjustment', 'captured_at')}
+        | {'last_date': data['rows'][-1]['date']}
+        for data in filtered.values()
+    ]
+    base = {
+        'pilot': 'petrochina_market_v1',
+        'code': code,
+        'method_version': PILOT_METHOD_VERSION,
+        'captured_at': now_iso(),
+        'requested_through': cutoff,
+        'errors': errors,
+        'sources': sources,
+        'cost': build_petrochina_cost(cutoff, company),
+        'valuation': build_petrochina_valuation(company, cutoff),
+    }
+    if not observed:
+        return dict(
+            base,
+            status='unavailable',
+            reason='截至所选观察日期暂未取得中国石油股价或布伦特油价日线',
+            as_of=None,
+            trend={
+                'status': 'unavailable',
+                'reason': '暂未取得股价或布伦特油价日线',
+                'default_listing': default_listing,
+                'listings': listings_meta,
+                'brent': brent_meta,
+                'ah_premium_included': False,
+                'chart': [],
+                'announcements': visible_anns,
+            },
+        )
+    window_observed = observed[-260:]
+    calendar = _weekday_calendar(window_observed[0], window_observed[-1], set(window_observed))
+    chart = [
+        {
+            'date': day,
+            'a_stock': prices_a.get(day),
+            'h_stock': prices_h.get(day),
+            'brent': prices_brent.get(day),
+        }
+        for day in calendar
+    ]
+    for ann in visible_anns:
+        ann['plot_date'] = next(
+            (d for d in calendar if d >= ann['published_on']),
+            None,
+        ) if ann['published_on'] >= calendar[0] and ann['published_on'] <= calendar[-1] else None
+    as_of = window_observed[-1]
+    return dict(
+        base,
+        status='ready',
+        as_of=as_of,
+        lag_days=(date.fromisoformat(cutoff) - date.fromisoformat(as_of)).days,
+        trend={
+            'status': 'ready',
+            'default_listing': default_listing,
+            'listings': listings_meta,
+            'brent': brent_meta,
+            'ah_premium_included': False,
+            'chart': chart,
+            'announcements': visible_anns,
+        },
+    )
+
+
 class MarketService:
     def __init__(self, directory):
         self.directory = Path(directory) / 'market_context'
@@ -331,6 +645,13 @@ class MarketService:
 
     def refresh(self, company):
         code = canonical(company['code'])
+        cutoff = completed_date()
+        if code in PETROCHINA_CODES:
+            instruments = [{'code': '601857.SH'}, {'code': '00857.HK'}, BRENT_INSTRUMENT]
+            series, errors = self.quotes.collect(instruments, cutoff)
+            result = build_petrochina_pilot(code, series, errors, cutoff, company=company)
+            write_json(self.directory / 'panels' / (code+'.json'), result)
+            return result
         profile, version = self.profile(code)
         market = 'HK' if code.endswith('.HK') else 'CN'
         instruments = [{'code': code}] + [{'code': peer['code']} for peer in profile['peers']]
@@ -338,7 +659,6 @@ class MarketService:
         if profile.get('sector_history') == 'property':
             from sector_history import registry
             instruments += [{'code':m['code']} for m in registry()['members']]
-        cutoff = completed_date()
         series, errors = self.quotes.collect(instruments, cutoff)
         result = build_context(code, profile, series, errors, cutoff, version)
         write_json(self.directory / 'panels' / (code+'.json'), result)
@@ -354,12 +674,68 @@ class MarketService:
             with self.lock:
                 self.failures[code] = {'message': str(error), 'at': now_iso()}
 
-    def response(self, company, force=False):
+    def response(self, company, force=False, as_of=None):
+        requested_as_of = validate_cutoff_date(as_of)
         try:
             code = canonical(company['code'])
         except ValueError as error:
             return {'status': 'unsupported', 'reason': str(error), 'refreshing': False}
         result = read_json(self.directory / 'panels' / (code+'.json'))
+        if code in PETROCHINA_CODES:
+            outdated = bool(result and result.get('method_version') != PILOT_METHOD_VERSION)
+            valid_cached = result if (result and not outdated) else None
+            elapsed = (datetime.now(timezone.utc)-datetime.fromisoformat(valid_cached['captured_at'])).total_seconds() if valid_cached else math.inf
+            with self.lock:
+                job = self.jobs.get(code)
+                failure = self.failures.get(code)
+                recently_failed = failure and (datetime.now(timezone.utc)-datetime.fromisoformat(failure['at'])).total_seconds() < 300
+                if (force or not recently_failed and (elapsed > 3600 or not valid_cached)) and (job is None or job.done()):
+                    job = self.executor.submit(self._run, dict(company))
+                    self.jobs[code] = job
+                refreshing = bool(job and not job.done())
+            live_cutoff = completed_date()
+            cutoff = min(requested_as_of, live_cutoff) if requested_as_of else (
+                valid_cached.get('requested_through') if valid_cached else live_cutoff
+            )
+            if requested_as_of or not valid_cached:
+                cached_series = {}
+                for key in ('601857.SH', '00857.HK', 'BRENT'):
+                    sliced = self.quotes.cached_through(key, cutoff)
+                    if sliced:
+                        cached_series[key] = sliced
+                if cached_series or requested_as_of:
+                    response = build_petrochina_pilot(
+                        code, cached_series, (valid_cached or {}).get('errors', []), cutoff, company=company
+                    )
+                else:
+                    response = {
+                        'pilot': 'petrochina_market_v1',
+                        'status': 'pending',
+                        'code': code,
+                        'requested_through': cutoff,
+                        'errors': [],
+                        'sources': [],
+                        'cost': build_petrochina_cost(cutoff, company),
+                        'valuation': build_petrochina_valuation(company, cutoff),
+                        'trend': {
+                            'status': 'pending',
+                            'default_listing': code,
+                            'listings': {},
+                            'brent': {'code': 'BRENT', 'name': '布伦特原油期货连续', 'unit': '美元/桶'},
+                            'ah_premium_included': False,
+                            'chart': [],
+                            'announcements': [dict(a) for a in PETROCHINA_ANNOUNCEMENTS if a['published_on'] <= cutoff],
+                        },
+                    }
+            else:
+                response = dict(valid_cached)
+                response['cost'] = build_petrochina_cost(cutoff, company)
+                response['valuation'] = build_petrochina_valuation(company, cutoff)
+            response['custom_cutoff'] = bool(requested_as_of)
+            response['refreshing'] = refreshing
+            response['refresh_error'] = failure['message'] if failure else None
+            response['cache_age_hours'] = round(elapsed/3600, 1) if valid_cached else None
+            return response
         _, profile_version = self.profile(code)
         outdated = result and (result.get('method_version') != METHOD_VERSION or result.get('profile_version') != profile_version)
         elapsed = (datetime.now(timezone.utc)-datetime.fromisoformat(result['captured_at'])).total_seconds() if result else math.inf
