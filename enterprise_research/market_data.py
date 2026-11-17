@@ -13,6 +13,7 @@ from zoneinfo import ZoneInfo
 
 
 HONG_KONG = ZoneInfo('Asia/Hong_Kong')
+LONDON = ZoneInfo('Europe/London')
 HISTORY_LIMIT = 1500
 BENCHMARKS = {
     'HK': [('HSCI', '恒生综合指数', '124.HSCI'),
@@ -37,6 +38,17 @@ def completed_date(now=None):
     while day.weekday() >= 5:
         day -= timedelta(days=1)
     return day.isoformat()
+
+def brent_completed_date(now=None):
+    """Exclude an unfinished ICE Brent session (01:00-23:00 Europe/London, plus 15m close buffer)."""
+    current = (now or datetime.now(timezone.utc)).astimezone(LONDON)
+    day = current.date()
+    if (current.hour, current.minute) < (23, 15):
+        day -= timedelta(days=1)
+    while day.weekday() >= 5:
+        day -= timedelta(days=1)
+    return day.isoformat()
+
 
 
 def symbol(code):
@@ -166,7 +178,8 @@ class QuoteCache:
         self._lock = Lock()
         self._locks = {}
 
-    def fetch(self, instrument, cutoff):
+    def fetch(self, instrument, cutoff)
+        cutoff = instrument.get('cutoff') or cutoff:
         code = instrument['code']
         with self._lock:
             lock = self._locks.setdefault(code, Lock())
@@ -177,7 +190,7 @@ class QuoteCache:
             # Short TTL deduplicates shared benchmarks across company requests.
             a_stock = code.endswith(('.SH', '.SZ'))
             current_provider = not a_stock or cached and cached.get('source') == '东方财富前复权日线'
-            if cached and current_provider and cached.get('requested_bars', 0) >= HISTORY_LIMIT and cached['rows'][-1]['date'] == cutoff:
+            if cached and current_provider and cached.get('requested_bars', 0) >= HISTORY_LIMIT and cached.get('rows') and  cached['rows'][-1]['date'] == cutoff:
                 age = current - datetime.fromisoformat(cached['captured_at'])
                 if age.total_seconds() < 3600:
                     return cached, None
@@ -217,7 +230,10 @@ class QuoteCache:
                 write_json(path, result)
                 return result, None
             except (OSError, ValueError, TypeError, KeyError, IndexError) as error:
-                return cached, str(error)
+                if not cached:
+                    return None, str(error)
+                rows = [row for row in cached.get('rows', []) if row['date'] <= cutoff]
+                return (dict(cached, rows=rows) if rows else None), str(error)
 
     def cached_through(self, code, cutoff):
         cached = read_json(self.directory / (code + '.json'))
@@ -229,7 +245,7 @@ class QuoteCache:
     def collect(self, instruments, cutoff):
         unique = {item['code']: item for item in instruments}
         def fetch(item):
-            data, error = self.fetch(item, cutoff)
+            data, error = self.fetch(item, item.get('cutoff') or cutoff)
             return item['code'], data, error
         with ThreadPoolExecutor(max_workers=4) as executor:
             results = list(executor.map(fetch, unique.values()))
