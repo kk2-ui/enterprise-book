@@ -21,7 +21,7 @@ function modelOverview(base,e,context){
  const c={...base,fixedOverviewSource:e.source_version,dossier:{
   as_of:e.information_cutoff,subtitle:data.subtitle||'企业全景',intro:data.intro||'',
   cover_period_text:data.cover_period_text,identity:data.identity||[],
-  metrics:data.metrics||{},series:data.series||[],overview:{
+  metrics:data.metrics||{},series:data.series||[],documents:e.public_documents||{},overview:{
    identity_refs:[],revenue_title:'营业收入',revenue_note:'',
    cash_title:'经营现金净额',cash_keys:['cfo'],cash_note:'',...data.overview
   },
