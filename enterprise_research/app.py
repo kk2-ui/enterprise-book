@@ -207,7 +207,8 @@ class Handler(BaseHTTPRequestHandler):
             m=re.fullmatch(r'/api/companies/([\w-]+)/market-context',p)
             if m:
                 company=self.server.store.company(m[1])
-                return self.send(200,encode(self.server.industry_monitor.overview(company,q.get('run')) or self.server.market_context.response(company)))
+                extra={'as_of':q['as_of']} if q.get('as_of') else {}
+                return self.send(200,encode(self.server.industry_monitor.overview(company,q.get('run')) or self.server.market_context.response(company,**extra)))
             m=re.fullmatch(r'/api/companies/([\w-]+)/data/versions(?:/([\w-]+))?(?:/(facts|search|documents)(?:/([\w-]+))?(?:/(original))?)?',p)
             if m:
                 repo=self.server.store.source_data;q={k:v[0] for k,v in parse_qs(u.query).items()}
@@ -308,7 +309,8 @@ class Handler(BaseHTTPRequestHandler):
                 if self.server.industry_monitor.overview(company):
                     job=self.server.industry_monitor.refresh()
                     return self.send(202,encode(dict(self.server.industry_monitor.overview(company),refresh_job_id=job['id'],refreshing=True)))
-                return self.send(202,encode(self.server.market_context.response(company,force=True)))
+                extra={'as_of':data['as_of']} if isinstance(data,dict) and data.get('as_of') else {}
+                return self.send(202,encode(self.server.market_context.response(company,force=True,**extra)))
             if p=='/api/editorial-instructions/prepare':return self.send(200,encode({'body':editorial_tasks.prepare(data)}))
             if p=='/api/organize':return self.send(200,encode({'updated':self.server.store.organize(data.get('ids'),data.get('changes',{}))}))
             if p=='/api/collections':return self.send(201,encode({'id':self.server.store.create_collection(data.get('name',''))}))
