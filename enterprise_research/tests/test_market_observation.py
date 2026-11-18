@@ -40,6 +40,16 @@ class MarketObservationTests(unittest.TestCase):
                     data = json.load(result)
                 self.assertEqual(data['cards'], [])
                 self.assertFalse(data['refresh']['running'])
+                edition = {'id': 'installed-edition', 'title': '已安装版', 'parts': {}}
+                with patch('company_market_observation.selected_edition', return_value=edition), \
+                     patch('company_market_observation.disclosures', return_value=[]), \
+                     patch('market_observation.official_snapshot', return_value={'edition_id': 'installed-edition', 'cash_yi': 1150}):
+                    with client.open(endpoint + '?observation=1&edition=installed-edition') as result:
+                        self.assertEqual(json.load(result)['valuation']['cash_yi'], 1150)
+                    other = dict(edition, id='other-edition')
+                    with patch('company_market_observation.selected_edition', return_value=other):
+                        with client.open(endpoint + '?observation=1&edition=other-edition') as result:
+                            self.assertNotIn('cash_yi', json.load(result)['valuation'])
                 updater.started.set()
                 with client.open(base + '/api/market-observation/refresh-status') as result:
                     self.assertEqual(json.load(result), {'running': True})

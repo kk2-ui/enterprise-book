@@ -28,7 +28,7 @@ async function render(){const version=++renderVersion;parseRoute();activeEdition
   if(version!==renderVersion)return;
   const preferred=preferredBookLocation(c,route.tab);
   if(preferred){location.replace(preferred);return;}
-  html=companyPage(c,route.tab==='market'&&hasMarketObservation(c)?marketObservationShell(c):route.tab==='editions'?await editionsView(c,editionContext):route.tab==='source-version'?await sourceVersionView(c):route.tab==='topics'?await topicsView(c):route.tab==='research'?await researchView(c):route.tab==='sources'?await dataSourcesView(c):undefined,editionContext.cover);}else if(route.page==='directory')html=wdirectory();else if(route.page==='collections')html=wcollections();else if(['library','tasks','reviews'].includes(route.page))html=await wfeed(route.page);else html=await whome();
+  html=companyPage(c,route.tab==='market'?marketObservationShell(c):route.tab==='editions'?await editionsView(c,editionContext):route.tab==='source-version'?await sourceVersionView(c):route.tab==='topics'?await topicsView(c):route.tab==='research'?await researchView(c):route.tab==='sources'?await dataSourcesView(c):undefined,editionContext.cover);}else if(route.page==='directory')html=wdirectory();else if(route.page==='collections')html=wcollections();else if(['library','tasks','reviews'].includes(route.page))html=await wfeed(route.page);else html=await whome();
  if(version!==renderVersion)return;activeEditionCompany=editionContext.company||null;$('#main').innerHTML=html;bindForms();wbind();if(typeof dbind==='function')dbind();if(typeof bbind==='function')bbind();tbind();bindModelBooks();bindMarketContext();
  }catch(err){if(version===renderVersion)$('#main').innerHTML=empty('页面读取失败',err.message);}
 }

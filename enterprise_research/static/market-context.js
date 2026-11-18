@@ -7,29 +7,21 @@ function hasMarketObservation(company) {
 }
 
 function withMarketObservationTab(company, tabs) {
-  return hasMarketObservation(company) ? [tabs[0], ['market', '市场观察'], ...tabs.slice(1)] : tabs;
+  return [tabs[0], ['market', '市场观察'], ...tabs.slice(1)];
 }
 
-function marketObservationShell(company) {
-  return `<section class="panel market-context observation" data-market-company="${esc(company.id)}" data-observation aria-label="市场观察">
+function marketObservationShell(company, edition) {
+  const cutoff = (edition?.parts?.overview?.display?.historical || edition?.snapshot?.dossier?.historical)
+    ? edition.information_cutoff || edition.book_date || '' : '';
+  return `<section class="panel market-context observation" data-market-company="${esc(company.id)}" data-observation
+    data-observation-edition="${esc(edition?.id || '')}" data-observation-limit="${esc(cutoff)}" aria-label="市场观察">
     <h2>市场观察</h2><p class="market-note" role="status">正在读取行情与披露…</p>
   </section>`;
 }
 
 
-function isPetroChinaMarketPilot(c) {
-  const code = String(c?.code || '').trim().toUpperCase();
-  return code === '601857.SH' || code === '00857.HK';
-}
-
-
 function marketContextShell(c) {
   if (hasMarketObservation(c)) return marketObservationShell(c);
-  if (isPetroChinaMarketPilot(c)) {
-    return `<section class="panel market-context" data-market-company="${esc(c.id)}" aria-label="市场观察">
-      <div class="market-heading"><div><h2>市场观察</h2><p class="muted">正在读取中国石油行情与披露快照…</p></div></div>
-    </section>`;
-  }
   return `<section class="panel market-context" data-market-company="${esc(c.id)}" aria-label="市场环境与主导力量">
     <div class="market-heading"><div><h2>市场环境与主导力量</h2><p class="muted">正在读取可比行情…</p></div></div>
   </section>`;

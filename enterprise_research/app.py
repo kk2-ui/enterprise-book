@@ -17,6 +17,8 @@ import model_books
 import editorial_tasks
 from market_context import MarketService
 import market_observation
+import company_market_observation
+import market_nbs
 import market_atlas
 from market_observation_update import ObservationUpdater
 from industry_monitor.service import MonitorService
@@ -209,15 +211,42 @@ class Handler(BaseHTTPRequestHandler):
             if m:return self.send(200,encode(self.server.industry_monitor.repo.job(m[1])))
             m=re.fullmatch(r'/api/research-subjects/([\w-]+)/monitor',p)
             if m:return self.send(200,encode(self.server.industry_monitor.subject(m[1],q.get('run'))))
+            m=re.fullmatch(r'/api/companies/([\w-]+)/market-context/macro',p)
+            if m:
+                company=self.server.store.company(m[1])
+                profile=company_market_observation.DRIVERS.get(company_market_observation.stock_code(company))
+                if not profile:
+                    return self.send(404,encode({'error':'该公司尚未配置行业统计指标'}))
+                selected=company_market_observation.selected_edition(self.server.store,company,q.get('edition'))
+                cutoff=market_observation.observation_cutoff(q.get('as_of'))
+                limit=company_market_observation.historical_limit(selected)
+                return self.send(200,encode(market_nbs.series(self.server.store.directory,profile['macro'],
+                                                            min(cutoff,limit) if limit else cutoff)))
             m=re.fullmatch(r'/api/companies/([\w-]+)/market-context',p)
             if m:
                 company=self.server.store.company(m[1])
-                if q.get('observation') == '1' and market_observation.observation_key(company):
-                    refresh=self.server.observation_updater.status()
-                    result=market_observation.response(self.server.store,company,q.get('as_of'))
-                    if q.get('layout') == 'atlas':
-                        result['atlas'] = market_atlas.build(result, int(q.get('days', '120')))
-                    result['refresh']=refresh
+                if q.get('observation') == '1':
+                    edition=company_market_observation.selected_edition(self.server.store,company,q.get('edition'))
+                    cutoff=market_observation.observation_cutoff(q.get('as_of'))
+                    limit=(company_market_observation.historical_limit(edition)
+                           if q.get('edition') or company.get('default_book_edition_id') else None)
+                    if limit:
+                        cutoff=min(cutoff,limit)
+                    key=market_observation.observation_key(company)
+                    if key:
+                        result=market_observation.response(self.server.store,company,cutoff)
+                        result['historical_limit']=limit
+                        if edition:
+                            result['cards'].extend(company_market_observation.disclosures(
+                                self.server.store,company,edition,cutoff))
+                        if edition and edition['id'] != result['valuation'].get('edition_id'):
+                            result['valuation']=company_market_observation.valuation(company,edition,cutoff)
+                            result['price_snapshot']=None
+                        if q.get('layout') == 'atlas':
+                            result['atlas']=market_atlas.build(result,int(q.get('days','120')))
+                        result['refresh']=self.server.observation_updater.status()
+                    else:
+                        result=company_market_observation.response(self.server.store,company,cutoff,edition,limit)
                     return self.send(200,encode(result))
                 extra={'as_of':q['as_of']} if q.get('as_of') else {}
                 return self.send(200,encode(self.server.industry_monitor.overview(company,q.get('run')) or self.server.market_context.response(company,**extra)))
@@ -292,7 +321,7 @@ class Handler(BaseHTTPRequestHandler):
                 path=Path(s['path']); ctype=mimetypes.guess_type(str(path))[0] or 'application/octet-stream'
                 disp='attachment' if 'download' in parse_qs(u.query) or path.suffix.lower() not in ('.pdf','.png','.jpg','.jpeg','.webp') else 'inline'
                 return self.send(200,path.read_bytes(),ctype,{'Content-Disposition':disp+"; filename*=UTF-8''"+quote(s.get('original_filename') or path.name)})
-            if p in ('/','/index.html','/app.js','/workspace.js','/dossier.js','/dossier.css','/style.css','/business.js','/business.css','/china-map.js','/book.js','/book.css','/topics.js','/topics.css','/framework.js','/layered-research.js','/research.js','/three-step.js','/source-data.js','/model-books.js','/model-books.css','/research.css','/market-context.js','/market-observation.js','/market-atlas.js','/market-atlas.css','/market-context.css','/industry-monitor.js','/industry-monitor.css'):
+            if p in ('/','/index.html','/app.js','/workspace.js','/dossier.js','/dossier.css','/style.css','/business.js','/business.css','/china-map.js','/book.js','/book.css','/topics.js','/topics.css','/framework.js','/layered-research.js','/research.js','/three-step.js','/source-data.js','/model-books.js','/model-books.css','/research.css','/market-context.js','/market-observation.js','/market-atlas.js','/market-driver-chart.js','/market-atlas.css','/market-context.css','/industry-monitor.js','/industry-monitor.css'):
                 f=BASE/'static'/('index.html' if p=='/' else p[1:]); return self.send(200,f.read_bytes(),mimetypes.guess_type(str(f))[0]+'; charset=utf-8')
             self.send(404,encode({'error':'页面不存在'}))
         except ValueError as e: self.send(404,encode({'error':str(e)}))
@@ -321,6 +350,15 @@ class Handler(BaseHTTPRequestHandler):
                 if data.get('observation') == 1 and market_observation.observation_key(company):
                     self.server.observation_updater.start()
                     return self.send(202,encode(self.server.observation_updater.status()))
+                if data.get('observation') == 1:
+                    code=company_market_observation.stock_code(company)
+                    cutoff=market_observation.observation_cutoff(data.get('as_of'))
+                    selected=company_market_observation.selected_edition(self.server.store,company,data.get('edition'))
+                    limit=company_market_observation.historical_limit(selected)
+                    if limit:
+                        cutoff=min(cutoff,limit)
+                    _, refresh=company_market_observation.series_for(self.server.store.directory,code,cutoff,force=True)
+                    return self.send(200,encode(refresh))
                 if self.server.industry_monitor.overview(company):
                     job=self.server.industry_monitor.refresh()
                     return self.send(202,encode(dict(self.server.industry_monitor.overview(company),refresh_job_id=job['id'],refreshing=True)))

@@ -149,7 +149,7 @@ def official_snapshot(store, company, key, cutoff):
     if cutoff < max(spec['date'], published):
         return {'reason': '所选日期早于正式估值公开，保留当时的信息边界。'}
     result = {
-        'date': spec['date'], 'published_on': published, 'cash_yi': spec['cash_yi'], 'cash': f"约 {spec['cash_yi']:,} 亿元/年", 'summary': spec['summary'],
+        'edition_id': summary['id'], 'date': spec['date'], 'published_on': published, 'cash_yi': spec['cash_yi'], 'cash': f"约 {spec['cash_yi']:,} 亿元/年", 'summary': spec['summary'],
         'url': f"#/company/{company['id']}/editions?edition={summary['id']}&view=valuation",
     }
     if formal.get('figure_url'):

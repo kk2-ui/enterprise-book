@@ -92,6 +92,10 @@ def valuation(key, data):
                sectionSub='用相同的 10% 股权回报率，把各市场的价格换算成每年需要的普通股现金。')
     if not val['available']:
         return dict(val, reason=snap['reason'])
+    if 'cash_yi' not in snap:
+        return dict(val, linkedEdition=True, sectionTitle='本版现金与估值',
+                    sectionSub='固定研究日期与适用条件见本版正文。', researchDate=snap['date'],
+                    published=snap['published_on'], url=snap['url'], editionTitle=snap['title'])
     val.update(researchDate=snap['date'], published=snap['published_on'], requiredReturnPct=10,
                baseline=snap['cash_yi'], url=snap['url'], figureUrl=snap.get('figure_url'),
                assumptions=[snap['summary'], '各市场价格分别应用于同一公司总股本，按投资者个人税前口径比较。'])

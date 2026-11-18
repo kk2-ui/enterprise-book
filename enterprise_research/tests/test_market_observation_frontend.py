@@ -33,6 +33,12 @@ for (const code of ['600690.SH', '690D.DE', '601857.SH']) {
   scope.company = {id: 'test-company', code};
   assert.match(vm.runInContext('marketContextShell(company)', scope), /data-observation/);
 }
+for (const code of ['000651.SZ', '06049.HK']) {
+  scope.company = {id: 'test-company', code};
+  assert.match(vm.runInContext('marketContextShell(company)', scope), /市场环境与主导力量/);
+  assert.equal(vm.runInContext("withMarketObservationTab(company, [['overview', '概览']])[1][0]", scope), 'market');
+  assert.match(vm.runInContext('marketObservationShell(company, {id: "published"})', scope), /data-observation-edition="published"/);
+}
 vm.runInContext('bindMarketContext()', scope);
 assert.equal(appended.length, 1);
 assert.equal(appended[0].src, '/market-observation.js');

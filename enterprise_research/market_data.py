@@ -96,7 +96,7 @@ def get_json(url):
         return json.load(response)
 
 
-def b00y_over_physical_route(url):
+def official_text_over_physical_route(url, host, referer):
     table = run(['/usr/sbin/netstat', '-rn', '-f', 'inet'], capture_output=True,
                 text=True, check=True, timeout=4).stdout
     interface = next((route[3] for route in map(str.split, table.splitlines())
@@ -105,11 +105,11 @@ def b00y_over_physical_route(url):
         raise OSError('未找到 macOS 以太网或 Wi-Fi 的默认路由')
     # A proxy TUN can replace system DNS with a synthetic address and catch raw-IP requests.
     # Resolve the same official host over HTTPS, then bind only this transfer to the physical interface.
-    error = '公开 DNS 未返回东财源站地址'
+    error = f'公开 DNS 未返回 {host} 的源站地址'
     tried = set()
     for resolver in B00Y_DNS:
         try:
-            answer = get_json(resolver + '?' + urlencode({'name': B00Y_HOST, 'type': 'A'}))
+            answer = get_json(resolver + '?' + urlencode({'name': host, 'type': 'A'}))
             addresses = [IPv4Address(row['data']) for row in answer.get('Answer', [])
                          if row['type'] == 1]
         except (OSError, ValueError, KeyError) as cause:
@@ -120,11 +120,11 @@ def b00y_over_physical_route(url):
                 continue
             tried.add(address)
             response = run(['/usr/bin/curl', '--interface', f'if!{interface}', '--noproxy', '*',
-                            '--resolve', f'{B00Y_HOST}:443:{address}', '-fsS', '--connect-timeout', '5',
-                            '--max-time', '8', '-A', 'Mozilla/5.0', '-e', B00Y_SITE, url],
+                            '--resolve', f'{host}:443:{address}', '-fsS', '--connect-timeout', '5',
+                            '--max-time', '8', '-A', 'Mozilla/5.0', '-e', referer, url],
                            capture_output=True, text=True, timeout=10)
             if response.returncode == 0:
-                return json.loads(response.stdout)
+                return response.stdout
             error = response.stderr.strip()
     raise OSError(error)
 
@@ -137,7 +137,7 @@ def get_b00y_json(url):
         if sys.platform != 'darwin':
             raise
         try:
-            return b00y_over_physical_route(url), 'macos-physical-interface'
+            return json.loads(official_text_over_physical_route(url, B00Y_HOST, B00Y_SITE)), 'macos-physical-interface'
         except (OSError, ValueError, SubprocessError) as alternate:
             raise OSError(f'东财常规路由失败（{original}），物理网卡也未取得日线（{alternate}）') from alternate
 

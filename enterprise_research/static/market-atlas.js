@@ -226,7 +226,8 @@ export function renderMarketAtlas(host, company, state, companyLinks) {
             </div>
           </div>
 
-          ${comp.valuation.available ? `<div class="val-stamp-grid">
+          ${comp.valuation.linkedEdition ? `<p>${esc(comp.valuation.editionTitle)} · 信息时点 ${esc(comp.valuation.researchDate)} · ${esc(comp.valuation.published)} 成版</p>
+          <a class="doc-link" data-observation-edition href="${esc(comp.valuation.url)}">打开本版现金与估值 →</a>` : comp.valuation.available ? `<div class="val-stamp-grid">
             <div class="val-stamp">
               <div class="val-stamp-k">研究日期</div>
               <div class="val-stamp-v">${esc(comp.valuation.researchDate)}</div><small>${esc(comp.valuation.published)} 成版</small>
@@ -845,7 +846,7 @@ export function renderMarketAtlas(host, company, state, companyLinks) {
    * ============================================================================ */
   function renderValuationGraphic(comp) {
     const val = comp.valuation;
-    if (!val.available) return;
+    if (!val.available || val.linkedEdition) return;
     const mount = shadow.getElementById("valuation-svg-mount");
     if (!val.venues.length) {mount.textContent="截至所选日期暂无同日价格、汇率及股本配对。"; return;}
     const W = 520;

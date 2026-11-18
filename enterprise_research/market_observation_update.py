@@ -72,7 +72,7 @@ def dataset(label, source, url, rows, **meta):
 
 def stock_series(code, cutoff):
     quote = symbol(code)
-    label, field, method = STOCKS[code]
+    label, field, method = STOCKS.get(code, (code, 'day', '未复权收盘'))
     flags = 'qfq' if field == 'qfqday' else ''
     query = urlencode({'param': f'{quote},day,{start_day(cutoff, 400)},{cutoff},640,{flags}'})
     endpoint = TENCENT.replace('/fqkline/', '/hkfqkline/') if code.endswith('.HK') and flags else TENCENT
@@ -83,8 +83,10 @@ def stock_series(code, cutoff):
     if payload.get('code') != 0 or not prices:
         raise ValueError(f'腾讯未返回 {quote} 的 {field} 日线')
     rows = [{'date': row[0], 'close': float(row[2])} for row in prices if row[0] <= cutoff]
-    if len(rows) < 240:
+    if code in STOCKS and len(rows) < 240:
         raise ValueError('腾讯日线少于一年观察窗口所需的覆盖')
+    if not rows:
+        raise ValueError('所选截止日没有已收盘日线')
     return dataset(label, f'腾讯证券 · {method}', f'https://gu.qq.com/{quote}/gp', rows)
 
 

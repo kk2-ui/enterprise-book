@@ -10,8 +10,8 @@ function observationControls(state) {
   return `<div class="market-controls">
     <label>窗口 <select data-observation-days>${[60, 120, 270].map(days =>
       `<option value="${days}" ${days === state.days ? 'selected' : ''}>${days === 270 ? '约一年' : days + ' 个工作日'}</option>`).join('')}</select></label>
-    <label>历史截止 <input data-observation-date type="date" value="${esc(state.date)}"></label>
-    <button type="button" class="btn secondary" data-observation-latest ${state.date ? '' : 'hidden'}>最新</button>
+    <label>历史截止 <input data-observation-date type="date" value="${esc(state.date)}" ${state.limit ? `max="${esc(state.limit)}"` : ""}></label>
+    <button type="button" class="btn secondary" data-observation-latest ${state.date && !state.limit ? '' : 'hidden'}>最新</button>
     <button class="btn secondary" type="button" data-observation-refresh disabled>更新行情</button>
   </div>`;
 }
@@ -25,7 +25,7 @@ function observationDetails(data) {
     timeZone: 'Asia/Hong_Kong', hour12: false,
   });
   const warnings = `${errors.length ? `<p class="market-note" data-observation-source-errors>${errors.map(([code]) => esc(code)).join('、')} 更新未成功。可展开查看结果。</p>` : ''}
-  ${lagging.length ? `<p class="market-note" data-observation-source-lag>${lagging.map(([code, state]) => `${esc(code)} 源数据更新至 ${esc(state.last)}，已检查到 ${esc(state.checked_through)}`).join('。')}。稍后自动重试。</p>` : ''}`;
+  ${lagging.length ? `<p class="market-note" data-observation-source-lag>${lagging.map(([code, state]) => `${esc(code)} 源数据更新至 ${esc(state.last)}，已检查到 ${esc(state.checked_through)}`).join('。')}。${data.observation === 'company' ? '可点击「更新行情」重新获取。' : '稍后自动重试。'}</p>` : ''}`;
   const body = `
     <p class="market-note">按各市场收盘时间和中间价发布时间自动拉取。${lastCheck ? '最近尝试 ' + esc(lastCheck) + '（香港时间）。' : ''}</p>
     ${errors.length ? `<ul>${errors.map(([code, message]) => `<li>${esc(code)} · ${esc(message)}</li>`).join('')}</ul>` : ''}
@@ -159,15 +159,56 @@ function drawObservation(root, data, mode, days) {
   }
 }
 
+function renderCompanyObservation(root, data, days) {
+  const last = data.chart.at(-1);
+  const code = data.coverage[0]?.code;
+  const mode = data.modes[0];
+  const quote = last && observationValue(last.values[code], mode.lanes[0].items[0].unit);
+  const value = data.valuation;
+  const sources = observationDetails(data);
+  root.innerHTML = `<div class="observation-company">
+    <section class="observation-section" data-observation-section="trend">
+      <div class="section-head"><div><h2 class="section-heading">${esc(data.company)}${data.drivers ? '股价、行业与经营走势' : '股价走势'}</h2>
+      <p class="section-sub">观察截至 ${esc(data.cutoff)}${data.historical_limit ? ' · 本版固定截止日 ' + esc(data.historical_limit) : ''}</p></div></div>
+      ${data.drivers ? '<div data-company-drivers></div>' : last ? `<p class="market-note">${esc(code)} · ${esc(last.date)} · 未复权收盘 <strong>${esc(quote)}</strong></p><div data-company-price-chart></div>`
+        : `<p class="market-note">${code ? '所选时段没有可用日线。' : '未登记受支持的沪深港股票代码。'}</p>`}
+    </section>
+    <section class="observation-section" data-observation-section="operating">
+      <h2 class="section-heading">经营披露</h2>
+      <div class="observation-cards">${data.cards.map(card => `<div class="observation-card">
+        <span>${esc(card.period)} · ${esc(card.published)} 公开</span><h4>${esc(card.title)}</h4>
+        <dl>${card.metrics.map(([name, number]) => `<div><dt>${esc(name)}</dt><dd>${esc(number)}</dd></div>`).join('')}</dl>
+        ${card.sources.map(([label, url]) => `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(label)} ↗</a>`).join(' · ')}
+      </div>`).join('') || '<p class="market-note">截至所选日期暂无可用的结构化经营披露。</p>'}</div>
+    </section>
+    <section class="observation-section" data-observation-section="valuation">
+      <h2 class="section-heading">本版现金与估值</h2>
+      ${value.url ? `<p>${esc(value.title)} · 信息时点 ${esc(value.date)} · ${esc(value.published_on)} 成版</p>
+        <div class="observation-cards">
+        ${value.cash ? `<div><span>研究现金</span><strong>${esc(value.cash)}</strong><p>${esc(value.cash_label || '')}</p></div>` : ''}
+        ${value.value ? `<div><span>本版条件价值</span><strong>${esc(value.value)}</strong><p>${esc(value.value_label || '')}</p></div>` : ''}
+        </div><a data-observation-edition href="${esc(value.url)}">打开本版现金与估值 →</a>`
+        : `<p class="market-note">${esc(value.reason)}</p>`}
+    </section>
+    ${sources.warnings}<details class="observation-details"><summary>行情来源与覆盖</summary>${sources.body}</details>
+  </div>`;
+  const chart = root.querySelector('[data-company-price-chart]');
+  if (chart) observationExtraCharts(chart, data, mode, days);
+}
+
 function bindMarketObservation(root) {
   const cid = root.dataset.marketCompany;
-  let data, renderAtlas, poll, resize;
+  const edition = root.dataset.observationEdition;
+  let limit = root.dataset.observationLimit;
+  let data, renderAtlas, renderDrivers, poll, resize;
+  let windowChosen = false;
   let requestSeq = 0;
   let refreshing = false;
   let extraOpen = false;
   let extraMode = 'd';
+  const requested = new URLSearchParams(location.hash.split('?')[1]).get('market_as_of') || '';
   const view = {
-    days: 120, date: new URLSearchParams(location.hash.split('?')[1]).get('market_as_of') || '',
+    days: 120, limit, date: limit && (!requested || requested > limit) ? limit : requested,
     mode: '', pinnedIdx: null, hoverIdx: null, activeEventId: null,
   };
 
@@ -187,13 +228,14 @@ function bindMarketObservation(root) {
   retry.onclick = () => load(false);
   root.querySelector('[data-observation-date]').onchange = event => changeDate(event.target.value);
   root.querySelector('[data-observation-days]').onchange = event => {
+    windowChosen = true;
     view.days = Number(event.target.value);
     load();
   };
 
   function updateButton() {
     const busy = refreshing || running;
-    button.disabled = busy || !data;
+    button.disabled = busy || !data || !data.coverage.length;
     const label = busy ? '正在更新…' : '更新行情';
     if (button.textContent !== label) button.textContent = label;
   }
@@ -232,6 +274,34 @@ function bindMarketObservation(root) {
   }
 
   function applySnapshot(next) {
+    if (next.historical_limit) {
+      limit = view.limit = next.historical_limit;
+      const input = root.querySelector('[data-observation-date]');
+      input.max = limit;
+      input.value = view.date = next.cutoff;
+      latest.hidden = true;
+    }
+    if (next.observation === 'company') {
+      data = next;
+      if (next.drivers && !windowChosen) {
+        view.days = 270;
+        root.querySelector('[data-observation-days]').value = String(view.days);
+      }
+      renderCompanyObservation(content, next, view.days);
+      if (next.drivers) {
+        const host = content.querySelector('[data-company-drivers]');
+        const request = requestSeq;
+        const params = new URLSearchParams({as_of: next.cutoff});
+        if (edition) params.set('edition', edition);
+        renderDrivers(host, next, null, view.days);
+        api(endpoint + '/macro?' + params).then(macro => {
+          if (current(request)) renderDrivers(host, next, macro, view.days);
+        }).catch(() => {
+          if (current(request)) renderDrivers(host, next, {points: [], message: '行业原表读取失败，可重新读取本页。'}, view.days);
+        });
+      }
+      return;
+    }
     const previous = data;
     data = next;
     if (!previous) mount();
@@ -264,9 +334,10 @@ function bindMarketObservation(root) {
   }
 
   function changeDate(date) {
+    date = limit && (!date || date > limit) ? limit : date;
     view.date = date;
     root.querySelector('[data-observation-date]').value = date;
-    latest.hidden = !date;
+    latest.hidden = !date || Boolean(limit);
     const [path, query] = location.hash.split('?');
     const params = new URLSearchParams(query);
     if (date) params.set('market_as_of', date);
@@ -302,7 +373,7 @@ function bindMarketObservation(root) {
     const request = requestSeq;
     try {
       const status = await api(endpoint + '/refresh', {
-        method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({observation: 1}),
+        method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({observation: 1, as_of: view.date || undefined, edition: edition || undefined}),
       });
       if (!root.isConnected) return;
       if (current(request) && status.running) {
@@ -334,9 +405,15 @@ function bindMarketObservation(root) {
     updateButton();
     const query = new URLSearchParams({observation: '1', layout: 'atlas', days: view.days});
     if (view.date) query.set('as_of', view.date);
+    if (edition) query.set('edition', edition);
     try {
       const [next, module] = await Promise.all([api(endpoint + '?' + query), import('/market-atlas.js')]);
       if (!current(request)) return;
+      if (next.drivers) {
+        const driverModule = await import('/market-driver-chart.js');
+        if (!current(request)) return;
+        renderDrivers = driverModule.renderDriverChart;
+      }
       renderAtlas = module.renderMarketAtlas;
       applySnapshot(next);
       running = Boolean(next.refresh?.running);
