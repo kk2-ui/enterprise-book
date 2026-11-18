@@ -1,5 +1,14 @@
 'use strict';
 
+const marketObservationCodes = new Set(['600690.SH', '06690.HK', '690D.DE', '601857.SH', '00857.HK']);
+
+function marketObservationShell(company) {
+  return `<section class="panel market-context observation" data-market-company="${esc(company.id)}" data-observation aria-label="市场观察">
+    <h2>市场观察</h2><p class="market-note" role="status">正在读取行情与披露…</p>
+  </section>`;
+}
+
+
 function isPetroChinaMarketPilot(c) {
   const code = String(c?.code || '').trim().toUpperCase();
   return code === '601857.SH' || code === '00857.HK';
@@ -556,7 +565,18 @@ function drawPetroChinaTrendChart(root, data, viewState) {
 function bindMarketContext() {
   const root=document.querySelector('[data-market-company]');
   if (!root) return;
-  if (root.hasAttribute('data-observation')) return bindMarketObservation(root);
+  if (root.hasAttribute('data-observation')) {
+    const bind = () => { if (root.isConnected) bindMarketObservation(root); };
+    if (typeof bindMarketObservation === 'function') return bind();
+    const script = document.createElement('script');
+    script.src = '/market-observation.js';
+    script.onload = bind;
+    script.onerror = () => {
+      if (root.isConnected) root.querySelector('[role="status"]').textContent = '市场观察脚本加载失败，请刷新页面重试。';
+    };
+    document.head.append(script);
+    return;
+  }
   const cid=root.dataset.marketCompany;
   const hashParams=new URLSearchParams(location.hash.split('?')[1]||'');
   let data, days='20', pilotDays='120', pilotListing='', pilotAsOf=hashParams.get('market_as_of')||'';

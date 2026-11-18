@@ -1,13 +1,5 @@
 'use strict';
 
-const marketObservationCodes = new Set(['600690.SH', '06690.HK', '690D.DE', '601857.SH', '00857.HK']);
-
-function marketObservationShell(company) {
-  return `<section class="panel market-context observation" data-market-company="${esc(company.id)}" data-observation aria-label="市场观察">
-    <h2>市场观察</h2><p class="market-note" role="status">正在读取行情与披露…</p>
-  </section>`;
-}
-
 function observationValue(value, unit) {
   if (value == null) return '—';
   if (unit === '股') return value.toLocaleString('zh-CN') + ' 股';
