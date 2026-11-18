@@ -6,13 +6,13 @@ function observationValue(value, unit) {
   return value.toFixed(unit === '欧元/股' ? 4 : 2) + (unit === '%' ? '%' : unit === '指数' ? '' : ' ' + unit);
 }
 
-function observationControls(state, running) {
+function observationControls(state) {
   return `<div class="market-controls">
     <label>窗口 <select data-observation-days>${[60, 120, 270].map(days =>
       `<option value="${days}" ${days === state.days ? 'selected' : ''}>${days === 270 ? '约一年' : days + ' 个工作日'}</option>`).join('')}</select></label>
     <label>历史截止 <input data-observation-date type="date" value="${esc(state.date)}"></label>
-    ${state.date ? '<button type="button" class="btn secondary" data-observation-latest>最新</button>' : ''}
-    <button class="btn secondary" type="button" data-observation-refresh ${running ? 'disabled' : ''}>${running ? '正在更新…' : '更新行情'}</button>
+    <button type="button" class="btn secondary" data-observation-latest ${state.date ? '' : 'hidden'}>最新</button>
+    <button class="btn secondary" type="button" data-observation-refresh disabled>更新行情</button>
   </div>`;
 }
 
@@ -24,15 +24,15 @@ function observationDetails(data) {
   const lastCheck = refresh.finished_at && new Date(refresh.finished_at).toLocaleString('zh-CN', {
     timeZone: 'Asia/Hong_Kong', hour12: false,
   });
-  return `${errors.length ? `<p class="market-note" data-observation-source-errors>${errors.map(([code]) => esc(code)).join('、')} 更新未成功。可展开查看结果。</p>` : ''}
-  ${lagging.length ? `<p class="market-note" data-observation-source-lag>${lagging.map(([code, state]) => `${esc(code)} 源数据更新至 ${esc(state.last)}，已检查到 ${esc(state.checked_through)}`).join('。')}。稍后自动重试。</p>` : ''}
-  <details class="observation-details"><summary>行情来源与覆盖</summary>
+  const warnings = `${errors.length ? `<p class="market-note" data-observation-source-errors>${errors.map(([code]) => esc(code)).join('、')} 更新未成功。可展开查看结果。</p>` : ''}
+  ${lagging.length ? `<p class="market-note" data-observation-source-lag>${lagging.map(([code, state]) => `${esc(code)} 源数据更新至 ${esc(state.last)}，已检查到 ${esc(state.checked_through)}`).join('。')}。稍后自动重试。</p>` : ''}`;
+  const body = `
     <p class="market-note">按各市场收盘时间和中间价发布时间自动拉取。${lastCheck ? '最近尝试 ' + esc(lastCheck) + '（香港时间）。' : ''}</p>
     ${errors.length ? `<ul>${errors.map(([code, message]) => `<li>${esc(code)} · ${esc(message)}</li>`).join('')}</ul>` : ''}
     <ul>${data.coverage.map(source => `<li>${source.url
       ? `<a href="${esc(source.url)}" target="_blank" rel="noopener">${esc(source.label)} · ${esc(source.source)} ↗</a> · ${esc(source.start)} 至 ${esc(source.end)} · ${source.count} 条`
-      : esc(source.code) + ' · 截至所选日期暂无已取得的数据'}</li>`).join('')}</ul>
-  </details>`;
+      : esc(source.code) + ' · 截至所选日期暂无已取得的数据'}</li>`).join('')}</ul>`;
+  return {warnings, body};
 }
 
 function observationExtraCharts(section, data, mode, days) {
@@ -171,60 +171,102 @@ function bindMarketObservation(root) {
     mode: '', pinnedIdx: null, hoverIdx: null, activeEventId: null,
   };
 
-  function display(message = '', failed = false) {
-    resize?.disconnect();
-    if (!root.isConnected) return;
-    const ready = data && !failed;
-    root.innerHTML = `<header class="market-heading"><h2>市场观察</h2>
-      ${observationControls(view, refreshing || data?.refresh?.running)}</header>
-      ${message ? `<p class="market-note" role="status">${esc(message)}</p>` : ''}
-      ${failed ? '<button type="button" class="btn secondary" data-observation-retry>重新读取</button>' : ''}
-      ${ready ? '<div data-market-atlas></div>' : ''}
-      ${ready && data.observation === 'haier' ? `<details class="observation-details" data-more-charts ${extraOpen ? 'open' : ''}>
-        <summary>单市场、折价与汇率分解</summary><div data-extra-chart></div></details>` : ''}
-      ${ready ? observationDetails(data) : ''}`;
-    root.querySelector('[data-observation-date]').onchange = event => changeDate(event.target.value);
-    const latest = root.querySelector('[data-observation-latest]');
-    if (latest) latest.onclick = () => changeDate('');
-    root.querySelector('[data-observation-days]').onchange = event => {
-      view.days = Number(event.target.value);
-      load();
-    };
-    root.querySelector('[data-observation-refresh]').onclick = refresh;
-    const retry = root.querySelector('[data-observation-retry]');
-    if (retry) retry.onclick = () => load();
-    if (!ready) return;
+  let running = false;
+  const endpoint = `/api/companies/${encodeURIComponent(cid)}/market-context`;
+  root.innerHTML = `<header class="market-heading"><h2>市场观察</h2>${observationControls(view)}</header>
+    <p class="market-note" role="status" data-observation-message hidden></p>
+    <button type="button" class="btn secondary" data-observation-retry hidden>重新读取</button>
+    <div data-observation-content></div>`;
+  const content = root.querySelector('[data-observation-content]');
+  const button = root.querySelector('[data-observation-refresh]');
+  const latest = root.querySelector('[data-observation-latest]');
+  const retry = root.querySelector('[data-observation-retry]');
+  const note = root.querySelector('[data-observation-message]');
+  button.onclick = refresh;
+  latest.onclick = () => changeDate('');
+  retry.onclick = () => load(false);
+  root.querySelector('[data-observation-date]').onchange = event => changeDate(event.target.value);
+  root.querySelector('[data-observation-days]').onchange = event => {
+    view.days = Number(event.target.value);
+    load();
+  };
 
-    const links = state.companies.filter(hasMarketObservation).map(company => ({
-      name: company.name, active: company.id === cid,
-      url: '#/company/' + encodeURIComponent(company.id) + '/market' +
-        (view.date ? '?market_as_of=' + encodeURIComponent(view.date) : ''),
-    }));
-    renderAtlas(root.querySelector('[data-market-atlas]'), data.atlas, view, links);
-    const details = root.querySelector('[data-more-charts]');
+  function updateButton() {
+    const busy = refreshing || running;
+    button.disabled = busy || !data;
+    const label = busy ? '正在更新…' : '更新行情';
+    if (button.textContent !== label) button.textContent = label;
+  }
+
+  function message(text = '', failed = false) {
+    note.textContent = text;
+    note.hidden = !text;
+    retry.hidden = !failed;
+  }
+
+  function drawExtra() {
+    const details = content.querySelector('[data-more-charts]');
+    if (!details?.open || !data) return;
+    const mode = data.modes.find(item => item.key === extraMode) || data.modes[0];
+    observationExtraCharts(details.querySelector('[data-extra-chart]'), data, mode, view.days);
+  }
+
+  function mount() {
+    content.innerHTML = `<div data-market-atlas></div>
+      ${data.observation === 'haier' ? `<details class="observation-details" data-more-charts ${extraOpen ? 'open' : ''}>
+        <summary>单市场、折价与汇率分解</summary><div data-extra-chart></div></details>` : ''}
+      <div data-source-warnings></div><details class="observation-details"><summary>行情来源与覆盖</summary>
+        <div data-source-body></div></details>`;
+    const details = content.querySelector('[data-more-charts]');
     if (!details) return;
-    const section = details.querySelector('[data-extra-chart]');
-    const draw = () => {
-      if (root.isConnected && details.open) {
-        const mode = data.modes.find(item => item.key === extraMode) || data.modes[0];
-        observationExtraCharts(section, data, mode, view.days);
-      }
-    };
-    details.ontoggle = () => { extraOpen = details.open; if (extraOpen) draw(); };
-    section.onchange = event => { extraMode = event.target.value; draw(); };
-    if (details.open) draw();
-    let lastWidth;
+    details.ontoggle = () => { extraOpen = details.open; drawExtra(); };
+    details.onchange = event => { extraMode = event.target.value; drawExtra(); };
+    let lastWidth = details.getBoundingClientRect().width;
     resize = new ResizeObserver(entries => {
       const width = entries[0].contentRect.width;
       if (!root.isConnected) resize.disconnect();
-      else if (width !== lastWidth && details.open) draw();
+      else if (width !== lastWidth) drawExtra();
       lastWidth = width;
     });
     resize.observe(details);
   }
 
+  function applySnapshot(next) {
+    const previous = data;
+    data = next;
+    if (!previous) mount();
+    if (!previous || JSON.stringify(previous.atlas) !== JSON.stringify(next.atlas)) {
+      if (previous) {
+        const before = previous.atlas.mainChart, after = next.atlas.mainChart;
+        const pinned = before.timeline[view.pinnedIdx]?.date;
+        const index = after.timeline.findIndex(row => row.date === pinned);
+        view.pinnedIdx = index >= 0 ? index : null;
+        view.hoverIdx = null;
+        const event = before.events.find(item => item.id === view.activeEventId);
+        view.activeEventId = event
+          ? after.events.find(item => item.date === event.date && item.title === event.title)?.id ?? null
+          : null;
+      }
+      const links = state.companies.filter(hasMarketObservation).map(company => ({
+        name: company.name, active: company.id === cid,
+        url: '#/company/' + encodeURIComponent(company.id) + '/market' +
+          (view.date ? '?market_as_of=' + encodeURIComponent(view.date) : ''),
+      }));
+      renderAtlas(content.querySelector('[data-market-atlas]'), next.atlas, view, links);
+    }
+    if (!previous || JSON.stringify([previous.chart, previous.events]) !== JSON.stringify([next.chart, next.events])) {
+      drawExtra();
+    }
+    const sources = observationDetails(next);
+    const oldSources = previous && observationDetails(previous);
+    if (sources.warnings !== oldSources?.warnings) content.querySelector('[data-source-warnings]').innerHTML = sources.warnings;
+    if (sources.body !== oldSources?.body) content.querySelector('[data-source-body]').innerHTML = sources.body;
+  }
+
   function changeDate(date) {
     view.date = date;
+    root.querySelector('[data-observation-date]').value = date;
+    latest.hidden = !date;
     const [path, query] = location.hash.split('?');
     const params = new URLSearchParams(query);
     if (date) params.set('market_as_of', date);
@@ -233,24 +275,49 @@ function bindMarketObservation(root) {
     load();
   }
 
+  function current(request) {
+    return request === requestSeq && root.isConnected;
+  }
+
+  function watch(request) {
+    clearTimeout(poll);
+    poll = setTimeout(async () => {
+      if (!current(request)) return;
+      try {
+        const status = await api('/api/market-observation/refresh-status');
+        if (!current(request)) return;
+        if (status.running) watch(request);
+        else load(false);
+      } catch (error) {
+        if (current(request)) message(error.message, true);
+      }
+    }, 2000);
+  }
+
   async function refresh() {
-    if (refreshing) return;
+    if (button.disabled) return;
     refreshing = true;
+    updateButton();
+    message();
     const request = requestSeq;
-    root.querySelector('[data-observation-refresh]').disabled = true;
     try {
-      await api(`/api/companies/${encodeURIComponent(cid)}/market-context/refresh`, {
+      const status = await api(endpoint + '/refresh', {
         method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({observation: 1}),
       });
+      if (!root.isConnected) return;
+      if (current(request) && status.running) {
+        running = true;
+        watch(request);
+      } else {
+        // The date/window may have changed while the update was starting.
+        await load(false);
+      }
     } catch (error) {
-      if (request === requestSeq) display(error.message, true);
-      return;
+      if (current(request)) message(error.message, true);
     } finally {
       refreshing = false;
-      const button = root.querySelector('[data-observation-refresh]');
-      if (button) button.disabled = Boolean(data?.refresh?.running);
+      updateButton();
     }
-    if (root.isConnected) load(false);
   }
 
   async function load(clear = true) {
@@ -258,23 +325,26 @@ function bindMarketObservation(root) {
     if (!root.isConnected) return;
     const request = ++requestSeq;
     if (clear) {
+      resize?.disconnect();
       data = null;
-      display('正在读取所选日期…');
+      view.pinnedIdx = view.hoverIdx = view.activeEventId = null;
+      content.replaceChildren();
     }
+    message(data ? '' : '正在读取所选日期…');
+    updateButton();
     const query = new URLSearchParams({observation: '1', layout: 'atlas', days: view.days});
     if (view.date) query.set('as_of', view.date);
     try {
-      const [next, module] = await Promise.all([
-        api(`/api/companies/${encodeURIComponent(cid)}/market-context?${query}`), import('/market-atlas.js'),
-      ]);
-      if (request !== requestSeq || !root.isConnected) return;
-      data = next;
+      const [next, module] = await Promise.all([api(endpoint + '?' + query), import('/market-atlas.js')]);
+      if (!current(request)) return;
       renderAtlas = module.renderMarketAtlas;
-      view.pinnedIdx = view.hoverIdx = view.activeEventId = null;
-      display();
-      if (data.refresh?.running) poll = setTimeout(() => load(false), 2000);
+      applySnapshot(next);
+      running = Boolean(next.refresh?.running);
+      updateButton();
+      message();
+      if (running) watch(request);
     } catch (error) {
-      if (request === requestSeq) display(error.message, true);
+      if (current(request)) message(error.message, true);
     }
   }
 

@@ -197,6 +197,8 @@ class Handler(BaseHTTPRequestHandler):
         try:
             u=urlparse(self.path); p=u.path
             if p=='/api/state': return self.send(200,encode(self.server.store.workspace()))
+            if p=='/api/market-observation/refresh-status':
+                return self.send(200,encode(self.server.observation_updater.status()))
             q={k:v[0] for k,v in parse_qs(u.query).items()}
             if p=='/api/industries/property/monitor':
                 return self.send(200,encode(self.server.industry_monitor.sector(q.get('run'))))
@@ -211,10 +213,11 @@ class Handler(BaseHTTPRequestHandler):
             if m:
                 company=self.server.store.company(m[1])
                 if q.get('observation') == '1' and market_observation.observation_key(company):
+                    refresh=self.server.observation_updater.status()
                     result=market_observation.response(self.server.store,company,q.get('as_of'))
                     if q.get('layout') == 'atlas':
                         result['atlas'] = market_atlas.build(result, int(q.get('days', '120')))
-                    result['refresh']=self.server.observation_updater.status()
+                    result['refresh']=refresh
                     return self.send(200,encode(result))
                 extra={'as_of':q['as_of']} if q.get('as_of') else {}
                 return self.send(200,encode(self.server.industry_monitor.overview(company,q.get('run')) or self.server.market_context.response(company,**extra)))

@@ -48,6 +48,8 @@
 .market-controls input[type="date"]{padding:6px 8px;font-size:13px;width:auto}
 
 .observation{--ob-stock:#165a71;--ob-h:#935123;--ob-d:#28735d;--ob-oil:#915333}
+.observation [hidden]{display:none}
+.observation [data-observation-refresh]{min-inline-size:7.5em}
 .observation-section{border-top:1px solid #dbe4da;padding:15px 0 10px;margin-top:12px}
 .observation .market-controls input{border:1px solid #cdd9d0;border-radius:5px;background:#fff;min-height:30px;padding:2px 6px;color:#243c34}
 .observation-legend{display:flex;gap:14px;flex-wrap:wrap;margin:7px 0 3px;font-size:12px}

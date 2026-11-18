@@ -40,6 +40,10 @@ class MarketObservationTests(unittest.TestCase):
                     data = json.load(result)
                 self.assertEqual(data['cards'], [])
                 self.assertFalse(data['refresh']['running'])
+                updater.started.set()
+                with client.open(base + '/api/market-observation/refresh-status') as result:
+                    self.assertEqual(json.load(result), {'running': True})
+                updater.started.clear()
                 with patch.object(updater, 'start') as start:
                     request = Request(endpoint + '/refresh', data=b'{"observation":1}',
                                       headers={'Content-Type': 'application/json'})
