@@ -7,7 +7,7 @@ function dunit(d,k){return d.metrics[k].unit==='人民币百万元'?(dossierUI.u
 function drows(d){return d.series.filter(r=>r.kind===dossierUI.period&&(r.kind==='half'||r.year>=Number(dossierUI.start)));}
 function dref(c,r){if(c.fixedOverviewSource&&r.document)return modelBody(`[[doc:${r.document}@${r.page}|${r.label||'查看原表'}]]`,c,c.fixedOverviewSource);const doc=c.dossier.documents[r.document];return doc?`<button class="evidence-link" data-action="d-source" data-doc="${esc(r.document)}" data-page="${r.page||0}">${icon('file',13)}${esc(r.label&&r.label!=='原始依据'?r.label:doc.title)}${r.page?` · PDF ${r.page}页`:''}</button>`:'';}
 function drefs(c,refs){return `<div class="evidence-links">${refs.map(r=>dref(c,r)).join('')}</div>`;}
-function dnav(c){const nav=[['overview','企业全景'],['book','八章总论'],['topics','专题研究'],['research','研究与估值'],['history','长期财务'],['life','生命周期'],['finance','现金与估值'],['sources','资料档案'],['track','跟踪与复盘']];return `<nav class="tabs dossier-tabs" aria-label="企业档案章节">${nav.map(([id,name])=>`<a class="${route.tab===id?'selected':''}" href="#/company/${c.id}/${id}">${name}</a>`).join('')}</nav>`;}
+function dnav(c){const nav=[['overview','企业全景'],['book','八章总论'],['topics','专题研究'],['research','研究与估值'],['history','长期财务'],['life','生命周期'],['finance','现金与估值'],['sources','资料档案'],['track','跟踪与复盘']];return `<nav class="tabs dossier-tabs" aria-label="企业档案章节">${withMarketObservationTab(c,nav).map(([id,name])=>`<a class="${route.tab===id?'selected':''}" href="#/company/${c.id}/${id}">${name}</a>`).join('')}</nav>`;}
 function dCover(c){
  const d=c.dossier,years=d.series.filter(x=>x.kind==='annual').map(x=>x.year).sort((a,b)=>a-b);
  const span=years.length?`${years[0]} — ${years.at(-1)}`:'年度财务待补';

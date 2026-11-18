@@ -2,6 +2,14 @@
 
 const marketObservationCodes = new Set(['600690.SH', '06690.HK', '690D.DE', '601857.SH', '00857.HK']);
 
+function hasMarketObservation(company) {
+  return marketObservationCodes.has(String(company.code).trim().toUpperCase());
+}
+
+function withMarketObservationTab(company, tabs) {
+  return hasMarketObservation(company) ? [tabs[0], ['market', '市场观察'], ...tabs.slice(1)] : tabs;
+}
+
 function marketObservationShell(company) {
   return `<section class="panel market-context observation" data-market-company="${esc(company.id)}" data-observation aria-label="市场观察">
     <h2>市场观察</h2><p class="market-note" role="status">正在读取行情与披露…</p>
@@ -16,7 +24,7 @@ function isPetroChinaMarketPilot(c) {
 
 
 function marketContextShell(c) {
-  if (marketObservationCodes.has(String(c.code).trim().toUpperCase())) return marketObservationShell(c);
+  if (hasMarketObservation(c)) return marketObservationShell(c);
   if (isPetroChinaMarketPilot(c)) {
     return `<section class="panel market-context" data-market-company="${esc(c.id)}" aria-label="市场观察">
       <div class="market-heading"><div><h2>市场观察</h2><p class="muted">正在读取中国石油行情与披露快照…</p></div></div>

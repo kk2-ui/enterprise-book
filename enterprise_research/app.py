@@ -17,6 +17,7 @@ import model_books
 import editorial_tasks
 from market_context import MarketService
 import market_observation
+import market_atlas
 from market_observation_update import ObservationUpdater
 from industry_monitor.service import MonitorService
 from source_data import access as source_access
@@ -211,6 +212,8 @@ class Handler(BaseHTTPRequestHandler):
                 company=self.server.store.company(m[1])
                 if q.get('observation') == '1' and market_observation.observation_key(company):
                     result=market_observation.response(self.server.store,company,q.get('as_of'))
+                    if q.get('layout') == 'atlas':
+                        result['atlas'] = market_atlas.build(result, int(q.get('days', '120')))
                     result['refresh']=self.server.observation_updater.status()
                     return self.send(200,encode(result))
                 extra={'as_of':q['as_of']} if q.get('as_of') else {}
@@ -286,7 +289,7 @@ class Handler(BaseHTTPRequestHandler):
                 path=Path(s['path']); ctype=mimetypes.guess_type(str(path))[0] or 'application/octet-stream'
                 disp='attachment' if 'download' in parse_qs(u.query) or path.suffix.lower() not in ('.pdf','.png','.jpg','.jpeg','.webp') else 'inline'
                 return self.send(200,path.read_bytes(),ctype,{'Content-Disposition':disp+"; filename*=UTF-8''"+quote(s.get('original_filename') or path.name)})
-            if p in ('/','/index.html','/app.js','/workspace.js','/dossier.js','/dossier.css','/style.css','/business.js','/business.css','/china-map.js','/book.js','/book.css','/topics.js','/topics.css','/framework.js','/layered-research.js','/research.js','/three-step.js','/source-data.js','/model-books.js','/model-books.css','/research.css','/market-context.js','/market-observation.js','/market-context.css','/industry-monitor.js','/industry-monitor.css'):
+            if p in ('/','/index.html','/app.js','/workspace.js','/dossier.js','/dossier.css','/style.css','/business.js','/business.css','/china-map.js','/book.js','/book.css','/topics.js','/topics.css','/framework.js','/layered-research.js','/research.js','/three-step.js','/source-data.js','/model-books.js','/model-books.css','/research.css','/market-context.js','/market-observation.js','/market-atlas.js','/market-atlas.css','/market-context.css','/industry-monitor.js','/industry-monitor.css'):
                 f=BASE/'static'/('index.html' if p=='/' else p[1:]); return self.send(200,f.read_bytes(),mimetypes.guess_type(str(f))[0]+'; charset=utf-8')
             self.send(404,encode({'error':'页面不存在'}))
         except ValueError as e: self.send(404,encode({'error':str(e)}))

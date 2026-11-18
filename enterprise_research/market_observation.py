@@ -89,7 +89,7 @@ SPECS = {
         'edition': {
             'title': '海尔智家 · Codex 企业书 · haier-book-20261110-v2',
             'source_version': 'haier-sources-20261110-v4', 'date': '2026-11-10',
-            'cash': '约 102 亿元/年', 'summary': '主例为需求低位稳定下的普通股正常经济现金。10% 条件部分 EPV 约 10.81 元/股，仍有金融覆盖、GE 和未计损失的边界。',
+            'cash_yi': 102, 'summary': '主例为需求低位稳定下的普通股正常经济现金。10% 条件部分 EPV 约 10.81 元/股，仍有金融覆盖、GE 和未计损失的边界。',
         },
     },
     'petrochina': {
@@ -111,7 +111,7 @@ SPECS = {
         ),
         'edition': {
             'source_version': 'petrochina-sources-20261115-v1', 'date': '2026-11-13',
-            'cash': '约 1,150 亿元/年', 'summary': '按 2026-11-13 收盘、10% 股权回报率与个人税前口径，H 股隐含年度普通股现金要求约 1,618 亿元，A 股约 2,268 亿元。',
+            'cash_yi': 1150, 'summary': '按 2026-11-13 收盘、10% 股权回报率与个人税前口径，H 股隐含年度普通股现金要求约 1,618 亿元，A 股约 2,268 亿元。',
         },
     },
 }
@@ -149,7 +149,7 @@ def official_snapshot(store, company, key, cutoff):
     if cutoff < max(spec['date'], published):
         return {'reason': '所选日期早于正式估值公开，保留当时的信息边界。'}
     result = {
-        'date': spec['date'], 'published_on': published, 'cash': spec['cash'], 'summary': spec['summary'],
+        'date': spec['date'], 'published_on': published, 'cash_yi': spec['cash_yi'], 'cash': f"约 {spec['cash_yi']:,} 亿元/年", 'summary': spec['summary'],
         'url': f"#/company/{company['id']}/editions?edition={summary['id']}&view=valuation",
     }
     if formal.get('figure_url'):
