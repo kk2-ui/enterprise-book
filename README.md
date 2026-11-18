@@ -15,6 +15,8 @@ python3 enterprise_research/app.py
 
 程序仅监听本机。行业监测的自动联网采集默认关闭，可按需用 `--schedule-monitor` 开启。工作区内的市场刷新或资料采集可按需手动运行。
 
+中国石油与已保存海尔档案的工作库支持共用三区块市场观察。服务运行期间按交易时区自动更新日线和 CFETS 中间价，页面提供「更新行情」和历史截止控件。来源、首次拉取、网络恢复及实盘核对见 [市场观察更新说明](enterprise_research/MARKET_OBSERVATION.md)。
+
 ## 代码和案例入口
 
 - [后端和 HTTP API](enterprise_research/app.py)；[网页路由和工作台](enterprise_research/static/app.js)；[整本前端](enterprise_research/static/model-books.js)。

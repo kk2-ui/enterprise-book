@@ -16,6 +16,8 @@ import research_workspace
 import model_books
 import editorial_tasks
 from market_context import MarketService
+import market_observation
+from market_observation_update import ObservationUpdater
 from industry_monitor.service import MonitorService
 from source_data import access as source_access
 from source_data import SourceRepository
@@ -207,6 +209,10 @@ class Handler(BaseHTTPRequestHandler):
             m=re.fullmatch(r'/api/companies/([\w-]+)/market-context',p)
             if m:
                 company=self.server.store.company(m[1])
+                if q.get('observation') == '1' and market_observation.observation_key(company):
+                    result=market_observation.response(self.server.store,company,q.get('as_of'))
+                    result['refresh']=self.server.observation_updater.status()
+                    return self.send(200,encode(result))
                 extra={'as_of':q['as_of']} if q.get('as_of') else {}
                 return self.send(200,encode(self.server.industry_monitor.overview(company,q.get('run')) or self.server.market_context.response(company,**extra)))
             m=re.fullmatch(r'/api/companies/([\w-]+)/data/versions(?:/([\w-]+))?(?:/(facts|search|documents)(?:/([\w-]+))?(?:/(original))?)?',p)
@@ -280,7 +286,7 @@ class Handler(BaseHTTPRequestHandler):
                 path=Path(s['path']); ctype=mimetypes.guess_type(str(path))[0] or 'application/octet-stream'
                 disp='attachment' if 'download' in parse_qs(u.query) or path.suffix.lower() not in ('.pdf','.png','.jpg','.jpeg','.webp') else 'inline'
                 return self.send(200,path.read_bytes(),ctype,{'Content-Disposition':disp+"; filename*=UTF-8''"+quote(s.get('original_filename') or path.name)})
-            if p in ('/','/index.html','/app.js','/workspace.js','/dossier.js','/dossier.css','/style.css','/business.js','/business.css','/china-map.js','/book.js','/book.css','/topics.js','/topics.css','/framework.js','/layered-research.js','/research.js','/three-step.js','/source-data.js','/model-books.js','/model-books.css','/research.css','/market-context.js','/market-context.css','/industry-monitor.js','/industry-monitor.css'):
+            if p in ('/','/index.html','/app.js','/workspace.js','/dossier.js','/dossier.css','/style.css','/business.js','/business.css','/china-map.js','/book.js','/book.css','/topics.js','/topics.css','/framework.js','/layered-research.js','/research.js','/three-step.js','/source-data.js','/model-books.js','/model-books.css','/research.css','/market-context.js','/market-observation.js','/market-context.css','/industry-monitor.js','/industry-monitor.css'):
                 f=BASE/'static'/('index.html' if p=='/' else p[1:]); return self.send(200,f.read_bytes(),mimetypes.guess_type(str(f))[0]+'; charset=utf-8')
             self.send(404,encode({'error':'页面不存在'}))
         except ValueError as e: self.send(404,encode({'error':str(e)}))
@@ -306,6 +312,9 @@ class Handler(BaseHTTPRequestHandler):
             m=re.fullmatch(r'/api/companies/([\w-]+)/market-context/refresh',p)
             if m:
                 company=self.server.store.company(m[1])
+                if data.get('observation') == 1 and market_observation.observation_key(company):
+                    self.server.observation_updater.start()
+                    return self.send(202,encode(self.server.observation_updater.status()))
                 if self.server.industry_monitor.overview(company):
                     job=self.server.industry_monitor.refresh()
                     return self.send(202,encode(dict(self.server.industry_monitor.overview(company),refresh_job_id=job['id'],refreshing=True)))
@@ -371,12 +380,14 @@ def serve(port=8778, directory=BASE/'data', schedule_monitor=False):
     server=ThreadingHTTPServer(('127.0.0.1',port),Handler); server.store=store
     server.market_context=MarketService(store.directory)
     server.industry_monitor=MonitorService(store.directory, start_scheduler=schedule_monitor)
+    server.observation_updater=ObservationUpdater(store.directory,schedule=True)
     print(f'企业书 http://127.0.0.1:{server.server_port}  data={store.directory}',flush=True)
     try: server.serve_forever()
     except KeyboardInterrupt: pass
     finally:
         server.market_context.close()
         server.industry_monitor.close()
+        server.observation_updater.close()
         server.server_close()
 
 if __name__=='__main__':

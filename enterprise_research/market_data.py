@@ -3,6 +3,9 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 import json
 import math
+import sys
+from ipaddress import IPv4Address
+from subprocess import SubprocessError, run
 from pathlib import Path
 import re
 import tempfile
@@ -14,6 +17,9 @@ from zoneinfo import ZoneInfo
 
 HONG_KONG = ZoneInfo('Asia/Hong_Kong')
 LONDON = ZoneInfo('Europe/London')
+B00Y_HOST = 'push2his.eastmoney.com'
+B00Y_SITE = 'https://quote.eastmoney.com/globalfuture/B00Y.html'
+B00Y_DNS = ('https://dns.alidns.com/resolve', 'https://dns.google/resolve')
 HISTORY_LIMIT = 1500
 BENCHMARKS = {
     'HK': [('HSCI', '恒生综合指数', '124.HSCI'),
@@ -88,6 +94,52 @@ def get_json(url):
     request = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
     with urlopen(request, timeout=18) as response:
         return json.load(response)
+
+
+def b00y_over_physical_route(url):
+    table = run(['/usr/sbin/netstat', '-rn', '-f', 'inet'], capture_output=True,
+                text=True, check=True, timeout=4).stdout
+    interface = next((route[3] for route in map(str.split, table.splitlines())
+                      if len(route) >= 4 and route[0] == 'default' and route[3].startswith('en')), None)
+    if not interface:
+        raise OSError('未找到 macOS 以太网或 Wi-Fi 的默认路由')
+    # A proxy TUN can replace system DNS with a synthetic address and catch raw-IP requests.
+    # Resolve the same official host over HTTPS, then bind only this transfer to the physical interface.
+    error = '公开 DNS 未返回东财源站地址'
+    tried = set()
+    for resolver in B00Y_DNS:
+        try:
+            answer = get_json(resolver + '?' + urlencode({'name': B00Y_HOST, 'type': 'A'}))
+            addresses = [IPv4Address(row['data']) for row in answer.get('Answer', [])
+                         if row['type'] == 1]
+        except (OSError, ValueError, KeyError) as cause:
+            error = str(cause)
+            continue
+        for address in addresses:
+            if not address.is_global or address in tried:
+                continue
+            tried.add(address)
+            response = run(['/usr/bin/curl', '--interface', f'if!{interface}', '--noproxy', '*',
+                            '--resolve', f'{B00Y_HOST}:443:{address}', '-fsS', '--connect-timeout', '5',
+                            '--max-time', '8', '-A', 'Mozilla/5.0', '-e', B00Y_SITE, url],
+                           capture_output=True, text=True, timeout=10)
+            if response.returncode == 0:
+                return json.loads(response.stdout)
+            error = response.stderr.strip()
+    raise OSError(error)
+
+
+def get_b00y_json(url):
+    """Return B00Y JSON and its successful route, including macOS TUN recovery."""
+    try:
+        return get_json(url), 'system'
+    except OSError as original:
+        if sys.platform != 'darwin':
+            raise
+        try:
+            return b00y_over_physical_route(url), 'macos-physical-interface'
+        except (OSError, ValueError, SubprocessError) as alternate:
+            raise OSError(f'东财常规路由失败（{original}），物理网卡也未取得日线（{alternate}）') from alternate
 
 
 def checked_rows(rows):
@@ -202,7 +254,7 @@ class QuoteCache:
                                        'fields1': 'f1,f2,f3,f4,f5,f6',
                                        'fields2': 'f51,f52,f53,f54,f55,f56,f57'})
                     url = 'https://push2his.eastmoney.com/api/qt/stock/kline/get?' + query
-                    payload = get_json(url)
+                    payload = get_b00y_json(url)[0] if secid == '112.B00Y' else get_json(url)
                     result = (parse_a_stock(payload, code, secid, url, cutoff) if a_stock else
                               parse_index(payload, code, instrument['name'], secid, url, cutoff,
                                           source=instrument.get('source', '东方财富指数日线'),

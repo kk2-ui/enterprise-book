@@ -46,3 +46,26 @@
 .pilot-threshold-figure img{display:block;max-width:100%;height:auto;margin:0 auto}
 .pilot-threshold-figure figcaption{font-size:12px;color:#647366;margin-top:8px;text-align:center}
 .market-controls input[type="date"]{padding:6px 8px;font-size:13px;width:auto}
+
+.observation{--ob-stock:#165a71;--ob-h:#935123;--ob-d:#28735d;--ob-oil:#915333}
+.observation-section{border-top:1px solid #dbe4da;padding:15px 0 10px;margin-top:12px}
+.observation .market-controls input{border:1px solid #cdd9d0;border-radius:5px;background:#fff;min-height:30px;padding:2px 6px;color:#243c34}
+.observation-legend{display:flex;gap:14px;flex-wrap:wrap;margin:7px 0 3px;font-size:12px}
+.observation-legend i{display:inline-block;width:12px;height:3px;margin-right:6px;background:var(--ob-color);vertical-align:middle}
+.ob-color-stock{--ob-color:var(--ob-stock)}.ob-color-h{--ob-color:var(--ob-h)}.ob-color-d{--ob-color:var(--ob-d)}.ob-color-oil{--ob-color:var(--ob-oil)}
+.observation-plot svg{display:block;width:100%;height:auto}.observation-plot text{font-size:10px;fill:#51635c}
+.observation-plot path{stroke:var(--ob-color);stroke-width:1.8;fill:none}.observation-plot g circle{fill:var(--ob-color)}
+.observation-guide{stroke:#74867c;stroke-dasharray:3 4;pointer-events:none}
+.observation-band{fill:#dae9df;opacity:.55}.observation-offer{stroke:#28735d;stroke-dasharray:4 3;stroke-width:1.4}
+.observation-event{stroke:#9c783b;stroke-dasharray:2 4;opacity:.7}.observation-pin{fill:#9c783b}
+.observation-bar{fill:#6f9f8d}.observation-readout{min-height:20px;font-variant-numeric:tabular-nums}
+.observation-details{font-size:13px;margin:9px 0}.observation-details summary{cursor:pointer;color:#36574b}
+.observation-details ul{margin:5px 0;padding-left:20px}.observation-details li+li{margin-top:3px}
+.observation-details time,.observation-details li span{margin-right:.4em;margin-left:.4em}
+.observation-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:9px 0}
+.observation-card{background:#f4f7f3;border:1px solid #dfe7dc;border-radius:6px;padding:10px 12px}
+.observation-card h4{font-size:15px;margin:0 0 5px}.observation-card dl{margin:7px 0}
+.observation-card dl div{display:flex;justify-content:space-between;gap:10px;padding:3px 0;font-size:13px}
+.observation-card dd{font-weight:650;text-align:right;margin:0}.observation-card p{font-size:12px}
+.observation-sources{display:flex;gap:10px;flex-wrap:wrap;font-size:12px}
+.observation-figure{margin:10px 0}.observation-figure img{width:min(100%,850px);height:auto;display:block}

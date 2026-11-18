@@ -34,7 +34,7 @@ function modelOverview(base,e,context){
  context.cover=frozenHTML(dCover(c),c,e);
  const content=dOverview(c,{
   analysis:modelPart(c,e,'overview'),current,
-  market:base.default_book_edition_id===e.id&&(p.display||(typeof isPetroChinaMarketPilot==='function'&&isPetroChinaMarketPilot(base)))&&!data.historical?marketContextShell(c):'',
+  market:base.default_book_edition_id===e.id&&(p.display||marketObservationCodes.has(String(c.code).trim().toUpperCase()))&&!data.historical?marketContextShell(c):'',
   gaps:`<section class="research-gaps"><div><span class="eyebrow">OPEN QUESTIONS</span><h2>还没有被材料解决的问题</h2></div><div class="document">${modelBody(e.parts.gaps.body,c,e.source_version)}</div></section>`
  });
  return frozenHTML(content,c,e);
@@ -51,7 +51,7 @@ async function editionsView(base,context={}){const p=editionParams(),id=p.get('e
   const c=structuredClone(e.snapshot);context.company=c;
   if(view==='overview'){
    context.cover=frozenHTML(dCover(c),c,e);
-   content=dOverview(c,{market:frameworkPanel(c,true)});
+   content=dOverview(c,{market:(base.default_book_edition_id===e.id&&marketObservationCodes.has(String(c.code).trim().toUpperCase())?marketObservationShell(c):'')+frameworkPanel(c,true)});
   }
   else if(view==='book')content=dDeepBook(c);
   else if(view==='topics'){const selected=e.topics.find(x=>x.id===p.get('topic'));content=selected?`<a href="${editionURL(c.id,e.id,'topics')}">← 本版全部专题</a><article class="model-book-prose document"><h2>${esc(selected.title)}</h2>${topicBody(selected.body,c)}</article>`:`<div class="model-part-grid">${e.topics.map(t=>`<a href="${editionURL(c.id,e.id,'topics',{topic:t.id})}"><h3>${esc(t.title)}</h3><p>${esc(t.summary||'')} · r${t.revision}</p></a>`).join('')}</div>`;}

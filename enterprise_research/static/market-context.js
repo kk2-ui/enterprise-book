@@ -7,6 +7,7 @@ function isPetroChinaMarketPilot(c) {
 
 
 function marketContextShell(c) {
+  if (marketObservationCodes.has(String(c.code).trim().toUpperCase())) return marketObservationShell(c);
   if (isPetroChinaMarketPilot(c)) {
     return `<section class="panel market-context" data-market-company="${esc(c.id)}" aria-label="市场观察">
       <div class="market-heading"><div><h2>市场观察</h2><p class="muted">正在读取中国石油行情与披露快照…</p></div></div>
@@ -555,6 +556,7 @@ function drawPetroChinaTrendChart(root, data, viewState) {
 function bindMarketContext() {
   const root=document.querySelector('[data-market-company]');
   if (!root) return;
+  if (root.hasAttribute('data-observation')) return bindMarketObservation(root);
   const cid=root.dataset.marketCompany;
   const hashParams=new URLSearchParams(location.hash.split('?')[1]||'');
   let data, days='20', pilotDays='120', pilotListing='', pilotAsOf=hashParams.get('market_as_of')||'';
