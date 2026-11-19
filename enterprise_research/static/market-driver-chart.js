@@ -918,116 +918,244 @@ function formatChangeSummary(activeItem, unit = '', cadence = 0) {
   return parts.length ? parts.join(' ｜ ') : '首期披露记录（无更早对比期）';
 }
 
+function expInjectStyles() {
+  if (typeof document === 'undefined' || document.getElementById('er-mo-exp-style')) return;
+  const st = document.createElement('style');
+  st.id = 'er-mo-exp-style';
+  st.textContent = `
+    .er-mo-wb .er-mo-exp{grid-column:1/-1;display:flex;flex-direction:column;gap:8px;font-size:12.5px;color:var(--wb-ink)}
+    .er-mo-exp-lead{display:flex;flex-direction:column;gap:5px;line-height:1.58}
+    .er-mo-exp-lead p{margin:0}
+    .er-mo-exp-k{display:inline-block;font-size:11px;font-weight:700;padding:1px 6px;margin-right:6px;border-radius:3px;background:#e8eef6;color:#1e3a5f}
+    .er-mo-wb[data-theme="poly"] .er-mo-exp-k{background:#e6f2ee;color:#134e3e}
+    .er-mo-exp-tbl{width:100%;border-collapse:collapse;font-size:11.5px;background:var(--wb-subtle);border:1px solid #e4e8ef}
+    .er-mo-exp-tbl th,.er-mo-exp-tbl td{padding:4px 8px;border-bottom:1px solid #e4e8ef;text-align:left}
+    .er-mo-exp-tbl th{font-weight:600;color:var(--wb-ink-sec);background:#eef1f6}
+    .er-mo-exp-tbl tr:last-child td{border-bottom:none}
+    .er-mo-exp-foot{font-size:11.5px;color:var(--wb-ink-sec);background:var(--wb-subtle);border:1px solid #e4e8ef;border-radius:3px;padding:5px 8px;line-height:1.5}
+  `;
+  document.head.appendChild(st);
+}
+
+function expMatchDxy(dxySeries, targetDay) {
+  const idx = binaryFloorIndex(dxySeries, 'date', targetDay);
+  if (idx < 0) return { ok: false };
+  const pt = dxySeries[idx];
+  const lag = diffCalendarDays(pt.date, targetDay);
+  return lag >= 0 && lag <= 5 ? { ok: true, date: pt.date, close: pt.close, lag } : { ok: false };
+}
+
+function expEvalSpan(name, p0, p1, dxySeries) {
+  const stockPct = ((p1.stock / p0.stock) - 1) * 100;
+  const hasBench = p0.bench > 0 && p1.bench > 0;
+  const benchPct = hasBench ? ((p1.bench / p0.bench) - 1) * 100 : null;
+  const diffPp = hasBench ? stockPct - benchPct : null;
+  const d0 = expMatchDxy(dxySeries, p0.date);
+  const d1 = expMatchDxy(dxySeries, p1.date);
+  const dxy = (d0.ok && d1.ok && d0.date < d1.date)
+    ? { ok: true, pct: ((d1.close / d0.close) - 1) * 100, d0: d0.date, d1: d1.date, shifted: Boolean(d0.lag || d1.lag) }
+    : { ok: false, note: (!d0.ok || !d1.ok) ? '端点缺近期可用值，不作比较' : `港可用日均为 ${d0.date}，无新收盘可比` };
+  return { name, start: p0.date, end: p1.date, stockPct, benchPct, diffPp, dxy };
+}
+
+function expDir(v) {
+  if (v === null || v === undefined || !Number.isFinite(v) || fmtNum(Math.abs(v), 2) === '0.00') return 0;
+  return v > 0 ? 1 : -1;
+}
+
+function expFmtPct(v, suffix = '%') {
+  if (v === null || v === undefined || !Number.isFinite(v)) return '—';
+  return fmtNum(Math.abs(v), 2) === '0.00' ? `0.00${suffix}` : fmtSigned(v, 2, suffix);
+}
+
+function expSpanRelation(aName, aPct, bName, bPct) {
+  const da = expDir(aPct);
+  const db = expDir(bPct);
+  if (da > 0 && db > 0) return '区间内同涨';
+  if (da < 0 && db < 0) return '区间内同跌';
+  if (da * db < 0) return '区间内反向';
+  if (da === 0 && db === 0) return '区间内均持平';
+  return da === 0
+    ? `区间内${aName}持平、${bName}${db > 0 ? '上涨' : '下跌'}`
+    : `区间内${aName}${da > 0 ? '上涨' : '下跌'}、${bName}持平`;
+}
+
+function expLegCompare(compName, sPct, benchName, bPct) {
+  const ds = expDir(sPct);
+  const db = expDir(bPct);
+  if (ds > 0 && db > 0) {
+    if (fmtNum(Math.abs(sPct - bPct), 2) === '0.00') return '两者涨幅持平';
+    return sPct > bPct ? `${compName}涨幅较大` : `${benchName}涨幅较大`;
+  }
+  if (ds < 0 && db < 0) {
+    if (fmtNum(Math.abs(sPct - bPct), 2) === '0.00') return '两者跌幅持平';
+    return sPct < bPct ? `${compName}跌幅较大` : `${benchName}跌幅较大`;
+  }
+  if (ds > 0 && db < 0) return `${compName}上涨、${benchName}下跌`;
+  if (ds < 0 && db > 0) return `${compName}下跌、${benchName}上涨`;
+  if (ds === 0 && db === 0) return '两者均持平';
+  return ds === 0
+    ? `${compName}持平、${benchName}${db > 0 ? '上涨' : '下跌'}`
+    : `${compName}${ds > 0 ? '上涨' : '下跌'}、${benchName}持平`;
+}
+
+function expDxyLegSummary(dxyLegs) {
+  const n = dxyLegs.length;
+  const head = n === 2
+    ? `展示的${escText(dxyLegs[0].name)}与${escText(dxyLegs[1].name)}这两段`
+    : `展示的${dxyLegs.map((l) => escText(l.name)).join('、')}三段`;
+  const rels = dxyLegs.map((l) => {
+    const ds = expDir(l.stockPct);
+    const dd = expDir(l.dxy.pct);
+    if (ds === 0 || dd === 0) return 'flat';
+    return ds === dd ? 'same' : 'opp';
+  });
+  const sameCnt = rels.filter((r) => r === 'same').length;
+  const oppCnt = rels.filter((r) => r === 'opp').length;
+  const flatCnt = rels.filter((r) => r === 'flat').length;
+  if (flatCnt === 0) {
+    if (sameCnt === n) return `${head}均同向`;
+    if (oppCnt === n) return `${head}均反向`;
+    const detail = dxyLegs.map((l, i) => `${escText(l.name)}${rels[i] === 'same' ? '同向' : '反向'}`).join('、');
+    if (n === 2) return `${head}一同向一反向（${detail}）`;
+    const cn = ['零', '一', '两', '三'];
+    return `${head}${cn[sameCnt]}同向${cn[oppCnt]}反向（${detail}）`;
+  }
+  const detail = dxyLegs.map((l, i) => {
+    if (rels[i] === 'same') return `${escText(l.name)}同向`;
+    if (rels[i] === 'opp') return `${escText(l.name)}反向`;
+    const ds = expDir(l.stockPct);
+    const dd = expDir(l.dxy.pct);
+    if (ds === 0 && dd === 0) return `${escText(l.name)}均持平`;
+    return ds === 0 ? `${escText(l.name)}股价持平` : `${escText(l.name)} DXY 持平`;
+  }).join('、');
+  return `${head}表现为${detail}（0.00% 按持平计）`;
+}
+
+function expTimingLabel(pubDay, winStart, winEnd, legs) {
+  if (pubDay < winStart) return '早于区间首日，属期初已知';
+  if (pubDay > winEnd) return `晚于区间最后收盘（${winEnd}）`;
+  if (pubDay === winStart) return '与区间首日同日公开';
+  if (pubDay === winEnd) return '与区间末日同日公开';
+  const hit = legs.find((l) => pubDay >= l.start && pubDay <= l.end);
+  return hit ? `处于${hit.name}期间` : '处于区间起止日之间';
+}
+
 function buildClueCardsHtml(model, cursorDay) {
-  const { profile, macroSeries, macroMeta, microSeriesList, normComp, benchMeta, dxySeries } = model;
-  const activeMacro = activeDisclosedAt(macroSeries, cursorDay)?.point || null;
-  const activeDxyIdx = binaryFloorIndex(dxySeries, 'date', cursorDay);
-  const activeDxy = activeDxyIdx >= 0 ? dxySeries[activeDxyIdx] : null;
+  expInjectStyles();
+  const { profile, benchMeta, macroMeta, macroSeries, microSeriesList, dxySeries } = model;
+  const compName = escText(profile.companyName);
+  const benchName = escText(benchMeta.label);
+  const stockPts = model.stockWin.filter((p) => p.date <= cursorDay).map((p) => ({ date: p.date, stock: p.close, bench: model.benchMap.get(p.date) || null }));
+  const common = stockPts.filter((p) => p.bench !== null);
 
-  let activeSpread = null;
-  if (normComp.hasCommon) {
-    for (let i = model.calendar.length - 1; i >= 0; i--) {
-      const d = model.calendar[i];
-      if (d > cursorDay) continue;
-      if (normComp.spreadMap.has(d)) {
-        activeSpread = normComp.spreadMap.get(d);
-        break;
-      }
-    }
+  const microByDate = new Map();
+  microSeriesList.forEach((s) => {
+    s.points.filter((pt) => pt.published <= cursorDay).forEach((pt) => {
+      const key = `${pt.published}|${pt.period}`;
+      if (!microByDate.has(key)) microByDate.set(key, { published: pt.published, period: pt.period, url: pt.url, items: [] });
+      microByDate.get(key).items.push(`${s.label} ${fmtNum(pt.value, 2)}${s.unit || '亿元'}`);
+    });
+  });
+  const microEvents = Array.from(microByDate.values()).sort((a, b) => (a.published < b.published ? -1 : 1));
+  const macroEvents = macroSeries.filter((pt) => pt.published <= cursorDay);
+
+  if (stockPts.length < 2) {
+    const lastM = microEvents[microEvents.length - 1];
+    const baseFiling = lastM ? `截至该日最近已公开财报为报告期 ${escText(lastM.period)}（${escText(lastM.published)} 公开：${escText(lastM.items.join('、'))}）。` : '截至该日尚无已公开财报记录。';
+    return `<div class="er-mo-exp" data-driver-explanation><div class="er-mo-exp-lead"><p><span class="er-mo-exp-k">窗口边界</span>当前选中日 ${escText(cursorDay)} 接近窗口起点，区间内有效交易日不足 2 日，向右移动光标即可复算价格区间与市场基准对照。${baseFiling}</p></div></div>`;
   }
 
-  const cards = [];
+  const legs = [];
+  let splitRule = '';
+  if (common.length >= 9) {
+    const n = common.length - 1;
+    const cuts = [0, Math.floor(n / 3), Math.floor((n * 2) / 3), n];
+    ['前段', '中段', '近段'].forEach((nm, i) => legs.push(expEvalSpan(nm, common[cuts[i]], common[cuts[i + 1]], dxySeries)));
+    splitRule = '按共同交易日三等分';
+  } else if (common.length >= 4) {
+    const n = common.length - 1;
+    const mid = Math.floor(n / 2);
+    legs.push(expEvalSpan('前半段', common[0], common[mid], dxySeries), expEvalSpan('后半段', common[mid], common[n], dxySeries));
+    splitRule = '按共同交易日二等分';
+  }
 
-  if (!profile.isPoly) {
-    cards.push({
-      label: '国家统计局家电和音像零售',
-      sub: macroMeta.loaded ? (activeMacro ? `统计期 ${activeMacro.period}` : '统计局月度同比') : '加载中',
-      val: activeMacro ? `${fmtSigned(activeMacro.value, 1, macroMeta.unit || '%')}` : (macroMeta.loaded ? '暂无已披露值' : '同步中…'),
-      meta: activeMacro
-        ? escText(`${activeMacro.published} 发布｜${formatChangeSummary(activeMacro, macroMeta.unit || '%')}。国家统计局社零家电和音像器材类增速不等于格力自身收入增速。`)
-        : escText(macroMeta.statusText),
-    });
-
-    const greeTargets = microSeriesList.length
-      ? microSeriesList
-      : [{ label: '合并存货', unit: '亿元', points: [] }, { label: '合并合同负债', unit: '亿元', points: [] }];
-
-    greeTargets.forEach((s) => {
-      const pt = activeDisclosedAt(s.points, cursorDay)?.point || null;
-      const roleTag = /存货/.test(s.label) ? '公司备货' : (/合同负债|预收/.test(s.label) ? '渠道预收' : '定期报告');
-      const sUnit = s.unit || '亿元';
-      cards.push({
-        label: `${s.label}（${roleTag}）`,
-        sub: pt ? `报告期 ${pt.period} · ${sUnit}` : `单位：${sUnit}`,
-        val: pt ? `${fmtNum(pt.value, 2)} ${sUnit}` : '所选日尚无已披露财报',
-        meta: pt
-          ? escText(`${pt.published} 披露｜${formatChangeSummary(pt, sUnit, model.cadence)}`)
-          : '仅显示 <= 选中日的已公开定期报告余额',
-      });
-    });
+  const refSpan = common.length >= 2 ? expEvalSpan('全窗口', common[0], common[common.length - 1], dxySeries) : expEvalSpan('当前窗口', stockPts[0], stockPts[stockPts.length - 1], dxySeries);
+  let p1 = '';
+  if (!macroMeta.loaded) {
+    p1 = `${escText(refSpan.start)} 至 ${escText(refSpan.end)} 期间，${compName}变动 <strong>${expFmtPct(refSpan.stockPct)}</strong>；${benchName}与 DXY 正在同步。`;
+  } else if (common.length < 2) {
+    p1 = `${escText(refSpan.start)} 至 ${escText(refSpan.end)} 期间，${compName}变动 <strong>${expFmtPct(refSpan.stockPct)}</strong>；与${benchName}共同交易日不足 2 日，暂不计算区间差。`;
   } else {
-    const arSeries = microSeriesList[0] || null;
-    const arPt = arSeries ? activeDisclosedAt(arSeries.points, cursorDay)?.point : null;
-    const arUnit = arSeries?.unit || '亿元';
-
-    cards.push({
-      label: readableMacroMetric('', macroMeta.label, true),
-      sub: macroMeta.loaded ? (activeMacro ? `统计期 ${activeMacro.period}` : '统计局月度同比') : '加载中',
-      val: activeMacro ? `${fmtSigned(activeMacro.value, 1, macroMeta.unit || '%')}` : (macroMeta.loaded ? '暂无已披露值' : '同步中…'),
-      meta: activeMacro
-        ? escText(`${activeMacro.published} 发布｜${formatChangeSummary(activeMacro, macroMeta.unit || '%')}。全国地产统计仅反映外部交付环境，不等于保利在管面积增速。`)
-        : escText(macroMeta.statusText),
-    });
-
-    cards.push({
-      label: `${arSeries?.label || '贸易应收款项及票据净额'}（回款占用）`,
-      sub: arPt ? `报告期 ${arPt.period} · ${arUnit}` : `单位：${arUnit}`,
-      val: arPt ? `${fmtNum(arPt.value, 2)} ${arUnit}` : '所选日尚无已披露财报',
-      meta: arPt
-        ? escText(`${arPt.published} 披露｜${formatChangeSummary(arPt, arUnit, model.cadence)}。随在管项目规模、业主及关联方结算节奏变动，已扣除坏账减值准备，反映期末回款资金占用而非当期实际坏账损失。`)
-        : '半年/年度披露指标不插值，仅显示 <= 选中日的已公开原值。',
-    });
+    const relTone = expSpanRelation(compName, refSpan.stockPct, benchName, refSpan.benchPct);
+    const maxLeg = legs.length ? legs.reduce((best, cur) => (Math.abs(cur.diffPp) > Math.abs(best.diffPp) ? cur : best), legs[0]) : null;
+    const legDetail = maxLeg
+      ? `；区间差最大的一段是<strong>${escText(maxLeg.name)}（${escText(maxLeg.start)} 至 ${escText(maxLeg.end)}）</strong>，${expLegCompare(compName, maxLeg.stockPct, benchName, maxLeg.benchPct)}，相差 <strong>${expFmtPct(maxLeg.diffPp, ' 个百分点')}</strong>`
+      : '';
+    p1 = `共同交易日 ${escText(refSpan.start)} 至 ${escText(refSpan.end)}（${common.length} 日）${relTone}，${compName}与${benchName}涨跌幅差 <strong>${expFmtPct(refSpan.diffPp, ' 个百分点')}</strong>${legDetail}。`;
   }
 
-  cards.push({
-    label: `相对${benchMeta.label}区间价差`,
-    sub: normComp.hasCommon ? `共同首日 ${normComp.baseDate}=100` : '相对基准表现',
-    val: activeSpread
-      ? `${fmtSigned(activeSpread.spread, 2, ' 百分点')}`
-      : (macroMeta.loaded ? (normComp.hasCommon ? '早于共同首日' : '暂无共同交易日') : '基准加载中…'),
-    meta: activeSpread
-      ? escText(`截至共同交易日 ${activeSpread.date}：个股归一 ${fmtNum(activeSpread.stockNorm, 2)} vs ${benchMeta.label}归一 ${fmtNum(activeSpread.benchNorm, 2)}（相对基准区间价差 ${fmtSigned(activeSpread.spread, 2, ' 百分点')}）。`)
-      : escText(normComp.hasCommon ? `选中日早于窗口内首个共同交易日 ${normComp.baseDate}。` : `等待 ${benchMeta.label} 日线返回或当前窗口无共同交易日。`),
-  });
+  let p2 = '';
+  const dxyLegs = legs.filter((l) => l.dxy.ok);
+  if (!macroMeta.loaded) {
+    p2 = 'ICE 美元指数（DXY）日线载入中。';
+  } else if (!refSpan.dxy.ok && dxyLegs.length < 2) {
+    p2 = `同期 DXY ${escText(refSpan.dxy.note)}，暂不作同反向比较。`;
+  } else if (!refSpan.dxy.ok) {
+    p2 = `全段端点缺近期 DXY，按有效分段（港可用日 ${escText(dxyLegs[0].dxy.d0)} 至 ${escText(dxyLegs[dxyLegs.length - 1].dxy.d1)}）观察：${expDxyLegSummary(dxyLegs)}。`;
+  } else {
+    const fullRel = expSpanRelation(compName, refSpan.stockPct, 'DXY', refSpan.dxy.pct);
+    const segPart = dxyLegs.length >= 2 ? `${expDxyLegSummary(dxyLegs)}` : '当前可比分段不足两段，不下多段方向稳定性结论';
+    p2 = `全段 DXY（港可用日 ${escText(refSpan.dxy.d0)} 至 ${escText(refSpan.dxy.d1)}${refSpan.dxy.shifted ? '，缺值取前一可用日' : ''}）变动 <strong>${expFmtPct(refSpan.dxy.pct)}</strong>，${fullRel}；${segPart}。`;
+  }
 
-  const winFirstDxyIdx = dxySeries.findIndex((p) => p.date >= model.startDay && p.date <= cursorDay);
-  const winFirstDxy = winFirstDxyIdx >= 0 ? dxySeries[winFirstDxyIdx] : null;
-  const dxyDelta = (activeDxy && winFirstDxy && activeDxy.date !== winFirstDxy.date)
-    ? activeDxy.close - winFirstDxy.close
-    : null;
+  const winStart = refSpan.start;
+  const winEnd = refSpan.end;
+  const pickMicro = microEvents.length ? microEvents[microEvents.length - 1] : null;
+  const inSpanMicro = microEvents.filter((e) => e.published >= winStart && e.published <= winEnd);
+  const pickMacro = macroEvents.length ? macroEvents[macroEvents.length - 1] : null;
+  const macroTitle = readableMacroMetric(pickMacro?.metric, macroMeta.label, profile.isPoly);
 
-  cards.push({
-    label: 'ICE 美元指数 (DXY) · 美元强弱观察',
-    sub: activeDxy ? `香港可用日 ${activeDxy.date}` : 'ICE 美元指数',
-    val: activeDxy ? `${fmtNum(activeDxy.close, 2)} 点` : (macroMeta.loaded ? '暂无可用收盘' : 'DXY 加载中…'),
-    meta: activeDxy
-      ? escText(`对应纽约 ${activeDxy.session || '前一交易日'} 完整收盘${dxyDelta !== null ? `（较窗口首日 ${fmtSigned(dxyDelta, 2)} 点）` : ''}。仅作美元强弱观察，与公司经营及股价关系需另做验证。`)
-      : '严格隔离盘中未完结柱，按纽约收盘次日香港可用对齐。',
-  });
+  const clauses = [];
+  if (pickMicro) {
+    const mTiming = expTimingLabel(pickMicro.published, winStart, winEnd, legs);
+    const mLink = pickMicro.url ? ` ${renderLink(pickMicro.url, '财报原件')}` : '';
+    const earlierNote = (inSpanMicro.length > 1 && inSpanMicro[0].period !== pickMicro.period)
+      ? `（区间内另有 ${escText(inSpanMicro[0].period)} 期于 ${escText(inSpanMicro[0].published)} 公开）`
+      : '';
+    clauses.push(`已收录最新公司财报为 ${escText(pickMicro.period)} 期（${escText(pickMicro.items.join('、'))}），${escText(pickMicro.published)} 公开（${escText(mTiming)}）${earlierNote}${mLink}`);
+  } else {
+    clauses.push('截至选中日尚无已公开公司财报');
+  }
+  if (pickMacro) {
+    const macTiming = expTimingLabel(pickMacro.published, winStart, winEnd, legs);
+    const macLink = pickMacro.url ? ` ${renderLink(pickMacro.url, '统计原件')}` : '';
+    clauses.push(`行业最新为${escText(macroTitle)} ${escText(pickMacro.period)} 期（${fmtSigned(pickMacro.value, 1, macroMeta.unit || '%')}），${escText(pickMacro.published)} 公开（${escText(macTiming)}）${macLink}`);
+  } else if (macroMeta.loaded) {
+    clauses.push('截至选中日暂无已公开行业统计');
+  }
+  const p3 = `${clauses.join('；')}。公开日仅标示披露时间位置，不作涨跌归因。`;
 
-  return cards
-    .map(
-      (c) => `
-      <div class="er-mo-kpi">
-        <div class="er-mo-kpi-label">
-          <span>${escText(c.label)}</span>
-          <span>${escText(c.sub)}</span>
-        </div>
-        <div class="er-mo-kpi-val">${escText(c.val)}</div>
-        <div class="er-mo-kpi-meta">${c.meta}</div>
-      </div>`
-    )
-    .join('');
+  const rowsToRender = common.length >= 2 ? [refSpan, ...legs] : [refSpan];
+  const rowsHtml = rowsToRender.map((r) => {
+    const dxyCell = r.dxy.ok
+      ? `${expFmtPct(r.dxy.pct)} <span style="color:var(--wb-ink-muted)">(${escText(r.dxy.d0)}→${escText(r.dxy.d1)}${r.dxy.shifted ? '·前值' : ''})</span>`
+      : `<span style="color:var(--wb-ink-muted)">${escText(r.dxy.note)}</span>`;
+    return `<tr><td><strong>${escText(r.name)}</strong> ${escText(r.start)} 至 ${escText(r.end)}</td><td>${expFmtPct(r.stockPct)}</td><td>${r.benchPct !== null ? expFmtPct(r.benchPct) : '—'}</td><td>${r.diffPp !== null ? expFmtPct(r.diffPp, ' 个百分点') : '—'}</td><td>${dxyCell}</td></tr>`;
+  }).join('');
+
+  return `
+    <div class="er-mo-exp" data-driver-explanation>
+      <div class="er-mo-exp-lead">
+        <p><span class="er-mo-exp-k">这段行情怎么走</span>${p1}</p>
+        <p><span class="er-mo-exp-k">市场与美元对照</span>${p2}</p>
+        <p><span class="er-mo-exp-k">基本面何时更新</span>${p3}</p>
+      </div>
+      <table class="er-mo-exp-tbl">
+        <thead><tr><th>同日期配对区间${splitRule ? `（${escText(splitRule)}）` : ''}</th><th>${compName}</th><th>${benchName}</th><th>涨跌幅之差</th><th>DXY（港股可用日）</th></tr></thead>
+        <tbody>${rowsHtml}</tbody>
+      </table>
+    </div>`;
 }
 
 function renderTrack0Svg(model, width = 860, height = 132) {
