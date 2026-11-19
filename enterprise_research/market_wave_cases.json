@@ -1,0 +1,534 @@
+{
+  "000651.SZ": [
+    {
+      "start": "2026-10-21",
+      "end": "2026-11-18",
+      "model": "Gemini",
+      "reviewed_by": "Codex",
+      "notes": [
+        {
+          "date": "2026-10-28",
+          "kind": "公告",
+          "title": "单季业绩承压后披露拟派息与拟增持，时间上与低位反弹吻合",
+          "text": "10月27日三季报显示第三季度单季营收同比降7.97%、归母净利降43.31%（前三季营收降8.10%、归母降19.51%），当日收于窗口低点36.60元；同日披露每10股拟派10元预案，次日京海互联公告拟增持6至12亿元。28日股价反弹1.91%，股东回报预期与低位企稳时间吻合，有个股层面的支撑线索，但各项贡献无法单独识别。",
+          "sources": [
+            {
+              "label": "格力电器2026年第三季度报告（巨潮资讯）",
+              "url": "https://static.cninfo.com.cn/finalpage/2026-10-27/1225627217.PDF"
+            },
+            {
+              "label": "格力电器2026年中期利润分配预案公告（巨潮资讯）",
+              "url": "https://static.cninfo.com.cn/finalpage/2026-10-27/1225627214.PDF"
+            },
+            {
+              "label": "关于股东京海互联增持公司股份计划的公告（巨潮资讯）",
+              "url": "https://static.cninfo.com.cn/finalpage/2026-10-28/1225630983.PDF"
+            },
+            {
+              "label": "格力电器A股历史行情日线（英为财情）",
+              "url": "https://cn.investing.com/equities/gree-electric-a-historical-data"
+            }
+          ]
+        },
+        {
+          "date": "2026-11-03",
+          "kind": "公告",
+          "title": "10月末已执行回购增量落地，与起步阶段反弹时点重合",
+          "text": "10月29日公告累计已回购23.25亿元，11月3日进一步披露截至10月底累计已回购24.04亿元，显示10月末存在约0.79亿元实际已执行回购买盘（区别于拟派息与拟增持计划）；期间股价于10月30日涨2.42%、11月3日涨1.74%。实际回购与起步反弹在时间上吻合，提供个股层面的支撑线索，但无法拆分回购与外部回报预期的各自贡献。",
+          "sources": [
+            {
+              "label": "关于回购公司股份比例达到1%的进展公告（巨潮资讯）",
+              "url": "https://static.cninfo.com.cn/finalpage/2026-10-29/1225636209.PDF"
+            },
+            {
+              "label": "关于股份回购进展情况的公告（巨潮资讯）",
+              "url": "https://static.cninfo.com.cn/finalpage/2026-11-03/1225653096.PDF"
+            },
+            {
+              "label": "格力电器A股历史行情日线（英为财情）",
+              "url": "https://cn.investing.com/equities/gree-electric-a-historical-data"
+            }
+          ]
+        },
+        {
+          "date": "2026-11-13",
+          "kind": "市场",
+          "title": "电子通信大单流出日白电龙头走强，录得窗口最大单日涨幅",
+          "text": "11月13日格力涨2.75%创本窗口最大单日涨幅，美的（+2.91%）、海尔（+2.17%）同涨，而沪深300跌0.68%、科创50跌2.30%、创业板指跌3.32%、通信ETF（515880）跌5.64%。按大单及超大单已成交口径估算，当日电子净流出236.57亿元、通信净流出94.13亿元，家电净流入1.85亿元，其中格力净流入3.22亿元。",
+          "sources": [
+            {
+              "label": "2026年11月13日A股行业主力资金流向统计",
+              "url": "https://www.yyqyx.com/moneyflow/2026-11-13"
+            },
+            {
+              "label": "格力电器近期主力资金流向明细",
+              "url": "https://www.yyqyx.com/s/000651.SZ"
+            },
+            {
+              "label": "格力电器A股历史行情日线（英为财情）",
+              "url": "https://cn.investing.com/equities/gree-electric-a-historical-data"
+            },
+            {
+              "label": "美的集团行情页（腾讯证券）",
+              "url": "https://gu.qq.com/sz000333/gp"
+            },
+            {
+              "label": "海尔智家行情页（腾讯证券）",
+              "url": "https://gu.qq.com/sh600690/gp"
+            }
+          ]
+        },
+        {
+          "date": "2026-11-17",
+          "kind": "行业",
+          "title": "电子通信续流出叠加10月家电零售单月转正，支撑后段情绪",
+          "text": "11月16日同口径估算电子净流出252.11亿元、通信净流出73.94亿元、家电净流入1.29亿元；同日统计局公布10月家电和音像器材零售单月同比+2.5%（1—10月累计-4.2%），改善后段行业预期但解释不了11月13日的提前加速。11月17日半导体设备与家电同强而通信仍弱，显示科技内部亦有分化。",
+          "sources": [
+            {
+              "label": "2026年11月16日A股行业主力资金流向统计",
+              "url": "https://www.yyqyx.com/moneyflow/2026-11-16"
+            },
+            {
+              "label": "国家统计局：2026年1—10月份社会消费品零售总额主要数据",
+              "url": "https://www.stats.gov.cn/sj/zxfb/202611/t20261116_1965839.html"
+            },
+            {
+              "label": "粤开证券2026年11月17日市场复盘报告",
+              "url": "https://www.ykzq.com/products/download-new/rpt/2026/11/17/620eb127d22a40e9ab8bc754bcdadad4.pdf"
+            }
+          ]
+        },
+        {
+          "date": "2026-11-18",
+          "kind": "研究判断",
+          "title": "11月中旬科技与白电的轮动最明显，仍无法追踪同一批资金",
+          "text": "三季报盈利并未反转，期间逆势走强与股东回报预期以及11月13日、16日的风格轮动更吻合。全段格力涨9.75%，美的（+11.67%）、海尔（+14.78%）同强，沪深300跌3.12%。盘面支持市场持仓相对强弱切换的推断，但格力16至18日大单估算分别为-1,319万、-7,034万和-1.26亿元而股价续涨，账户级资金直接迁移未经证实，各因素对涨幅的贡献亦无法量化。",
+          "sources": [
+            {
+              "label": "格力三季报",
+              "url": "https://static.cninfo.com.cn/finalpage/2026-10-27/1225627217.PDF"
+            },
+            {
+              "label": "2026年11月13日A股行业主力资金流向统计",
+              "url": "https://www.yyqyx.com/moneyflow/2026-11-13"
+            },
+            {
+              "label": "2026年11月16日A股行业主力资金流向统计",
+              "url": "https://www.yyqyx.com/moneyflow/2026-11-16"
+            },
+            {
+              "label": "格力电器近期主力资金流向明细",
+              "url": "https://www.yyqyx.com/s/000651.SZ"
+            },
+            {
+              "label": "美的集团行情页（腾讯证券）",
+              "url": "https://gu.qq.com/sz000333/gp"
+            },
+            {
+              "label": "海尔智家行情页（腾讯证券）",
+              "url": "https://gu.qq.com/sh600690/gp"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "06049.HK": [
+    {
+      "start": "2026-10-21",
+      "end": "2026-11-18",
+      "model": "Gemini",
+      "reviewed_by": "Codex",
+      "notes": [
+        {
+          "date": "2026-10-22",
+          "kind": "市场",
+          "title": "早段随港股风险资产普跌，录得窗口内最深单日回撤",
+          "text": "10月22日保利物业单日跌2.38%为本窗口最大跌幅，同日恒生指数跌3.03%、恒生科技指数跌5.03%、同业中海物业跌2.60%。窗口初段的价格下台阶与香港风险资产广泛回撤及物管同业同跌高度吻合，并非单纯窄幅震荡或个股孤立利空。",
+          "sources": [
+            {
+              "label": "保利物业历史收盘",
+              "url": "https://cn.investing.com/equities/poly-property-development-co-ltd-historical-data"
+            },
+            {
+              "label": "10月22日港股市场复盘报道（英为财情）",
+              "url": "https://hk.investing.com/news/stock-market-news/article-1711523"
+            }
+          ]
+        },
+        {
+          "date": "2026-11-12",
+          "kind": "行业",
+          "title": "关联方10月签约降幅收窄但仍承压，公开当日随大盘偏弱",
+          "text": "控股股东保利发展11月11日盘后公开、12日版面刊载简报，10月签约金额同比降15.70%（较9月单月-21.13%降幅收窄）；11月12日保利物业跌1.06%、恒指跌1.26%。关联房企签约仅反映外部交付压力背景，不等同保利物业自身订单或回款指标。",
+          "sources": [
+            {
+              "label": "保利发展信息披露列表（巨潮资讯）",
+              "url": "https://www.cninfo.com.cn/new/disclosure/stock?orgId=9900000161&stockCode=600048"
+            },
+            {
+              "label": "保利发展2026年10月份销售情况简报（巨潮资讯）",
+              "url": "https://static.cninfo.com.cn/finalpage/2026-11-12/1225667691.PDF"
+            },
+            {
+              "label": "保利发展2026年9月份销售情况简报（巨潮资讯）",
+              "url": "https://static.cninfo.com.cn/finalpage/2026-10-17/1225608088.PDF"
+            },
+            {
+              "label": "保利物业历史收盘",
+              "url": "https://cn.investing.com/equities/poly-property-development-co-ltd-historical-data"
+            }
+          ]
+        },
+        {
+          "date": "2026-11-13",
+          "kind": "公告",
+          "title": "随同业收跌后盘后披露关连交易与车位续签，部分事项尚须审批",
+          "text": "11月13日保利物业收跌0.91%，同日华润万象生活跌3.34%、中海物业跌1.23%、恒指跌1.55%；当日盘后港交所披露2027—2029年度持续关连交易及车位代理续签框架协议，部分事项尚须独立股东批准，第一期车位代理保证金拟沿用每年最高余额30亿元的上限。",
+          "sources": [
+            {
+              "label": "保利物业：持续关连交易2027至2029年度框架协议（披露易）",
+              "url": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/1113/2026111301417_c.pdf"
+            },
+            {
+              "label": "保利物业：续签车位代理框架协议公告（披露易）",
+              "url": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/1113/2026111301475_c.pdf"
+            },
+            {
+              "label": "保利物业历史收盘",
+              "url": "https://cn.investing.com/equities/poly-property-development-co-ltd-historical-data"
+            },
+            {
+              "label": "中海物业港股历史行情日线（英为财情）",
+              "url": "https://cn.investing.com/equities/china-overseas-property-holdings-historical-data"
+            },
+            {
+              "label": "华润万象生活历史收盘",
+              "url": "https://cn.investing.com/equities/china-resources-mixc-lifestyle-serv-historical-data"
+            }
+          ]
+        },
+        {
+          "date": "2026-11-16",
+          "kind": "行业",
+          "title": "全国前10月住宅竣工与销售延续负增长，公布当日股价随市微升",
+          "text": "11月16日统计局公布1—10月全国住宅竣工面积累计同比降27.9%、新建商品房销售额降14.3%，印证地产竣工及外部结算环境依然偏弱；但当日保利物业收涨0.38%（恒指涨0.49%），该宏观数据仅为行业压力背景而非股价下跌触发点。",
+          "sources": [
+            {
+              "label": "国家统计局：2026年1—10月份全国房地产市场基本情况",
+              "url": "https://www.stats.gov.cn/sj/zxfb/202611/t20261116_1965840.html"
+            },
+            {
+              "label": "保利物业历史收盘",
+              "url": "https://cn.investing.com/equities/poly-property-development-co-ltd-historical-data"
+            }
+          ]
+        },
+        {
+          "date": "2026-11-18",
+          "kind": "研究判断",
+          "title": "早段随港股与同业回落，盘后续约公告晚于主要跌势",
+          "text": "10月21日至11月18日保利物业跌1.86%，与恒指（-1.51%）、华润万象生活（-2.00%）、中海物业（-0.61%）同处港股与地产弱背景压力区间（同期DXY按港可用日涨1.73%，具体贡献不明）。关连交易框架在大部分下跌后才披露，且11月17日保利涨1.91%（恒指跌1.03%），未印证公告构成负面触发；11月9日保利跌1.76%时中海物业亦跌1.49%（恒指-0.13%），仍未查清是否存在其他个股独立驱动。",
+          "sources": [
+            {
+              "label": "11月17日港股市场行情复盘（华盛通）",
+              "url": "https://www.hstong.com/news/detail/26111716115058781"
+            },
+            {
+              "label": "中海物业港股历史行情日线（英为财情）",
+              "url": "https://cn.investing.com/equities/china-overseas-property-holdings-historical-data"
+            },
+            {
+              "label": "保利物业历史收盘",
+              "url": "https://cn.investing.com/equities/poly-property-development-co-ltd-historical-data"
+            },
+            {
+              "label": "国家统计局：2026年1—10月份全国房地产市场基本情况",
+              "url": "https://www.stats.gov.cn/sj/zxfb/202611/t20261116_1965840.html"
+            },
+            {
+              "label": "华润万象生活历史收盘",
+              "url": "https://cn.investing.com/equities/china-resources-mixc-lifestyle-serv-historical-data"
+            },
+            {
+              "label": "ICE DXY 历史收盘",
+              "url": "https://finance.yahoo.com/quote/DX-Y.NYB/history/"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "600690.SH": [
+    {
+      "start": "2026-10-27",
+      "end": "2026-11-18",
+      "model": "Gemini",
+      "reviewed_by": "Codex",
+      "notes": [
+        {
+          "date": "2026-10-30",
+          "kind": "公告",
+          "title": "三季报含汇兑与整合支出拖累但毛利率持平，次日A/H跳升",
+          "text": "10月29日盘后披露三季报：单季营收降10.13%、归母降12.31%（汇兑净损同比多4.98亿元、海外整合等一次性支出约5亿元）；前三季毛利率27.2%基本持平（境内降、境外升含一次性退税），季报还重述10月9日已公开的D股回购结果。30日A涨5.65%、H涨5.33%，与季报披露的时点吻合，市场如何衡量经营韧性仍不明。",
+          "sources": [
+            {
+              "label": "海尔智家2026年第三季度报告（披露易）",
+              "url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/1029/2026102901552_c.pdf"
+            },
+            {
+              "label": "海尔智家2026年第三季度报告（巨潮资讯）",
+              "url": "https://static.cninfo.com.cn/finalpage/2026-10-30/1225641263.PDF"
+            }
+          ]
+        },
+        {
+          "date": "2026-11-12",
+          "kind": "公告",
+          "title": "10月A股回购月报落地，月初走高至21.35元后回落整理",
+          "text": "11月3日披露10月全月实际回购A股230万股、支付总金额4,581.91万元，当日A股延续反弹收于21.35元，随后至11月12日回落收报20.78元。月度回购进展仅汇总上月总量而非逐日报买量，无法据此对应月初至中旬逐日价格起伏的买盘占比。",
+          "sources": [
+            {
+              "label": "海尔智家关于回购A股股份进展公告（2026-11-03）",
+              "url": "https://stockmc.xueqiu.com/202611/600690_20261103_P2ON.pdf"
+            },
+            {
+              "label": "海尔智家A股行情页（腾讯证券）",
+              "url": "https://gu.qq.com/sh600690/gp"
+            }
+          ]
+        },
+        {
+          "date": "2026-11-17",
+          "kind": "市场",
+          "title": "电子通信大单流出叠加10月家电零售转正，后段再度走高",
+          "text": "11月13、16日大单估算电子净流出236.57亿、252.11亿元，通信净流出94.13亿、73.94亿元，家电净流入1.85亿、1.29亿元（估算不代表同一账户划转），A股升至21.23、21.72元；16日公布10月家电音像零售单月+2.5%（累计-4.2%），17日收22.30元，仅印证后段情绪而非前段原因。",
+          "sources": [
+            {
+              "label": "2026年11月13日A股行业主力资金流向统计",
+              "url": "https://www.yyqyx.com/moneyflow/2026-11-13"
+            },
+            {
+              "label": "2026年11月16日A股行业主力资金流向统计",
+              "url": "https://www.yyqyx.com/moneyflow/2026-11-16"
+            },
+            {
+              "label": "国家统计局：2026年1—10月份社会消费品零售总额主要数据",
+              "url": "https://www.stats.gov.cn/sj/zxfb/202611/t20261116_1965839.html"
+            }
+          ]
+        },
+        {
+          "date": "2026-11-18",
+          "kind": "研究判断",
+          "title": "A/H分阶段上涨线索清晰而D股微跌，账户迁移与D股背离未明",
+          "text": "全段A涨16.74%（19.36→22.60元）、H涨15.19%（18.96→21.84港元），前段与三季报披露时点吻合、后段有行业相对走强证据；同期D股欧元跌0.32%（1.825→1.8192欧元），CFETS欧元中间价7.4804→7.3525。目前无账户级资金迁移实证，D股不跟涨的具体机制亦未查清。",
+          "sources": [
+            {
+              "label": "海尔智家A股行情（腾讯证券）",
+              "url": "https://gu.qq.com/sh600690/gp"
+            },
+            {
+              "label": "海尔智家H股行情（腾讯证券）",
+              "url": "https://gu.qq.com/hk06690/gp"
+            },
+            {
+              "label": "海尔智家2026年第三季度报告（披露易）",
+              "url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/1029/2026102901552_c.pdf"
+            },
+            {
+              "label": "2026年11月13日A股行业主力资金流向统计",
+              "url": "https://www.yyqyx.com/moneyflow/2026-11-13"
+            },
+            {
+              "label": "2026年11月16日A股行业主力资金流向统计",
+              "url": "https://www.yyqyx.com/moneyflow/2026-11-16"
+            },
+            {
+              "label": "德交所Xetra海尔智家D股历史价量记录",
+              "url": "https://live.deutsche-boerse.com/equity/haier-smart-home-co-ltd/price-history/historical-prices-and-volumes"
+            },
+            {
+              "label": "海尔智家D股（690D.DE）历史行情（Yahoo Finance）",
+              "url": "https://finance.yahoo.com/quote/690D.DE/history/"
+            },
+            {
+              "label": "中国外汇交易中心人民币汇率中间价公告（CFETS）",
+              "url": "https://www.chinamoney.com.cn/chinese/bkccpr/"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "601857.SH": [
+    {
+      "start": "2026-10-21",
+      "end": "2026-11-02",
+      "model": "Gemini",
+      "reviewed_by": "Codex",
+      "notes": [
+        {
+          "date": "2026-10-27",
+          "kind": "行业",
+          "title": "前周供应与航运扰动推升隔夜油价，对应早段A/H股价上行",
+          "text": "路透27日回顾前周中东供应担忧与航运扰动时确认油价曾明显冲高，布伦特连续B00Y于10月23日升至117.38美元（26日伦敦收110.15美元晚于沪港收盘），与26日中石油走强至A股13.38元、H股10.16港元先后呼应；但公开资料无法精确归因当天买盘。",
+          "sources": [
+            {
+              "label": "Reuters：中东外交预期与供应担忧下的油价回顾（2026-10-27）",
+              "url": "https://www.investing.com/news/commodities-news/oil-eases-on-middle-east-diplomacy-hopes-saudi-attacks-keep-supply-worries-alive-4974185"
+            },
+            {
+              "label": "布伦特原油当月连续（B00Y）行情（东方财富）",
+              "url": "https://quote.eastmoney.com/globalfuture/B00Y.html"
+            }
+          ]
+        },
+        {
+          "date": "2026-10-29",
+          "kind": "公告",
+          "title": "三季报归母净利增逾两成落地，披露次日A/H股价续涨",
+          "text": "10月28日盘后（港交所19:47）首发三季报，前三季归母净利同比增21.9%、第三季度单季归母净利增21.6%（半年报成本上升仅属前期背景）。29日A股升至13.69元、H股升至10.24港元，季报盈利高增与次日上涨时间吻合，但不能判定由业绩独自驱动。",
+          "sources": [
+            {
+              "label": "中国石油2026年第三季度报告（披露易）",
+              "url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/1028/2026102801189.pdf"
+            }
+          ]
+        },
+        {
+          "date": "2026-10-30",
+          "kind": "市场",
+          "title": "同业季报陆续公开且油气龙头同日走强，月末板块表现一致",
+          "text": "10月29日至30日中石化、中海油相继公开三季报（中海油精确披露时点未核实，不直接归因当日A股收盘）；30日三桶油同步收涨，中石油收于A股13.84元、H股10.82港元，中石化A涨4.98%、中海油A涨1.55%，显示月末上涨具板块共性。",
+          "sources": [
+            {
+              "label": "中国石化2026年第三季度报告（披露易）",
+              "url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/1029/2026102900847_c.pdf"
+            },
+            {
+              "label": "中国海洋石油2026年第三季度报告（披露易）",
+              "url": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/1030/2026103000587_c.pdf"
+            },
+            {
+              "label": "中国石化A股行情页（腾讯证券）",
+              "url": "https://gu.qq.com/sh600028/gp"
+            },
+            {
+              "label": "中国海油A股行情页（腾讯证券）",
+              "url": "https://gu.qq.com/sh600938/gp"
+            }
+          ]
+        },
+        {
+          "date": "2026-11-02",
+          "kind": "研究判断",
+          "title": "早段油价冲高与季报同涨提供主要线索，资金与换月影响未明",
+          "text": "10月21日至11月2日以前复权收盘计，A股涨11.62%（12.56→14.02元）、H股涨10.53%（9.78→10.81港元）。截至2日沪港收盘，最近完整伦敦日线为10月30日B00Y收113.40美元；10月21至23日油价冲高、三季报披露与油股同涨提供较强线索，但B00Y换月影响与具体资金贡献未查清。",
+          "sources": [
+            {
+              "label": "布伦特原油当月连续（B00Y）行情（东方财富）",
+              "url": "https://quote.eastmoney.com/globalfuture/B00Y.html"
+            },
+            {
+              "label": "中国石油A股行情页（腾讯证券）",
+              "url": "https://gu.qq.com/sh601857/gp"
+            },
+            {
+              "label": "中国石油H股行情页（腾讯证券）",
+              "url": "https://gu.qq.com/hk00857/gp"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "start": "2026-11-02",
+      "end": "2026-11-10",
+      "model": "Gemini",
+      "reviewed_by": "Codex",
+      "notes": [
+        {
+          "date": "2026-11-05",
+          "kind": "市场",
+          "title": "市场押注中东冲突降温，隔夜布油连挫后，5日油气股同步急跌",
+          "text": "11月2日晚B00Y回落至104.32美元（3日亚洲可用），4日伦敦B00Y续挫至94.62美元（5日亚洲可用），路透当时将油价回落与和谈及冲突降温押注相联系。5日沪港盘油股齐跌，中石油A跌7.93%至12.54元，中海油A跌6.55%、中石化A跌0.87%。",
+          "sources": [
+            {
+              "label": "Reuters：伊朗和谈预期下国际油价走低报道",
+              "url": "https://www.investing.com/news/commodities-news/oil-slips-more-than-1-as-talks-continue-on-ending-iran-war-4989784"
+            },
+            {
+              "label": "Reuters：中东战事不确定性与油价波动市场解读（2026-11-04）",
+              "url": "https://finance.yahoo.com/news/oil-rises-iran-war-uncertainty-051949081.html"
+            },
+            {
+              "label": "布伦特原油当月连续（B00Y）行情（东方财富）",
+              "url": "https://quote.eastmoney.com/globalfuture/B00Y.html"
+            },
+            {
+              "label": "中国海油A股行情页（腾讯证券）",
+              "url": "https://gu.qq.com/sh600938/gp"
+            },
+            {
+              "label": "中国石化A股行情（腾讯证券）",
+              "url": "https://gu.qq.com/sh600028/gp"
+            }
+          ]
+        },
+        {
+          "date": "2026-11-09",
+          "kind": "行业",
+          "title": "OPEC+维持12月产量计划，隔夜油价反抽后股价低位企稳",
+          "text": "OPEC+已于11月1日声明12月产量维持9月目标；11月5日晚伦敦B00Y反抽收于99.32美元后，中石油A股于6日小幅反弹，至11月9日收报12.62元，在首轮急跌后呈短暂横盘企稳。",
+          "sources": [
+            {
+              "label": "OPEC+重申维持2026年12月产量计划声明（2026-11-01）",
+              "url": "https://www.opec.org/pr-detail/2033620-1-november-2026.html"
+            },
+            {
+              "label": "布伦特原油当月连续（B00Y）行情（东方财富）",
+              "url": "https://quote.eastmoney.com/globalfuture/B00Y.html"
+            },
+            {
+              "label": "中国石油A股行情页（腾讯证券）",
+              "url": "https://gu.qq.com/sh601857/gp"
+            }
+          ]
+        },
+        {
+          "date": "2026-11-10",
+          "kind": "研究判断",
+          "title": "隔夜油价再破位与同业共振解释力较强，A/H跌幅差与资金未明",
+          "text": "路透9日报道美方淡化进一步袭击、航运风险缓和预期，9日伦敦B00Y跌至92.20美元（10日沪港可用）；10日中石油A跌6.34%至11.82元、H跌约3.45%至10.07港元，中海油A跌3.83%、中石化A跌1.90%。全段按前复权收盘计，A股跌15.69%、H股跌6.85%，隔夜油价回撤与同业共振较强；暂未核实到公司新利空，B00Y换月、A/H跌幅差及资金来源未查清。",
+          "sources": [
+            {
+              "label": "Reuters：美方释放克制信号与霍尔木兹风险报道（2026-11-09）",
+              "url": "https://in.marketscreener.com/news/oil-steadies-after-trump-signals-restraint-on-iran-hormuz-risks-persist-ce785fd3d988f42d"
+            },
+            {
+              "label": "布伦特原油当月连续（B00Y）行情（东方财富）",
+              "url": "https://quote.eastmoney.com/globalfuture/B00Y.html"
+            },
+            {
+              "label": "中国石油A股行情页（腾讯证券）",
+              "url": "https://gu.qq.com/sh601857/gp"
+            },
+            {
+              "label": "中国石油H股行情页（腾讯证券）",
+              "url": "https://gu.qq.com/hk00857/gp"
+            },
+            {
+              "label": "中国海油A股行情（腾讯证券）",
+              "url": "https://gu.qq.com/sh600938/gp"
+            },
+            {
+              "label": "中国石化A股行情（腾讯证券）",
+              "url": "https://gu.qq.com/sh600028/gp"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

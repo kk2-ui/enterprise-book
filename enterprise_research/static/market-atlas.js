@@ -109,7 +109,7 @@ function buildBandAreaPaths(upperPts, lowerPts) {
 }
 
 // Gemini 绘制的市场观察图，数据与正式企业书共用同一披露截面。
-export function renderMarketAtlas(host, company, state, companyLinks) {
+export function renderMarketAtlas(host, company, state, companyLinks, attribution) {
   const shadow = host.shadowRoot || host.attachShadow({mode: 'open'});
   if (!shadow.firstChild) {
     shadow.innerHTML = '<link rel="stylesheet" href="/market-atlas.css"><div class="page-shell" id="app"></div>';
@@ -172,6 +172,7 @@ export function renderMarketAtlas(host, company, state, companyLinks) {
           <div class="floating-tooltip" id="chart-tooltip"></div>
         </div>
 
+        <div data-wave-panel></div>
         <div class="events-tray" ${comp.mainChart.events.length ? '' : 'hidden'}>
           <div class="events-tray-title">关键公告与事件时间轴核验（点击卡片或图中编号定位日期，点击链接查阅原件）</div>
           <div class="events-list" id="events-list">
@@ -270,6 +271,10 @@ export function renderMarketAtlas(host, company, state, companyLinks) {
     const mc = comp.mainChart;
     const rows = mc.timeline;
     const n = rows.length;
+    const wavePanel = shadow.querySelector('[data-wave-panel]');
+    const waveDates = rows.map(row => row.date);
+    const waveItems = marketWaveItems(attribution, waveDates);
+    if (attribution) renderMarketWavePanel(wavePanel, waveItems, attribution.threshold_pct);
     if (!n) {
       shadow.getElementById("main-svg-mount").textContent = "截至所选日期暂无已取得的行情。";
       return;
@@ -593,11 +598,13 @@ export function renderMarketAtlas(host, company, state, companyLinks) {
       <rect id="svg-hit-rect" x="${padL}" y="${trackTop}" width="${plotW}" height="${axisY - trackTop}" fill="transparent" style="cursor:crosshair;" />
     `;
 
+    svgInner += marketWaveBands(waveItems, waveDates, xAt, trackTop, axisY);
     const mount = shadow.getElementById("main-svg-mount");
     mount.innerHTML = `<svg class="main-svg" id="primary-svg" viewBox="0 0 ${W} ${H}" aria-label="${esc(mc.sectionTitle)}">${svgInner}</svg>`;
 
     // 绑定悬停与点击锁定逻辑
     const svgEl = shadow.getElementById("primary-svg");
+    bindMarketWaveMarkers(svgEl, wavePanel, waveItems, attribution?.threshold_pct);
     const hitRect = shadow.getElementById("svg-hit-rect");
     // 公告标记要在透明的悬停层上方，否则圆点点击会被截走。
     svgEl.querySelectorAll(".svg-event-pin").forEach(pin => svgEl.append(pin));

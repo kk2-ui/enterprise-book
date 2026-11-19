@@ -19,6 +19,7 @@ from market_context import MarketService
 import market_observation
 import company_market_observation
 import market_nbs
+import market_wave
 import market_factors
 import market_atlas
 from market_observation_update import ObservationUpdater
@@ -254,6 +255,8 @@ class Handler(BaseHTTPRequestHandler):
                         result['refresh']=self.server.observation_updater.status()
                     else:
                         result=company_market_observation.response(self.server.store,company,cutoff,edition,limit)
+                    result['attribution']=market_wave.response(self.server.store.directory,
+                        company_market_observation.stock_code(company),result['chart'],cutoff)
                     return self.send(200,encode(result))
                 extra={'as_of':q['as_of']} if q.get('as_of') else {}
                 return self.send(200,encode(self.server.industry_monitor.overview(company,q.get('run')) or self.server.market_context.response(company,**extra)))
@@ -351,6 +354,12 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send(202,encode(self.server.industry_monitor.refresh()))
             m=re.fullmatch(r'/api/monitor-jobs/([\w-]+)/retry',p)
             if m:return self.send(202,encode(self.server.industry_monitor.refresh(retry=m[1])))
+            m=re.fullmatch(r'/api/companies/([\w-]+)/market-attribution',p)
+            if m:
+                company=self.server.store.company(m[1])
+                result=market_wave.publish(self.server.store.directory,company_market_observation.stock_code(company),
+                                           data,market_observation.observation_cutoff(None))
+                return self.send(201,encode(result))
             m=re.fullmatch(r'/api/companies/([\w-]+)/market-context/refresh',p)
             if m:
                 company=self.server.store.company(m[1])

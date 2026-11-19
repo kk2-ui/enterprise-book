@@ -918,293 +918,12 @@ function formatChangeSummary(activeItem, unit = '', cadence = 0) {
   return parts.length ? parts.join(' ｜ ') : '首期披露记录（无更早对比期）';
 }
 
-// Gemini's dated case review, checked against the original disclosures and closing prices.
-const OCT_NOV_MARKET_REVIEW = {
-  "000651.SZ": [
-    {
-      "date": "2026-10-28",
-      "kind": "公告",
-      "title": "单季业绩承压后披露拟派息与拟增持，时间上与低位反弹吻合",
-      "text": "10月27日三季报显示第三季度单季营收同比降7.97%、归母净利降43.31%（前三季营收降8.10%、归母降19.51%），当日收于窗口低点36.60元；同日披露每10股拟派10元预案，次日京海互联公告拟增持6至12亿元。28日股价反弹1.91%，股东回报预期与低位企稳时间吻合，有个股层面的支撑线索，但各项贡献无法单独识别。",
-      "sources": [
-        {
-          "label": "格力电器2026年第三季度报告（巨潮资讯）",
-          "url": "https://static.cninfo.com.cn/finalpage/2026-10-27/1225627217.PDF"
-        },
-        {
-          "label": "格力电器2026年中期利润分配预案公告（巨潮资讯）",
-          "url": "https://static.cninfo.com.cn/finalpage/2026-10-27/1225627214.PDF"
-        },
-        {
-          "label": "关于股东京海互联增持公司股份计划的公告（巨潮资讯）",
-          "url": "https://static.cninfo.com.cn/finalpage/2026-10-28/1225630983.PDF"
-        },
-        {
-          "label": "格力电器A股历史行情日线（英为财情）",
-          "url": "https://cn.investing.com/equities/gree-electric-a-historical-data"
-        }
-      ]
-    },
-    {
-      "date": "2026-11-03",
-      "kind": "公告",
-      "title": "10月末已执行回购增量落地，与起步阶段反弹时点重合",
-      "text": "10月29日公告累计已回购23.25亿元，11月3日进一步披露截至10月底累计已回购24.04亿元，显示10月末存在约0.79亿元实际已执行回购买盘（区别于拟派息与拟增持计划）；期间股价于10月30日涨2.42%、11月3日涨1.74%。实际回购与起步反弹在时间上吻合，提供个股层面的支撑线索，但无法拆分回购与外部回报预期的各自贡献。",
-      "sources": [
-        {
-          "label": "关于回购公司股份比例达到1%的进展公告（巨潮资讯）",
-          "url": "https://static.cninfo.com.cn/finalpage/2026-10-29/1225636209.PDF"
-        },
-        {
-          "label": "关于股份回购进展情况的公告（巨潮资讯）",
-          "url": "https://static.cninfo.com.cn/finalpage/2026-11-03/1225653096.PDF"
-        },
-        {
-          "label": "格力电器A股历史行情日线（英为财情）",
-          "url": "https://cn.investing.com/equities/gree-electric-a-historical-data"
-        }
-      ]
-    },
-    {
-      "date": "2026-11-13",
-      "kind": "市场",
-      "title": "电子通信大单流出日白电龙头走强，录得窗口最大单日涨幅",
-      "text": "11月13日格力涨2.75%创本窗口最大单日涨幅，美的（+2.91%）、海尔（+2.17%）同涨，而沪深300跌0.68%、科创50跌2.30%、创业板指跌3.32%、通信ETF（515880）跌5.64%。按大单及超大单已成交口径估算，当日电子净流出236.57亿元、通信净流出94.13亿元，家电净流入1.85亿元，其中格力净流入3.22亿元。",
-      "sources": [
-        {
-          "label": "2026年11月13日A股行业主力资金流向统计",
-          "url": "https://www.yyqyx.com/moneyflow/2026-11-13"
-        },
-        {
-          "label": "格力电器近期主力资金流向明细",
-          "url": "https://www.yyqyx.com/s/000651.SZ"
-        },
-        {
-          "label": "格力电器A股历史行情日线（英为财情）",
-          "url": "https://cn.investing.com/equities/gree-electric-a-historical-data"
-        },
-        {
-          "label": "美的集团行情页（腾讯证券）",
-          "url": "https://gu.qq.com/sz000333/gp"
-        },
-        {
-          "label": "海尔智家行情页（腾讯证券）",
-          "url": "https://gu.qq.com/sh600690/gp"
-        }
-      ]
-    },
-    {
-      "date": "2026-11-17",
-      "kind": "行业",
-      "title": "电子通信续流出叠加10月家电零售单月转正，支撑后段情绪",
-      "text": "11月16日同口径估算电子净流出252.11亿元、通信净流出73.94亿元、家电净流入1.29亿元；同日统计局公布10月家电和音像器材零售单月同比+2.5%（1—10月累计-4.2%），改善后段行业预期但解释不了11月13日的提前加速。11月17日半导体设备与家电同强而通信仍弱，显示科技内部亦有分化。",
-      "sources": [
-        {
-          "label": "2026年11月16日A股行业主力资金流向统计",
-          "url": "https://www.yyqyx.com/moneyflow/2026-11-16"
-        },
-        {
-          "label": "国家统计局：2026年1—10月份社会消费品零售总额主要数据",
-          "url": "https://www.stats.gov.cn/sj/zxfb/202611/t20261116_1965839.html"
-        },
-        {
-          "label": "粤开证券2026年11月17日市场复盘报告",
-          "url": "https://www.ykzq.com/products/download-new/rpt/2026/11/17/620eb127d22a40e9ab8bc754bcdadad4.pdf"
-        }
-      ]
-    },
-    {
-      "date": "2026-11-18",
-      "kind": "研究判断",
-      "title": "11月中旬科技与白电的轮动最明显，仍无法追踪同一批资金",
-      "text": "三季报盈利并未反转，期间逆势走强与股东回报预期以及11月13日、16日的风格轮动更吻合。全段格力涨9.75%，美的（+11.67%）、海尔（+14.78%）同强，沪深300跌3.12%。盘面支持市场持仓相对强弱切换的推断，但格力16至18日大单估算分别为-1,319万、-7,034万和-1.26亿元而股价续涨，账户级资金直接迁移未经证实，各因素对涨幅的贡献亦无法量化。",
-      "sources": [
-        {
-          "label": "格力三季报",
-          "url": "https://static.cninfo.com.cn/finalpage/2026-10-27/1225627217.PDF"
-        },
-        {
-          "label": "2026年11月13日A股行业主力资金流向统计",
-          "url": "https://www.yyqyx.com/moneyflow/2026-11-13"
-        },
-        {
-          "label": "2026年11月16日A股行业主力资金流向统计",
-          "url": "https://www.yyqyx.com/moneyflow/2026-11-16"
-        },
-        {
-          "label": "格力电器近期主力资金流向明细",
-          "url": "https://www.yyqyx.com/s/000651.SZ"
-        },
-        {
-          "label": "美的集团行情页（腾讯证券）",
-          "url": "https://gu.qq.com/sz000333/gp"
-        },
-        {
-          "label": "海尔智家行情页（腾讯证券）",
-          "url": "https://gu.qq.com/sh600690/gp"
-        }
-      ]
-    }
-  ],
-  "06049.HK": [
-    {
-      "date": "2026-10-22",
-      "kind": "市场",
-      "title": "早段随港股风险资产普跌，录得窗口内最深单日回撤",
-      "text": "10月22日保利物业单日跌2.38%为本窗口最大跌幅，同日恒生指数跌3.03%、恒生科技指数跌5.03%、同业中海物业跌2.60%。窗口初段的价格下台阶与香港风险资产广泛回撤及物管同业同跌高度吻合，并非单纯窄幅震荡或个股孤立利空。",
-      "sources": [
-        {
-          "label": "保利物业历史收盘",
-          "url": "https://cn.investing.com/equities/poly-property-development-co-ltd-historical-data"
-        },
-        {
-          "label": "10月22日港股市场复盘报道（英为财情）",
-          "url": "https://hk.investing.com/news/stock-market-news/article-1711523"
-        }
-      ]
-    },
-    {
-      "date": "2026-11-12",
-      "kind": "行业",
-      "title": "关联方10月签约降幅收窄但仍承压，公开当日随大盘偏弱",
-      "text": "控股股东保利发展11月11日盘后公开、12日版面刊载简报，10月签约金额同比降15.70%（较9月单月-21.13%降幅收窄）；11月12日保利物业跌1.06%、恒指跌1.26%。关联房企签约仅反映外部交付压力背景，不等同保利物业自身订单或回款指标。",
-      "sources": [
-        {
-          "label": "保利发展信息披露列表（巨潮资讯）",
-          "url": "https://www.cninfo.com.cn/new/disclosure/stock?orgId=9900000161&stockCode=600048"
-        },
-        {
-          "label": "保利发展2026年10月份销售情况简报（巨潮资讯）",
-          "url": "https://static.cninfo.com.cn/finalpage/2026-11-12/1225667691.PDF"
-        },
-        {
-          "label": "保利发展2026年9月份销售情况简报（巨潮资讯）",
-          "url": "https://static.cninfo.com.cn/finalpage/2026-10-17/1225608088.PDF"
-        },
-        {
-          "label": "保利物业历史收盘",
-          "url": "https://cn.investing.com/equities/poly-property-development-co-ltd-historical-data"
-        }
-      ]
-    },
-    {
-      "date": "2026-11-13",
-      "kind": "公告",
-      "title": "随同业收跌后盘后披露关连交易与车位续签，部分事项尚须审批",
-      "text": "11月13日保利物业收跌0.91%，同日华润万象生活跌3.34%、中海物业跌1.23%、恒指跌1.55%；当日盘后港交所披露2027—2029年度持续关连交易及车位代理续签框架协议，部分事项尚须独立股东批准，第一期车位代理保证金拟沿用每年最高余额30亿元的上限。",
-      "sources": [
-        {
-          "label": "保利物业：持续关连交易2027至2029年度框架协议（披露易）",
-          "url": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/1113/2026111301417_c.pdf"
-        },
-        {
-          "label": "保利物业：续签车位代理框架协议公告（披露易）",
-          "url": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/1113/2026111301475_c.pdf"
-        },
-        {
-          "label": "保利物业历史收盘",
-          "url": "https://cn.investing.com/equities/poly-property-development-co-ltd-historical-data"
-        },
-        {
-          "label": "中海物业港股历史行情日线（英为财情）",
-          "url": "https://cn.investing.com/equities/china-overseas-property-holdings-historical-data"
-        },
-        {
-          "label": "华润万象生活历史收盘",
-          "url": "https://cn.investing.com/equities/china-resources-mixc-lifestyle-serv-historical-data"
-        }
-      ]
-    },
-    {
-      "date": "2026-11-16",
-      "kind": "行业",
-      "title": "全国前10月住宅竣工与销售延续负增长，公布当日股价随市微升",
-      "text": "11月16日统计局公布1—10月全国住宅竣工面积累计同比降27.9%、新建商品房销售额降14.3%，印证地产竣工及外部结算环境依然偏弱；但当日保利物业收涨0.38%（恒指涨0.49%），该宏观数据仅为行业压力背景而非股价下跌触发点。",
-      "sources": [
-        {
-          "label": "国家统计局：2026年1—10月份全国房地产市场基本情况",
-          "url": "https://www.stats.gov.cn/sj/zxfb/202611/t20261116_1965840.html"
-        },
-        {
-          "label": "保利物业历史收盘",
-          "url": "https://cn.investing.com/equities/poly-property-development-co-ltd-historical-data"
-        }
-      ]
-    },
-    {
-      "date": "2026-11-18",
-      "kind": "研究判断",
-      "title": "早段随港股与同业回落，盘后续约公告晚于主要跌势",
-      "text": "10月21日至11月18日保利物业跌1.86%，与恒指（-1.51%）、华润万象生活（-2.00%）、中海物业（-0.61%）同处港股与地产弱背景压力区间（同期DXY按港可用日涨1.73%，具体贡献不明）。关连交易框架在大部分下跌后才披露，且11月17日保利涨1.91%（恒指跌1.03%），未印证公告构成负面触发；11月9日保利跌1.76%时中海物业亦跌1.49%（恒指-0.13%），仍未查清是否存在其他个股独立驱动。",
-      "sources": [
-        {
-          "label": "11月17日港股市场行情复盘（华盛通）",
-          "url": "https://www.hstong.com/news/detail/26111716115058781"
-        },
-        {
-          "label": "中海物业港股历史行情日线（英为财情）",
-          "url": "https://cn.investing.com/equities/china-overseas-property-holdings-historical-data"
-        },
-        {
-          "label": "保利物业历史收盘",
-          "url": "https://cn.investing.com/equities/poly-property-development-co-ltd-historical-data"
-        },
-        {
-          "label": "国家统计局：2026年1—10月份全国房地产市场基本情况",
-          "url": "https://www.stats.gov.cn/sj/zxfb/202611/t20261116_1965840.html"
-        },
-        {
-          "label": "华润万象生活历史收盘",
-          "url": "https://cn.investing.com/equities/china-resources-mixc-lifestyle-serv-historical-data"
-        },
-        {
-          "label": "ICE DXY 历史收盘",
-          "url": "https://finance.yahoo.com/quote/DX-Y.NYB/history/"
-        }
-      ]
-    }
-  ]
-};
-
-function marketReviewNotes(code, startDay, asOf) {
-  const end = '2026-11-18';
-  if (startDay > end) return [];
-  return (OCT_NOV_MARKET_REVIEW[code] || []).filter(note => note.date <= asOf);
-}
-
-function updateMarketReview(host, model, asOf) {
-  const box = host.querySelector('[data-driver-attribution]');
-  if (!box) return;
-  const notes = marketReviewNotes(model.profile.code, model.startDay, asOf);
-  box.hidden = !notes.length;
-  if (!notes.length || box.dataset.evidenceCount === String(notes.length)) return;
-  const expanded = box.querySelector('details')?.open;
-  const latest = notes.at(-1);
-  const renderNote = note => `<article>
-    <div class="er-mo-case-meta"><time datetime="${escText(note.date)}">${escText(note.date)}</time> · ${escText(note.kind)}</div>
-    <strong>${escText(note.title)}</strong>
-    <p>${escText(note.text)}</p>
-    <div class="er-mo-case-links">${note.sources.map(src => renderLink(src.url, src.label)).join(' · ')}</div>
-  </article>`;
-  box.innerHTML = `<h4>行情归因 · 2026-10-21 至 ${latest.date}</h4>${renderNote(latest)}
-    ${notes.length > 1 ? `<details ${expanded ? 'open' : ''}><summary>查看关键日期与原件</summary>
-      ${notes.slice(0, -1).map(renderNote).join('')}</details>` : ''}`;
-  box.dataset.evidenceCount = String(notes.length);
-}
-
 function expInjectStyles() {
   if (typeof document === 'undefined' || document.getElementById('er-mo-exp-style')) return;
   const st = document.createElement('style');
   st.id = 'er-mo-exp-style';
   st.textContent = `
     .er-mo-wb .er-mo-exp{grid-column:1/-1;display:flex;flex-direction:column;gap:8px;font-size:12.5px;color:var(--wb-ink)}
-    .er-mo-wb .er-mo-case{margin:8px 0 12px;padding:10px 12px;border:1px solid #dce5e2;background:var(--wb-panel);font-size:13px;line-height:1.6}
-    .er-mo-case h4{margin:0 0 6px;font-size:14px}
-    .er-mo-case p{margin:2px 0}
-    .er-mo-case-meta,.er-mo-case-links{font-size:12px;color:var(--wb-ink-sec)}
-    .er-mo-case details{margin-top:6px}
-    .er-mo-case summary{cursor:pointer;font-weight:600}
-    .er-mo-case details article{margin-top:9px;padding-top:7px;border-top:1px solid #dce5e2}
     .er-mo-exp-lead{display:flex;flex-direction:column;gap:5px;line-height:1.58}
     .er-mo-exp-lead p{margin:0}
     .er-mo-exp-k{display:inline-block;font-size:11px;font-weight:700;padding:1px 6px;margin-right:6px;border-radius:3px;background:#e8eef6;color:#1e3a5f}
@@ -1533,6 +1252,7 @@ function renderTrack0Svg(model, width = 860, height = 132) {
       <circle data-cursor-dot="stock" cx="0" cy="0" r="3.8" fill="${model.profile.primaryColor}" stroke="#fff" stroke-width="1.2" visibility="hidden" />
       <circle data-cursor-dot="bench" cx="0" cy="0" r="3.3" fill="#64748b" stroke="#fff" stroke-width="1.2" visibility="hidden" />
       ${axisDates}
+      ${marketWaveBands(model.waveItems, model.calendar, xOf, padT, height - padB)}
     </svg>
   `;
 }
@@ -1842,8 +1562,6 @@ function updateCursorVisuals(host, model, state) {
     }
   });
 
-  updateMarketReview(host, model, state.pinned ? cursorDay : model.endDay);
-
   // Clue KPI cards update dynamically with cursorDay (respecting <= cursorDay disclosure!)
   const kpiBox = host.querySelector('[data-role="kpi-grid"]');
   if (kpiBox) {
@@ -2025,6 +1743,7 @@ function buildDataModel(data, macro, days) {
 
   return {
     profile,
+    waveItems: marketWaveItems(data.attribution, calendar),
     cutoff: endDay,
     startDay,
     endDay,
@@ -2137,7 +1856,7 @@ export function renderDriverChart(host, data, macro, days) {
           <span class="er-mo-clue-title">${escText(clueHeading)}</span>
           <span class="er-mo-clue-rule">悬停看日明细 · 单击固定日期 · 左右方向键逐日核查（严格仅显示 &lt;= 选中日已公开数据）</span>
         </div>
-        <section class="er-mo-case" data-driver-attribution hidden></section>
+        <div data-wave-panel></div>
         <div class="er-mo-kpi-grid" data-role="kpi-grid"></div>
       </div>
 
@@ -2322,6 +2041,9 @@ export function renderDriverChart(host, data, macro, days) {
     );
   });
 
+  const wavePanel = host.querySelector('[data-wave-panel]');
+  if (data.attribution) renderMarketWavePanel(wavePanel, model.waveItems, data.attribution.threshold_pct);
+  bindMarketWaveMarkers(host.querySelector('[data-svg-track="0"]'), wavePanel, model.waveItems, data.attribution?.threshold_pct);
   const resetBtn = host.querySelector('[data-action="reset-cursor"]');
   if (resetBtn) {
     resetBtn.addEventListener(

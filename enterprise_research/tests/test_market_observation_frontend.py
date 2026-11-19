@@ -99,29 +99,3 @@ assert.match(onlyStock, /10\.00%/);
 """
         result = subprocess.run(['node', '-e', script, str(module)], capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stderr)
-
-    def test_market_case_notes_follow_the_historical_information_cutoff(self):
-        module = Path(__file__).resolve().parents[1] / 'static' / 'market-driver-chart.js'
-        script = r"""
-const fs = require('node:fs');
-const vm = require('node:vm');
-const assert = require('node:assert/strict');
-const source = fs.readFileSync(process.argv[1], 'utf8')
-  .replace('export function renderDriverChart(', 'function renderDriverChart(');
-const notes = vm.runInNewContext(source + '\nmarketReviewNotes');
-const start = '2026-10-21';
-for (const code of ['000651.SZ', '06049.HK']) {
-  const full = notes(code, start, '2026-11-18');
-  assert.ok(full.length >= 4);
-  assert.equal(full.at(-1).date, '2026-11-18');
-  const earlier = notes(code, start, '2026-11-12');
-  assert.ok(earlier.length > 0 && earlier.length < full.length);
-  assert.ok(earlier.every(event => event.date <= '2026-11-12'));
-  assert.ok(full.every(event => event.sources.every(s => s.url.startsWith('https://'))));
-  assert.equal(notes(code, start, '2026-10-20').length, 0);
-  assert.equal(notes(code, '2026-11-19', '2026-11-20').length, 0);
-}
-assert.equal(notes('601857.SH', start, '2026-11-18').length, 0);
-"""
-        result = subprocess.run(['node', '-e', script, str(module)], capture_output=True, text=True)
-        self.assertEqual(result.returncode, 0, result.stderr)

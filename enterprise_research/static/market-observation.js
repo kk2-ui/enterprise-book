@@ -35,6 +35,79 @@ function observationDetails(data) {
   return {warnings, body};
 }
 
+// Each chart supplies its own date scale and shares the same research panel.
+function marketWaveItems(data, dates) {
+  if (!data?.code || !dates.length) return [];
+  const overlaps = wave => wave.start <= dates.at(-1) && wave.end >= dates[0];
+  return [
+    ...data.reviewed.filter(overlaps).reverse(),
+    ...data.pending.filter(overlaps).reverse().slice(0, 3),
+  ];
+}
+
+function marketWaveBands(items, dates, x, top, bottom) {
+  return items.map((wave, index) => {
+    const first = dates.findIndex(day => day >= wave.start);
+    const last = dates.findLastIndex(day => day <= wave.end);
+    if (first < 0 || last < first) return '';
+    const color = wave.notes ? '#287264' : '#936324';
+    const label = (wave.notes ? '研' : '待') + (index + 1);
+    const cx = x(last) - 12;
+    const cy = top + 22 + index % 3 * 18;
+    const title = wave.notes ? wave.notes.at(-1).title : '待核证据 ' + wave.change + '%';
+    return `<g>
+      <rect x="${x(first)}" y="${top}" width="${Math.max(2, x(last) - x(first))}" height="${bottom - top}" fill="${color}" opacity=".08" pointer-events="none" />
+      <g role="button" tabindex="0" data-wave-marker="${esc(wave.id)}" aria-label="${esc(wave.start + ' 至 ' + wave.end + ' ' + title)}" style="cursor:pointer">
+        <title>${esc(title)}</title>
+        <rect x="${cx - 13}" y="${cy - 10}" width="26" height="19" rx="4" fill="${color}" />
+        <text x="${cx}" y="${cy + 3}" text-anchor="middle" font-size="11" style="fill:#fff;pointer-events:none">${label}</text>
+      </g>
+    </g>`;
+  }).join('');
+}
+
+function renderMarketWavePanel(panel, items, threshold, selected = '') {
+  if (!panel) return;
+  const wave = items.find(item => item.id === selected) || items[0];
+  const label = item => item.start + ' 至 ' + item.end + (item.notes ? ' · 已审核' : ' · 待核证');
+  const link = source => /^https?:\/\//.test(source.url)
+    ? `<a href="${esc(source.url)}" target="_blank" rel="noopener noreferrer">${esc(source.label)} ↗</a>` : '';
+  const renderNote = note => `<article style="margin:.6em 0"><time datetime="${esc(note.date)}">${esc(note.date)}</time>
+    · ${esc(note.kind)}　<strong>${esc(note.title)}</strong><p style="margin:.25em 0">${esc(note.text)}</p>
+    <div>${note.sources.map(link).filter(Boolean).join(' · ')}</div></article>`;
+  panel.innerHTML = `<section style="margin:1em 0;padding:.75em 1em;border:1px solid #cbd9d3;border-radius:6px;font-size:13px;line-height:1.6" aria-label="波段归因">
+    <strong>波段归因</strong>
+    ${wave ? `<div style="display:flex;gap:.5em;flex-wrap:wrap;margin:.45em 0">
+      ${items.map((item,i) => `<button type="button" data-wave-select="${esc(item.id)}" aria-pressed="${item === wave}">
+        ${item.notes ? '研' : '待'}${i + 1}　${esc(label(item))}</button>`).join('')}
+    </div>${wave.notes ? `${renderNote(wave.notes.at(-1))}
+      ${wave.notes.length > 1 ? `<details><summary>关键日期与原件</summary>${wave.notes.slice(0, -1).map(renderNote).join('')}</details>` : ''}`
+      : `<p>已列入待研究。自 ${esc(wave.start)} 至 ${esc(wave.end)} 股价变动 ${esc(wave.change)}%，等待核对公告、行业变化和市场资金证据。</p>`}`
+      : `<p>该窗口暂无已审核案例或达到 ${esc(threshold ?? 7)}% 的待核波段。</p>`}
+  </section>`;
+  for (const button of panel.querySelectorAll('[data-wave-select]')) {
+    button.onclick = () => renderMarketWavePanel(panel, items, threshold, button.dataset.waveSelect);
+  }
+}
+
+function bindMarketWaveMarkers(svg, panel, items, threshold) {
+  if (!svg || !panel) return;
+  for (const marker of svg.querySelectorAll('[data-wave-marker]')) {
+    const select = event => {
+      event.stopPropagation();
+      renderMarketWavePanel(panel, items, threshold, marker.dataset.waveMarker);
+      panel.querySelector('button[aria-pressed="true"]')?.focus();
+    };
+    marker.addEventListener('click', select);
+    marker.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        select(event);
+      }
+    });
+  }
+}
+
 function observationExtraCharts(section, data, mode, days) {
   section.innerHTML = `<label>走势 <select data-observation-mode>${data.modes.map(item =>
     `<option value="${esc(item.key)}" ${item.key === mode.key ? 'selected' : ''}>${esc(item.label)}</option>`).join('')}</select></label>
@@ -77,6 +150,10 @@ function drawObservation(root, data, mode, days) {
       ? null : 100 * row.values[key] / windowRows[first].values[key]])),
   })) : windowRows;
   const readout = root.querySelector('.observation-readout');
+  const wavePanel = root.parentElement.querySelector('[data-wave-panel]');
+  const waveDates = rows.map(row => row.date);
+  const waveItems = marketWaveItems(data.attribution, waveDates);
+  if (wavePanel) renderMarketWavePanel(wavePanel, waveItems, data.attribution?.threshold_pct);
   const hosts = [...root.querySelectorAll('.observation-plot')];
   function inspect(index) {
     const row = rows[index];
@@ -146,9 +223,11 @@ function drawObservation(root, data, mode, days) {
       ${ticks}${band}${lines}
       <text x="${left}" y="${height - 4}">${esc(rows[0].date)}</text>
       ${rows.length > 1 ? `<text x="${right}" y="${height - 4}" text-anchor="end">${esc(rows.at(-1).date)}</text>` : ''}
-      <line data-left="${left}" data-span="${span}" y1="${top}" y2="${bottom}" class="observation-guide"/>${pins}
+      <line data-left="${left}" data-span="${span}" y1="${top}" y2="${bottom}" class="observation-guide"/>${pins}${index === 0 && wavePanel ? marketWaveBands(waveItems, waveDates, x, top, bottom) : ''}
     </svg>`;
-    host.querySelector('svg').onpointermove = event => {
+    const svg = host.querySelector('svg');
+    if (index === 0) bindMarketWaveMarkers(svg, wavePanel, waveItems, data.attribution?.threshold_pct);
+    svg.onpointermove = event => {
       const box = host.getBoundingClientRect();
       const px = (event.clientX - box.left) * width / box.width;
       inspect(Math.min(rows.length - 1, Math.max(0, Math.round((px - left) / span * (rows.length - 1)))));
@@ -172,6 +251,7 @@ function renderCompanyObservation(root, data, days) {
       <p class="section-sub">观察截至 ${esc(data.cutoff)}${data.historical_limit ? ' · 本版固定截止日 ' + esc(data.historical_limit) : ''}</p></div></div>
       ${data.drivers ? '<div data-company-drivers></div>' : last ? `<p class="market-note">${esc(code)} · ${esc(last.date)} · 未复权收盘 <strong>${esc(quote)}</strong></p><div data-company-price-chart></div>`
         : `<p class="market-note">${code ? '所选时段没有可用日线。' : '未登记受支持的沪深港股票代码。'}</p>`}
+      ${!data.drivers && data.attribution?.code ? '<div data-wave-panel></div>' : ''}
     </section>
     <section class="observation-section" data-observation-section="operating">
       <h2 class="section-heading">经营披露</h2>
@@ -194,6 +274,7 @@ function renderCompanyObservation(root, data, days) {
   </div>`;
   const chart = root.querySelector('[data-company-price-chart]');
   if (chart) observationExtraCharts(chart, data, mode, days);
+  else if (!data.drivers) renderMarketWavePanel(root.querySelector('[data-wave-panel]'), [], data.attribution?.threshold_pct);
 }
 
 function bindMarketObservation(root) {
@@ -305,7 +386,7 @@ function bindMarketObservation(root) {
     const previous = data;
     data = next;
     if (!previous) mount();
-    if (!previous || JSON.stringify(previous.atlas) !== JSON.stringify(next.atlas)) {
+    if (!previous || JSON.stringify([previous.atlas, previous.attribution]) !== JSON.stringify([next.atlas, next.attribution])) {
       if (previous) {
         const before = previous.atlas.mainChart, after = next.atlas.mainChart;
         const pinned = before.timeline[view.pinnedIdx]?.date;
@@ -322,7 +403,7 @@ function bindMarketObservation(root) {
         url: '#/company/' + encodeURIComponent(company.id) + '/market' +
           (view.date ? '?market_as_of=' + encodeURIComponent(view.date) : ''),
       }));
-      renderAtlas(content.querySelector('[data-market-atlas]'), next.atlas, view, links);
+      renderAtlas(content.querySelector('[data-market-atlas]'), next.atlas, view, links, next.attribution);
     }
     if (!previous || JSON.stringify([previous.chart, previous.events]) !== JSON.stringify([next.chart, next.events])) {
       drawExtra();
