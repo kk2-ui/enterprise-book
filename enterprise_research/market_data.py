@@ -3,6 +3,9 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 import json
 import math
+import sys
+from ipaddress import IPv4Address
+from subprocess import SubprocessError, run
 from pathlib import Path
 import re
 import tempfile
@@ -13,6 +16,10 @@ from zoneinfo import ZoneInfo
 
 
 HONG_KONG = ZoneInfo('Asia/Hong_Kong')
+LONDON = ZoneInfo('Europe/London')
+B00Y_HOST = 'push2his.eastmoney.com'
+B00Y_SITE = 'https://quote.eastmoney.com/globalfuture/B00Y.html'
+B00Y_DNS = ('https://dns.alidns.com/resolve', 'https://dns.google/resolve')
 HISTORY_LIMIT = 1500
 BENCHMARKS = {
     'HK': [('HSCI', '恒生综合指数', '124.HSCI'),
@@ -37,6 +44,17 @@ def completed_date(now=None):
     while day.weekday() >= 5:
         day -= timedelta(days=1)
     return day.isoformat()
+
+def brent_completed_date(now=None):
+    """Exclude an unfinished ICE Brent session (01:00-23:00 Europe/London, plus 15m close buffer)."""
+    current = (now or datetime.now(timezone.utc)).astimezone(LONDON)
+    day = current.date()
+    if (current.hour, current.minute) < (23, 15):
+        day -= timedelta(days=1)
+    while day.weekday() >= 5:
+        day -= timedelta(days=1)
+    return day.isoformat()
+
 
 
 def symbol(code):
@@ -76,6 +94,52 @@ def get_json(url):
     request = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
     with urlopen(request, timeout=18) as response:
         return json.load(response)
+
+
+def official_text_over_physical_route(url, host, referer):
+    table = run(['/usr/sbin/netstat', '-rn', '-f', 'inet'], capture_output=True,
+                text=True, check=True, timeout=4).stdout
+    interface = next((route[3] for route in map(str.split, table.splitlines())
+                      if len(route) >= 4 and route[0] == 'default' and route[3].startswith('en')), None)
+    if not interface:
+        raise OSError('未找到 macOS 以太网或 Wi-Fi 的默认路由')
+    # A proxy TUN can replace system DNS with a synthetic address and catch raw-IP requests.
+    # Resolve the same official host over HTTPS, then bind only this transfer to the physical interface.
+    error = f'公开 DNS 未返回 {host} 的源站地址'
+    tried = set()
+    for resolver in B00Y_DNS:
+        try:
+            answer = get_json(resolver + '?' + urlencode({'name': host, 'type': 'A'}))
+            addresses = [IPv4Address(row['data']) for row in answer.get('Answer', [])
+                         if row['type'] == 1]
+        except (OSError, ValueError, KeyError) as cause:
+            error = str(cause)
+            continue
+        for address in addresses:
+            if not address.is_global or address in tried:
+                continue
+            tried.add(address)
+            response = run(['/usr/bin/curl', '--interface', f'if!{interface}', '--noproxy', '*',
+                            '--resolve', f'{host}:443:{address}', '-fsS', '--connect-timeout', '5',
+                            '--max-time', '8', '-A', 'Mozilla/5.0', '-e', referer, url],
+                           capture_output=True, text=True, timeout=10)
+            if response.returncode == 0:
+                return response.stdout
+            error = response.stderr.strip()
+    raise OSError(error)
+
+
+def get_b00y_json(url):
+    """Return B00Y JSON and its successful route, including macOS TUN recovery."""
+    try:
+        return get_json(url), 'system'
+    except OSError as original:
+        if sys.platform != 'darwin':
+            raise
+        try:
+            return json.loads(official_text_over_physical_route(url, B00Y_HOST, B00Y_SITE)), 'macos-physical-interface'
+        except (OSError, ValueError, SubprocessError) as alternate:
+            raise OSError(f'东财常规路由失败（{original}），物理网卡也未取得日线（{alternate}）') from alternate
 
 
 def checked_rows(rows):
@@ -123,24 +187,30 @@ def parse_stock(payload, code, url, cutoff):
             'rows': rows, 'captured_at': now_iso()}
 
 
-def parse_index(payload, code, name, secid, url, cutoff):
+def parse_index(payload, code, name, secid, url, cutoff, source='东方财富指数日线',
+                adjustment='PRICE_INDEX', currency=None, unit=None):
     data = payload.get('data') or {}
-    if data.get('code') != secid.split('.')[1]:
+    if str(data.get('code') or '').upper() != secid.split('.')[1].upper():
         raise ValueError('指数代码与请求不符')
     rows = []
     for raw in data.get('klines', []):
         fields = raw.split(',')
         if fields[0] <= cutoff:
             rows.append({'date': fields[0], 'close': float(fields[2]), 'volume': None})
-    return {'code': code, 'name': name, 'provider_name': data.get('name'),
-            'source': '东方财富指数日线', 'source_url': url, 'adjustment': 'PRICE_INDEX',
+    result = {'code': code, 'name': name, 'provider_name': data.get('name'),
+            'source': source, 'source_url': url, 'adjustment': adjustment,
             'rows': checked_rows(rows), 'captured_at': now_iso()}
+    if currency:
+        result['currency'] = currency
+    if unit:
+        result['unit'] = unit
+    return result
 
 
 def parse_a_stock(payload, code, secid, url, cutoff):
     """Eastmoney adjusted equity bars; also the explicit HK fallback."""
     data = payload.get('data') or {}
-    if data.get('code') != secid.split('.')[1]:
+    if str(data.get('code') or '').upper() != secid.split('.')[1].upper():
         raise ValueError('股票代码与请求不符')
     rows = []
     for raw in data.get('klines', []):
@@ -161,6 +231,7 @@ class QuoteCache:
         self._locks = {}
 
     def fetch(self, instrument, cutoff):
+        cutoff = instrument.get('cutoff') or cutoff
         code = instrument['code']
         with self._lock:
             lock = self._locks.setdefault(code, Lock())
@@ -171,7 +242,7 @@ class QuoteCache:
             # Short TTL deduplicates shared benchmarks across company requests.
             a_stock = code.endswith(('.SH', '.SZ'))
             current_provider = not a_stock or cached and cached.get('source') == '东方财富前复权日线'
-            if cached and current_provider and cached.get('requested_bars', 0) >= HISTORY_LIMIT and cached['rows'][-1]['date'] == cutoff:
+            if cached and current_provider and cached.get('requested_bars', 0) >= HISTORY_LIMIT and cached.get('rows') and  cached['rows'][-1]['date'] == cutoff:
                 age = current - datetime.fromisoformat(cached['captured_at'])
                 if age.total_seconds() < 3600:
                     return cached, None
@@ -183,9 +254,13 @@ class QuoteCache:
                                        'fields1': 'f1,f2,f3,f4,f5,f6',
                                        'fields2': 'f51,f52,f53,f54,f55,f56,f57'})
                     url = 'https://push2his.eastmoney.com/api/qt/stock/kline/get?' + query
-                    payload = get_json(url)
+                    payload = get_b00y_json(url)[0] if secid == '112.B00Y' else get_json(url)
                     result = (parse_a_stock(payload, code, secid, url, cutoff) if a_stock else
-                              parse_index(payload, code, instrument['name'], secid, url, cutoff))
+                              parse_index(payload, code, instrument['name'], secid, url, cutoff,
+                                          source=instrument.get('source', '东方财富指数日线'),
+                                          adjustment=instrument.get('adjustment', 'PRICE_INDEX'),
+                                          currency=instrument.get('currency'),
+                                          unit=instrument.get('unit')))
                 else:
                     key = symbol(code)
                     endpoint = 'hkfqkline' if key.startswith('hk') else 'fqkline'
@@ -207,12 +282,22 @@ class QuoteCache:
                 write_json(path, result)
                 return result, None
             except (OSError, ValueError, TypeError, KeyError, IndexError) as error:
-                return cached, str(error)
+                if not cached:
+                    return None, str(error)
+                rows = [row for row in cached.get('rows', []) if row['date'] <= cutoff]
+                return (dict(cached, rows=rows) if rows else None), str(error)
+
+    def cached_through(self, code, cutoff):
+        cached = read_json(self.directory / (code + '.json'))
+        if not cached:
+            return None
+        rows = [row for row in cached.get('rows', []) if row['date'] <= cutoff]
+        return dict(cached, rows=rows) if rows else None
 
     def collect(self, instruments, cutoff):
         unique = {item['code']: item for item in instruments}
         def fetch(item):
-            data, error = self.fetch(item, cutoff)
+            data, error = self.fetch(item, item.get('cutoff') or cutoff)
             return item['code'], data, error
         with ThreadPoolExecutor(max_workers=4) as executor:
             results = list(executor.map(fetch, unique.values()))

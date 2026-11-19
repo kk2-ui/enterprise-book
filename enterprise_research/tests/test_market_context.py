@@ -12,8 +12,13 @@ from datetime import date, datetime, timedelta, timezone
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from market_context import MarketService, build_context, fit_model, prior_window_analysis
-from market_data import QuoteCache, completed_date, parse_index, parse_stock, parse_a_stock
+from market_context import (
+    BRENT_INSTRUMENT, MarketService, build_context, build_petrochina_cost,
+    build_petrochina_pilot, build_petrochina_valuation, fit_model, prior_window_analysis,
+)
+from market_data import (
+    QuoteCache, brent_completed_date, completed_date, parse_index, parse_stock, parse_a_stock,
+)
 from app import Store, Handler
 from industry_monitor.service import MonitorService
 
@@ -114,6 +119,24 @@ class MarketAcquisitionTests(unittest.TestCase):
         self.assertEqual(completed_date(datetime(2026,11,6,10,tzinfo=timezone.utc)), '2026-11-06')
         self.assertEqual(completed_date(datetime(2026,11,8,10,tzinfo=timezone.utc)), '2026-11-06')
 
+    def test_brent_cutoff_respects_london_23_close_and_dst(self):
+        hk_closed_winter = datetime(2026, 11, 17, 9, 30, tzinfo=timezone.utc)
+        self.assertEqual(completed_date(hk_closed_winter), '2026-11-17')
+        self.assertEqual(brent_completed_date(hk_closed_winter), '2026-11-16')
+
+        after_settlement_still_trading = datetime(2026, 11, 17, 19, 30, tzinfo=timezone.utc)
+        self.assertEqual(brent_completed_date(after_settlement_still_trading), '2026-11-16')
+
+        after_london_close_winter = datetime(2026, 11, 17, 23, 15, tzinfo=timezone.utc)
+        self.assertEqual(brent_completed_date(after_london_close_winter), '2026-11-17')
+
+        monday_hk_closed = datetime(2026, 11, 16, 9, 30, tzinfo=timezone.utc)
+        self.assertEqual(completed_date(monday_hk_closed), '2026-11-16')
+        self.assertEqual(brent_completed_date(monday_hk_closed), '2026-11-13')
+
+        self.assertEqual(brent_completed_date(datetime(2026, 9, 1, 21, 59, tzinfo=timezone.utc)), '2026-08-31')
+        self.assertEqual(brent_completed_date(datetime(2026, 9, 1, 22, 15, tzinfo=timezone.utc)), '2026-09-01')
+
     def test_a_stock_extended_history_keeps_volume_and_close_cutoff(self):
         payload = {'data':{'code':'000651','name':'格力电器','klines':[
             '2026-11-05,38,39,40,37,100,3900',
@@ -156,6 +179,369 @@ class MarketAcquisitionTests(unittest.TestCase):
         result = build_context('00506.HK', {'peers':[]}, series, [], '2026-11-06', 'v1')
         self.assertEqual(result['status'], 'unavailable')
         self.assertEqual(result['as_of'], '2026-11-04')
+
+
+class PetroChinaMarketPilotTests(unittest.TestCase):
+    def _sample_series(self):
+        return {
+            '601857.SH': {
+                'code': '601857.SH',
+                'name': '中国石油',
+                'source': '东方财富前复权日线',
+                'source_url': ('ht' + 'tps://example.org/601857'),
+                'adjustment': 'QFQ',
+                'currency': 'CNY',
+                'captured_at': '2026-11-13T10:00:00+00:00',
+                'rows': [
+                    {'date': '2026-08-28', 'close': 11.80, 'volume': 1000},
+                    {'date': '2026-08-31', 'close': 11.95, 'volume': 1200},
+                    {'date': '2026-09-02', 'close': 12.10, 'volume': 1100},
+                    {'date': '2026-11-13', 'close': 12.39, 'volume': 1300},
+                ],
+            },
+            '00857.HK': {
+                'code': '00857.HK',
+                'name': '中国石油股份',
+                'source': '腾讯前复权日线',
+                'source_url': ('ht' + 'tps://example.org/00857'),
+                'adjustment': 'QFQ',
+                'currency': 'HKD',
+                'captured_at': '2026-11-13T10:00:00+00:00',
+                'rows': [
+                    {'date': '2026-08-28', 'close': 9.85, 'volume': 2000},
+                    {'date': '2026-08-31', 'close': 9.96, 'volume': 2100},
+                    {'date': '2026-09-01', 'close': 10.02, 'volume': 1900},
+                    {'date': '2026-11-13', 'close': 10.33, 'volume': 2200},
+                ],
+            },
+            'BRENT': {
+                'code': 'BRENT',
+                'name': '布伦特原油期货连续',
+                'source': '东方财富期货连续日线',
+                'source_url': ('ht' + 'tps://example.org/brent'),
+                'adjustment': 'CONTINUOUS_FUTURES',
+                'currency': 'USD',
+                'unit': '美元/桶',
+                'captured_at': '2026-11-13T10:00:00+00:00',
+                'rows': [
+                    {'date': '2026-08-28', 'close': 76.40, 'volume': None},
+                    {'date': '2026-09-01', 'close': 75.80, 'volume': None},
+                    {'date': '2026-09-02', 'close': 75.20, 'volume': None},
+                    {'date': '2026-11-13', 'close': 73.90, 'volume': None},
+                ],
+            },
+        }
+
+    def test_brent_continuous_futures_preserves_unit_and_code_check(self):
+        payload = {'data': {'code': 'B00Y', 'name': '布伦特原油当月连续', 'klines': [
+            '2026-11-12,73.1,73.5,74.0,72.8,1000,0',
+            '2026-11-13,73.5,73.9,74.2,73.2,1100,0',
+        ]}}
+        parsed = parse_index(
+            payload, 'BRENT', BRENT_INSTRUMENT['name'], BRENT_INSTRUMENT['secid'],
+            ('ht' + 'tps://example.org'), '2026-11-13',
+            source=BRENT_INSTRUMENT['source'], adjustment=BRENT_INSTRUMENT['adjustment'],
+            currency=BRENT_INSTRUMENT['currency'], unit=BRENT_INSTRUMENT['unit'],
+        )
+        self.assertEqual(parsed['unit'], '美元/桶')
+        self.assertEqual(parsed['currency'], 'USD')
+        self.assertEqual(parsed['adjustment'], 'CONTINUOUS_FUTURES')
+        self.assertEqual(len(parsed['rows']), 2)
+
+    def test_trend_keeps_missing_weekday_gaps_and_omits_epv_or_65_lines(self):
+        pilot = build_petrochina_pilot('601857.SH', self._sample_series(), [], '2026-11-13')
+        self.assertEqual(pilot['pilot'], 'petrochina_market_v1')
+        self.assertEqual(pilot['status'], 'ready')
+        trend = pilot['trend']
+        self.assertFalse(trend['ah_premium_included'])
+        by_date = {row['date']: row for row in trend['chart']}
+        self.assertIsNone(by_date['2026-09-01']['a_stock'])
+        self.assertEqual(by_date['2026-09-01']['brent'], 75.80)
+        self.assertEqual(by_date['2026-08-31']['a_stock'], 11.95)
+        self.assertIsNone(by_date['2026-08-31']['brent'])
+        self.assertIsNone(by_date['2026-09-03']['a_stock'])
+        self.assertIsNone(by_date['2026-09-03']['brent'])
+        anns = {a['id']: a for a in trend['announcements']}
+        self.assertEqual(anns['div2026']['plot_date'], '2026-08-31')
+        self.assertEqual(anns['results2026h1']['plot_date'], '2026-08-31')
+        self.assertTrue(anns['h12026']['url'].endswith('#page=25'))
+        for row in trend['chart']:
+            self.assertEqual(set(row.keys()), {'date', 'a_stock', 'h_stock', 'brent'})
+
+    def test_hk_closed_while_brent_intraday_excludes_today_brent_bar(self):
+        with tempfile.TemporaryDirectory() as directory:
+            service = MarketService(directory)
+            quotes_dir = service.quotes.directory
+            quotes_dir.mkdir(parents=True, exist_ok=True)
+            series = self._sample_series()
+            series['601857.SH']['rows'].extend([
+                {'date': '2026-11-16', 'close': 12.42, 'volume': 1250},
+                {'date': '2026-11-17', 'close': 12.50, 'volume': 1310},
+            ])
+            series['00857.HK']['rows'].extend([
+                {'date': '2026-11-16', 'close': 10.35, 'volume': 2100},
+                {'date': '2026-11-17', 'close': 10.41, 'volume': 2300},
+            ])
+            series['BRENT']['rows'].extend([
+                {'date': '2026-11-16', 'close': 92.44, 'volume': None},
+                {'date': '2026-11-17', 'close': 92.65, 'volume': None},
+            ])
+            for key, item in series.items():
+                (quotes_dir / f'{key}.json').write_text(json.dumps(item, ensure_ascii=False), encoding='utf-8')
+            company = {'id': 'c_petro', 'code': '601857.SH', 'book_editions': [], 'sources': []}
+            try:
+                with patch('market_context.completed_date', return_value='2026-11-17'), \
+                     patch('market_context.brent_completed_date', return_value='2026-11-16'), \
+                     patch('market_data.get_json', side_effect=OSError('tls timeout')):
+                    refreshed = service.refresh(company)
+                    resp = service.response(company)
+                    same_day_as_of = service.response(company, as_of='2026-11-17')
+                for payload in (refreshed, resp, same_day_as_of):
+                    self.assertEqual(payload['requested_through'], '2026-11-17')
+                    self.assertEqual(payload['brent_through'], '2026-11-16')
+                    self.assertEqual(payload['trend']['listings']['601857.SH']['last_date'], '2026-11-17')
+                    self.assertEqual(payload['trend']['listings']['00857.HK']['last_date'], '2026-11-17')
+                    self.assertEqual(payload['trend']['brent']['last_date'], '2026-11-16')
+                    by_date = {r['date']: r for r in payload['trend']['chart']}
+                    self.assertEqual(by_date['2026-11-17']['a_stock'], 12.50)
+                    self.assertEqual(by_date['2026-11-17']['h_stock'], 10.41)
+                    self.assertIsNone(by_date['2026-11-17']['brent'])
+                    self.assertEqual(by_date['2026-11-16']['brent'], 92.44)
+            finally:
+                service.close()
+
+    def test_cost_card_gates_values_and_each_original_link_by_publication_date(self):
+        company_with_pkg = {
+            'book_editions': [{
+                'id': 'ed_formal',
+                'title': '中国石油企业书 · 修订版 v1',
+                'information_cutoff': '2026-11-13',
+                'source_version': 'petrochina-sources-20261115-v1',
+            }],
+        }
+        before = build_petrochina_cost('2026-08-29', company_with_pkg)
+        self.assertFalse(before['visible'])
+        self.assertIsNone(before['prior_value'])
+        self.assertIsNone(before['current_value'])
+        self.assertIsNone(before['yoy_pct'])
+        self.assertIsNone(before['source_url'])
+        self.assertIsNone(before['first_disclosure_url'])
+        self.assertIsNone(before['first_disclosure_en_url'])
+        self.assertIsNone(before['local_source_version'])
+        self.assertIsNone(before['local_doc_id'])
+        self.assertIsNone(before['local_doc_page'])
+        self.assertEqual(before['sources'], [])
+
+        on_results = build_petrochina_cost('2026-08-30', company_with_pkg)
+        self.assertTrue(on_results['visible'])
+        self.assertEqual(on_results['prior_value'], 10.14)
+        self.assertEqual(on_results['current_value'], 10.68)
+        self.assertEqual(on_results['yoy_pct'], 5.3)
+        self.assertIn('2026083000018_c.pdf#page=14', on_results['first_disclosure_url'])
+        self.assertIn('#page=17', on_results['first_disclosure_en_url'])
+        self.assertIsNone(on_results['source_url'])
+        self.assertIsNone(on_results['local_source_version'])
+        self.assertIsNone(on_results['local_doc_id'])
+        self.assertIsNone(on_results['local_doc_page'])
+        self.assertTrue(all(s['published_on'] == '2026-08-30' for s in on_results['sources']))
+
+        on_interim = build_petrochina_cost('2026-09-18', company_with_pkg)
+        self.assertTrue(on_interim['visible'])
+        self.assertIn('2026091800441.pdf#page=25', on_interim['source_url'])
+        self.assertEqual(on_interim['local_source_version'], 'petrochina-sources-20261115-v1')
+        self.assertEqual(on_interim['local_doc_id'], 'h12026')
+        self.assertEqual(on_interim['local_doc_page'], 25)
+        self.assertEqual({s['published_on'] for s in on_interim['sources']}, {'2026-08-30', '2026-09-18'})
+
+    def test_valuation_strictly_matches_formal_edition_and_prose_figure_without_wrong_fallbacks(self):
+        company = {
+            'id': 'c_petro',
+            'code': '601857.SH',
+            'default_book_edition_id': 'ed_newer_draft',
+            'book_editions': [
+                {'id': 'ed_newer_draft', 'title': '草稿试验版', 'information_cutoff': '2026-12-01'},
+                {
+                    'id': 'ed_formal_20261113',
+                    'title': '中国石油企业书 · 修订版 v1',
+                    'information_cutoff': '2026-11-13',
+                    'source_version': 'petrochina-sources-20261115-v1',
+                    'model': {'name': 'Codex', 'version': 'gpt-6.1-sol'},
+                    'parts': {
+                        'valuation': {
+                            'title': '普通股现金与三步估值',
+                            'body': (
+                                '先看历史油价图 [[figure:fig_other_chart|布伦特历史回顾]]。\n'
+                                '再看门槛对比 [[figure:fig_thresh_formal|中国石油A/H价格的年度现金要求]]。'
+                            ),
+                        },
+                    },
+                },
+            ],
+            'sources': [
+                {'id': 'fig_thresh_decoy', 'title': '中国石油A/H价格的年度现金要求', 'available': True},
+                {'id': 'fig_other_chart', 'title': '布伦特历史回顾', 'available': True},
+                {'id': 'fig_thresh_formal', 'title': '中国石油A/H价格的年度现金要求', 'available': True},
+            ],
+        }
+        val = build_petrochina_valuation(company, '2026-11-13')
+        self.assertEqual(val['edition_id'], 'ed_formal_20261113')
+        self.assertEqual(
+            val['edition_valuation_url'],
+            '#/company/c_petro/editions?edition=ed_formal_20261113&view=valuation',
+        )
+        self.assertEqual(val['figure_url'], '/api/sources/fig_thresh_formal/file')
+
+        wrong_date_company = {
+            'id': 'c_petro',
+            'code': '601857.SH',
+            'default_book_edition_id': 'ed_wrong_date',
+            'book_editions': [{
+                'id': 'ed_wrong_date',
+                'title': '中国石油企业书 · 修订版 v1',
+                'information_cutoff': '2026-11-14',
+                'source_version': 'petrochina-sources-20261115-v1',
+                'parts': {'valuation': {'body': '[[figure:fig_thresh_decoy|中国石油A/H价格的年度现金要求]]'}},
+            }],
+            'sources': company['sources'],
+        }
+        wrong_date_val = build_petrochina_valuation(wrong_date_company, '2026-11-13')
+        self.assertIsNone(wrong_date_val['edition_id'])
+        self.assertIsNone(wrong_date_val['edition_valuation_url'])
+        self.assertIsNone(wrong_date_val['figure_url'])
+
+        other_model_company = {
+            'id': 'c_petro',
+            'code': '601857.SH',
+            'default_book_edition_id': 'ed_other_default',
+            'book_editions': [
+                {
+                    'id': 'ed_other_default',
+                    'title': '中国石油 · 其他模型研究版',
+                    'information_cutoff': '2026-11-13',
+                    'source_version': 'petrochina-sources-20261115-v1',
+                    'model': {'name': 'OtherModel', 'version': '1.0'},
+                    'parts': {'valuation': {'body': '[[figure:fig_thresh_decoy|中国石油A/H价格的年度现金要求]]'}},
+                },
+                {
+                    'id': 'ed_same_title_other_model',
+                    'title': '中国石油企业书 · 修订版 v1',
+                    'information_cutoff': '2026-11-13',
+                    'source_version': 'petrochina-sources-20261115-v1',
+                    'model': {'name': 'OtherModel', 'version': '1.0'},
+                    'parts': {'valuation': {'body': '[[figure:fig_thresh_decoy|中国石油A/H价格的年度现金要求]]'}},
+                },
+            ],
+            'sources': company['sources'],
+        }
+        other_model_val = build_petrochina_valuation(other_model_company, '2026-11-13')
+        self.assertIsNone(other_model_val['edition_id'])
+        self.assertIsNone(other_model_val['edition_valuation_url'])
+        self.assertIsNone(other_model_val['figure_url'])
+
+        wrong_pkg_company = {
+            'id': 'c_petro',
+            'code': '601857.SH',
+            'book_editions': [{
+                'id': 'ed_wrong_pkg',
+                'title': '中国石油企业书 · 修订版 v1',
+                'information_cutoff': '2026-11-13',
+                'source_version': 'petrochina-sources-draft',
+                'parts': {'valuation': {'body': '[[figure:fig_thresh_formal|中国石油A/H价格的年度现金要求]]'}},
+            }],
+            'sources': company['sources'],
+        }
+        self.assertIsNone(build_petrochina_valuation(wrong_pkg_company, '2026-11-13')['edition_id'])
+        self.assertIsNone(build_petrochina_valuation(wrong_pkg_company, '2026-11-13')['figure_url'])
+
+    def test_http_handler_serves_petrochina_as_of_cutoff_and_keeps_other_companies_unchanged(self):
+        with tempfile.TemporaryDirectory() as directory:
+            store = Store(Path(directory))
+            petro_id = store.add_company({'name': '中国石油', 'code': '601857.SH'})
+            other_id = store.add_company({'name': '中国食品', 'code': '00506.HK'})
+            _decoy_id = store.add_source(
+                petro_id,
+                {'title': '中国石油A/H价格的年度现金要求', 'kind': '研究图'},
+                b'\x89PNG\r\n\x1a\nDECOY',
+                'decoy.png',
+            )
+            fig_id = store.add_source(
+                petro_id,
+                {'title': '中国石油A/H价格的年度现金要求', 'kind': '研究图'},
+                b'\x89PNG\r\n\x1a\nREAL',
+                'threshold.png',
+            )
+            with store.connect() as conn:
+                conn.execute(
+                    'INSERT INTO book_editions VALUES(?,?,?,?)',
+                    (
+                        'ed_petro_v1',
+                        petro_id,
+                        json.dumps({
+                            'title': '中国石油企业书 · 修订版 v1',
+                            'information_cutoff': '2026-11-13',
+                            'source_version': 'petrochina-sources-20261115-v1',
+                            'model': {'name': 'Codex', 'version': 'gpt-6.1-sol'},
+                            'parts': {
+                                'valuation': {
+                                    'title': '普通股现金与三步估值',
+                                    'body': f'年度现金门槛对比见图：[[figure:{fig_id}|中国石油A/H价格的年度现金要求]]。',
+                                },
+                            },
+                        }, ensure_ascii=False),
+                        '2026-11-15T00:00:00+08:00',
+                    ),
+                )
+            service = MarketService(directory)
+            quotes_dir = service.quotes.directory
+            quotes_dir.mkdir(parents=True, exist_ok=True)
+            for key, item in self._sample_series().items():
+                (quotes_dir / f'{key}.json').write_text(json.dumps(item, ensure_ascii=False), encoding='utf-8')
+
+            server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+            server.store, server.market_context = store, service
+            server.industry_monitor = MonitorService(directory, start_scheduler=False)
+            thread = threading.Thread(target=server.serve_forever, daemon=True)
+            thread.start()
+            opener = build_opener(ProxyHandler({}))
+            base = ('ht' + f'tp://127.0.0.1:{server.server_port}')
+            try:
+                with patch.object(service, '_run', lambda c: None):
+                    with opener.open(f'{base}/api/companies/{petro_id}/market-context?as_of=2026-08-29') as resp:
+                        early = json.load(resp)
+                    self.assertEqual(early['pilot'], 'petrochina_market_v1')
+                    self.assertFalse(early['cost']['visible'])
+                    self.assertIsNone(early['cost']['current_value'])
+                    self.assertIsNone(early['cost']['source_url'])
+                    self.assertIsNone(early['cost']['local_source_version'])
+                    self.assertEqual(early['cost']['sources'], [])
+                    self.assertEqual(early['valuation']['edition_id'], 'ed_petro_v1')
+                    self.assertEqual(early['valuation']['figure_url'], f'/api/sources/{fig_id}/file')
+
+                    with opener.open(f'{base}/api/companies/{petro_id}/market-context?as_of=2026-08-30') as resp:
+                        aug30 = json.load(resp)
+                    self.assertTrue(aug30['cost']['visible'])
+                    self.assertEqual(aug30['cost']['current_value'], 10.68)
+                    self.assertIsNone(aug30['cost']['source_url'])
+                    self.assertIsNone(aug30['cost']['local_source_version'])
+                    self.assertTrue(len(aug30['cost']['sources']) >= 1)
+
+                    with opener.open(f'{base}/api/companies/{petro_id}/market-context?as_of=2026-11-13') as resp:
+                        latest = json.load(resp)
+                    self.assertTrue(latest['cost']['visible'])
+                    self.assertEqual(latest['cost']['current_value'], 10.68)
+                    self.assertEqual(latest['cost']['local_source_version'], 'petrochina-sources-20261115-v1')
+                    self.assertEqual(latest['trend']['status'], 'ready')
+
+                    with opener.open(f'{base}/api/companies/{other_id}/market-context') as resp:
+                        other = json.load(resp)
+                    self.assertNotIn('pilot', other)
+                    self.assertEqual(other['code'], '00506.HK')
+            finally:
+                server.shutdown()
+                server.server_close()
+                thread.join()
+                service.close()
+                server.industry_monitor.close()
 
 
 if __name__ == '__main__':

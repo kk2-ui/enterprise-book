@@ -16,6 +16,7 @@ function modelShelf(c){return `<div class="book-model-bar"><label>企业书版�
 function frozenHTML(html,c,e){const box=document.createElement('div');box.innerHTML=html;box.querySelectorAll('a[href]').forEach(a=>{const u=a.getAttribute('href');const m=u.match(/^#\/company\/([^/]+)\/([^?]+)(?:\?(.*))?$/);if(m&&m[1]===c.id&&['overview','book','topics','finance','research','history','life','track','business','ownership','regions','products'].includes(m[2])){a.href=editionURL(c.id,e.id,m[2]==='finance'?'valuation':m[2],Object.fromEntries(new URLSearchParams(m[3]||'')));}});box.querySelectorAll('select[data-task]').forEach(s=>{const label=document.createElement('span');label.textContent=s.value;s.replaceWith(label);});box.querySelectorAll('button').forEach(b=>{if(!b.dataset.modelAction&&!/^(d-|b-|source$|topic-figure$)/.test(b.dataset.action||''))b.remove();});return box.innerHTML;}
 function modelBody(text,c,version){const refs=[];const raw=(text||'').replace(/\[\[doc:([\w-]+)@(\d+)\|([^\]\n]+)\]\]/g,(_,id,page,label)=>{refs.push(`<button class="text-btn inline-source" data-model-action="source" data-cid="${c.id}" data-version="${esc(version)}" data-doc="${id}" data-page="${page}">${esc(label)} · 第${page}页 ↗</button>`);return `MODELREF${refs.length-1}END`;});return topicBody(raw,c).replace(/MODELREF(\d+)END/g,(_,i)=>refs[Number(i)]);}
 function modelPart(c,e,key){const p=e.parts[key];return p?`<article class="model-book-prose document"><h2>${esc(p.title)}</h2>${modelBody(p.body,c,e.source_version)}</article>`:empty('本版未保存这部分内容','历史成稿按当时内容保留；请从版本选择切换到已补全的新稿。');}
+
 function modelOverview(base,e,context){
  const p=e.parts.overview,data=p.display||{};
  const c={...base,fixedOverviewSource:e.source_version,dossier:{
@@ -34,7 +35,7 @@ function modelOverview(base,e,context){
  context.cover=frozenHTML(dCover(c),c,e);
  const content=dOverview(c,{
   analysis:modelPart(c,e,'overview'),current,
-  market:base.default_book_edition_id===e.id&&p.display&&!data.historical?marketContextShell(c):'',
+  market:!data.historical&&base.default_book_edition_id===e.id?marketContextShell(c):'',
   gaps:`<section class="research-gaps"><div><span class="eyebrow">OPEN QUESTIONS</span><h2>还没有被材料解决的问题</h2></div><div class="document">${modelBody(e.parts.gaps.body,c,e.source_version)}</div></section>`
  });
  return frozenHTML(content,c,e);
@@ -44,8 +45,11 @@ async function editionsView(base,context={}){const p=editionParams(),id=p.get('e
  if(!id){const jobs=await api(`/api/companies/${base.id}/book-tasks`);return `<section class="panel"><h2>模型企业书</h2><p>每个版本是一整本独立内容。模型、资料时点与审阅状态分别保留。</p><div class="model-part-grid">${list.map(e=>`<a href="${editionURL(base.id,e.id)}"><span class="eyebrow">${esc(modelName(e))}</span><h3>${esc(e.title)}</h3><p>${esc(e.information_cutoff||'时点未登记')} · ${e.review_status==='independent_review'?'已独立审阅 · 待用户阅读':e.review_status==='not_reviewed'?'模型成稿 · 未独立审阅':'历史协作稿'}</p><span>打开完整企业书 →</span></a>`).join('')||'<p>尚无保存的整本版本。</p>'}</div></section><section class="panel"><div class="panel-head"><h2>外部 Agent 研究任务</h2><button class="btn secondary" data-model-action="refresh">刷新进度</button></div>${jobs.map(t=>`<article class="model-task-row"><h3>${esc(t.title)}</h3><p>${esc(modelName(t))} · ${esc(({waiting:'等待 Agent 接入',running:'研究与写作中',failed:'执行中断',completed:'整本已保存'})[t.status])} · 已存 ${t.saved_parts.length} 个部分</p><p class="small muted">资料版本 ${esc(t.source_version)} · ${esc(t.message||'')}</p><button class="text-btn" data-model-action="task-open" data-cid="${base.id}" data-task="${t.id}">打开任务与接入说明 →</button>${t.edition_id?` <a href="${editionURL(base.id,t.edition_id)}">阅读成稿 →</a>`:''}</article>`).join('')||empty('尚无外部任务','创建任务后，把接入指令交给有本机工具访问能力的 Agent；它会直接从系统读写。')}</section>`;}
  const e=await api(`/api/companies/${base.id}/books/${id}`),view=p.get('view')||'overview';let content='';
  const nav=[['overview','企业全景'],['book','八章总论'],['topics','专题研究'],['life','生命周期'],['history','长期财务'],['track','跟踪与复盘'],['judgment','判断'],['valuation','现金与估值'],['research','依据与研究']];
+ nav.splice(1,0,['market','市场观察']);
  if(e.source_version)nav.push(['sources','本版资料']);
- if(view==='sources'&&e.source_version){
+ if(view==='market'){
+  content=marketObservationShell(base,e);
+ }else if(view==='sources'&&e.source_version){
   content=await sourceVersionView(base,e.source_version);
  }else if(e.format==='legacy_snapshot'){
   const c=structuredClone(e.snapshot);context.company=c;
