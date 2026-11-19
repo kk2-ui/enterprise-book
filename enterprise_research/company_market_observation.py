@@ -18,10 +18,10 @@ UNIT_TO_YI = {'CNY': 1e8, 'CNY_yuan': 1e8, 'CNY_thousand': 1e5, 'CNY_million': 1
 
 
 DRIVERS = {
-    '000651.SZ': dict(macro='appliances', cadence=3, macro_note='观察家电终端需求。统计范围包含其他家电品牌和音像器材。',
+    '000651.SZ': dict(macro='appliances', benchmark='sh000300', cadence=3, macro_note='观察家电终端需求。统计范围包含其他家电品牌和音像器材。',
                       micro_note='存货反映公司账上的备货，合同负债反映预收对价。两者都随季节波动，经销商库存另有口径。',
                       micro={'inventory': '合并存货', 'contracts': '合并合同负债'}),
-    '06049.HK': dict(macro='housing', cadence=6, macro_note='住宅竣工影响新盘交付的行业环境。存量住宅续约及公建外拓另有驱动。',
+    '06049.HK': dict(macro='housing', benchmark='hkHSI', cadence=6, macro_note='住宅竣工影响新盘交付的行业环境。存量住宅续约及公建外拓另有驱动。',
                       micro_note='贸易应收款项及票据的期末净额反映已确认但尚待收回的款项，也受项目规模和半年收款节奏影响。',
                       micro={'trade_receivables_net': '贸易应收款项及票据净额'}),
 }

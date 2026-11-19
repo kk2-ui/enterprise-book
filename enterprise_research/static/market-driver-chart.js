@@ -1,138 +1,1926 @@
-/* Gemini's three aligned tracks, rendered from published observations on a calendar axis. */
-const DAY = 86400000;
-const left = 66, right = 906, top = 12, bottom = 93;
-const palette = ['#333f43', '#39709c', '#17715c', '#ad7329'];
-const ms = day => Date.parse(day + 'T00:00:00Z');
-const iso = time => new Date(time).toISOString().slice(0, 10);
-const number = (value, unit) => (unit === '%' && value > 0 ? '+' : '') + value.toFixed(unit === '%' ? 1 : 2) + (unit === '%' ? '%' : ' ' + unit);
-const monthIndex = date => Number(date.slice(0, 4)) * 12 + Number(date.slice(5, 7));
+// enterprise_research/static/market-driver-chart.js
 
-function sourceURL(value) {
-  if (!value) return '';
-  const url = new URL(value, location.href);
-  return ['https:', 'http:'].includes(url.protocol) ? esc(url.href) : '';
+const STYLE_ID = 'er-mo-workbench-v2-style';
+const STATE_MAP = new WeakMap();
+
+const STYLES = `
+.er-mo-wb {
+  --wb-bg: #fcfcfa;
+  --wb-panel: #ffffff;
+  --wb-subtle: #f5f6f8;
+  --wb-border: #dfe3ea;
+  --wb-border-strong: #c5cdd8;
+  --wb-ink: #161d27;
+  --wb-ink-sec: #4a5568;
+  --wb-ink-muted: #768295;
+  --wb-gree: #0e5a8a;
+  --wb-gree-alt: #b85d19;
+  --wb-poly: #146c54;
+  --wb-bench: #64748b;
+  --wb-macro: #5b4b8a;
+  --wb-dxy: #8f3d26;
+  --wb-warn-bg: #fff8eb;
+  --wb-warn-bd: #e8c987;
+  --wb-warn-tx: #7c5211;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  color: var(--wb-ink);
+  background: var(--wb-bg);
+  border: 1px solid var(--wb-border);
+  border-radius: 6px;
+  padding: 14px 16px 12px;
+  box-sizing: border-box;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+.er-mo-wb *, .er-mo-wb *::before, .er-mo-wb *::after {
+  box-sizing: border-box;
+}
+.er-mo-wb a.er-mo-link {
+  color: #1d4ed8;
+  text-decoration: none;
+  border-bottom: 1px dotted #93c5fd;
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+.er-mo-wb a.er-mo-link:hover {
+  color: #1e3a8a;
+  border-bottom-style: solid;
+}
+.er-mo-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--wb-border);
+}
+.er-mo-title-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.er-mo-badge {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 2px 7px;
+  border-radius: 3px;
+  color: #fff;
+  background: var(--wb-gree);
+}
+.er-mo-wb[data-theme="poly"] .er-mo-badge {
+  background: var(--wb-poly);
+}
+.er-mo-heading {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--wb-ink);
+}
+.er-mo-subtag {
+  font-size: 11.5px;
+  color: var(--wb-ink-sec);
+  background: var(--wb-subtle);
+  border: 1px solid var(--wb-border);
+  padding: 1px 7px;
+  border-radius: 3px;
+}
+.er-mo-cursor-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.er-mo-day-pill {
+  font-weight: 700;
+  color: var(--wb-ink);
+  background: #eef2f7;
+  border: 1px solid var(--wb-border-strong);
+  border-radius: 3px;
+  padding: 2px 8px;
+}
+.er-mo-day-pill[data-pinned="1"] {
+  background: #fef3c7;
+  border-color: #d97706;
+  color: #78350f;
+}
+.er-mo-btn {
+  cursor: pointer;
+  font-size: 11.5px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  border: 1px solid var(--wb-border-strong);
+  background: var(--wb-panel);
+  color: var(--wb-ink-sec);
+}
+.er-mo-btn:hover {
+  background: var(--wb-subtle);
+  color: var(--wb-ink);
+}
+.er-mo-clue-box {
+  margin-top: 10px;
+  background: var(--wb-panel);
+  border: 1px solid var(--wb-border);
+  border-left: 3px solid var(--wb-gree);
+  border-radius: 4px;
+  padding: 10px 12px;
+}
+.er-mo-wb[data-theme="poly"] .er-mo-clue-box {
+  border-left-color: var(--wb-poly);
+}
+.er-mo-clue-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.er-mo-clue-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--wb-ink);
+}
+.er-mo-clue-rule {
+  font-size: 11px;
+  color: var(--wb-ink-muted);
+}
+.er-mo-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 8px;
+}
+.er-mo-kpi {
+  background: var(--wb-subtle);
+  border: 1px solid #e6e9ef;
+  border-radius: 4px;
+  padding: 7px 9px;
+}
+.er-mo-kpi-label {
+  font-size: 11px;
+  color: var(--wb-ink-sec);
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+}
+.er-mo-kpi-val {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--wb-ink);
+  margin: 2px 0;
+}
+.er-mo-kpi-meta {
+  font-size: 11px;
+  color: var(--wb-ink-muted);
+  line-height: 1.35;
+}
+.er-mo-tracks {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.er-mo-track {
+  background: var(--wb-panel);
+  border: 1px solid var(--wb-border);
+  border-radius: 4px;
+  padding: 7px 10px 6px;
+}
+.er-mo-track-hdr {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 6px 12px;
+  margin-bottom: 4px;
+}
+.er-mo-track-lhs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.er-mo-track-tag {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: #edf1f7;
+  color: #334155;
+  border: 1px solid #d5dde8;
+}
+.er-mo-track-name {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--wb-ink);
+}
+.er-mo-track-unit {
+  font-size: 11px;
+  color: var(--wb-ink-muted);
+}
+.er-mo-track-val {
+  font-size: 12px;
+  color: var(--wb-ink);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+}
+.er-mo-swatch {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  margin-right: 3px;
+  vertical-align: middle;
+}
+.er-mo-swatch-dash {
+  display: inline-block;
+  width: 12px;
+  height: 0;
+  border-top: 2px dashed var(--wb-bench);
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.er-mo-plot {
+  position: relative;
+  width: 100%;
+  user-select: none;
+  outline: none;
+}
+.er-mo-plot:focus-visible {
+  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.35);
+  border-radius: 3px;
+}
+.er-mo-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  cursor: crosshair;
+}
+.er-mo-empty {
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--wb-subtle);
+  border: 1px dashed var(--wb-border-strong);
+  border-radius: 3px;
+  font-size: 12px;
+  color: var(--wb-ink-muted);
+  padding: 0 12px;
+  text-align: center;
+}
+.er-mo-track-foot {
+  margin-top: 3px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+  font-size: 11px;
+  color: var(--wb-ink-muted);
+}
+.er-mo-status-strip {
+  margin-top: 8px;
+  padding: 7px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  line-height: 1.45;
+  background: var(--wb-subtle);
+  border: 1px solid var(--wb-border);
+  color: var(--wb-ink-sec);
+}
+.er-mo-status-strip[data-warn="1"] {
+  background: var(--wb-warn-bg);
+  border-color: var(--wb-warn-bd);
+  color: var(--wb-warn-tx);
+}
+.er-mo-guardrails {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--wb-ink-muted);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 14px;
+}
+`;
+
+function injectStyles() {
+  if (typeof document === 'undefined') return;
+  if (document.getElementById(STYLE_ID)) return;
+  const style = document.createElement('style');
+  style.id = STYLE_ID;
+  style.textContent = STYLES;
+  document.head.appendChild(style);
 }
 
-function missedRelease(a, b, cadence) {
-  if (cadence === 0) {
-    for (let t = ms(a.published) + DAY; t < ms(b.published); t += DAY) {
-      if (![0, 6].includes(new Date(t).getUTCDay())) return true;
+function escText(val) {
+  if (val === null || val === undefined) return '';
+  const s = String(val);
+  if (typeof window !== 'undefined' && typeof window.esc === 'function') {
+    return window.esc(s);
+  }
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function safeHref(raw) {
+  if (!raw || typeof raw !== 'string') return '';
+  const trimmed = raw.trim();
+  if (!trimmed) return '';
+  try {
+    const base = (typeof window !== 'undefined' && window.location && window.location.origin && window.location.origin !== 'null')
+      ? window.location.origin
+      : 'https://localhost';
+    const parsed = new URL(trimmed, base);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+      return parsed.href;
+    }
+  } catch (_) {
+    return '';
+  }
+  return '';
+}
+
+function renderLink(url, text, title = '') {
+  const href = safeHref(url);
+  if (!href) return escText(text || '');
+  const tAttr = title ? ` title="${escText(title)}"` : '';
+  return `<a class="er-mo-link" href="${escText(href)}" target="_blank" rel="noopener noreferrer"${tAttr}>${escText(text)}</a>`;
+}
+
+function isValidDay(d) {
+  return typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d);
+}
+
+function parseUtcMs(dayStr) {
+  const [y, m, d] = dayStr.split('-').map(Number);
+  return Date.UTC(y, m - 1, d);
+}
+
+function formatUtcDay(ms) {
+  const dt = new Date(ms);
+  const y = dt.getUTCFullYear();
+  const m = String(dt.getUTCMonth() + 1).padStart(2, '0');
+  const d = String(dt.getUTCDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function addCalendarDays(dayStr, delta) {
+  return formatUtcDay(parseUtcMs(dayStr) + delta * 86400000);
+}
+
+function diffCalendarDays(a, b) {
+  return Math.round((parseUtcMs(b) - parseUtcMs(a)) / 86400000);
+}
+
+function isWeekendDay(dayStr) {
+  const wd = new Date(parseUtcMs(dayStr)).getUTCDay();
+  return wd === 0 || wd === 6;
+}
+
+function finiteNum(v) {
+  if (typeof v === 'boolean' || v === null || v === undefined || v === '') return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+
+function fmtNum(n, digits = 2) {
+  if (n === null || n === undefined || !Number.isFinite(n)) return '—';
+  return n.toLocaleString('zh-CN', {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  });
+}
+
+function fmtSigned(n, digits = 2, suffix = '') {
+  if (n === null || n === undefined || !Number.isFinite(n)) return '—';
+  const sign = n > 0 ? '+' : '';
+  return `${sign}${fmtNum(n, digits)}${suffix}`;
+}
+
+function binaryFloorIndex(arr, key, target) {
+  let lo = 0;
+  let hi = arr.length - 1;
+  let ans = -1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    if (arr[mid][key] <= target) {
+      ans = mid;
+      lo = mid + 1;
+    } else {
+      hi = mid - 1;
+    }
+  }
+  return ans;
+}
+
+function detectCompanyProfile(data) {
+  const comp = String(data?.company || '');
+  const macroType = String(data?.drivers?.macro || '');
+  const covCode = String(data?.coverage?.[0]?.code || '');
+  const firstValKey = Object.keys(data?.chart?.[0]?.values || {})[0] || '';
+  const code = covCode || firstValKey;
+
+  const isPoly = macroType === 'housing' || /保利|06049|\.HK/i.test(comp + ' ' + code);
+  const unitFromModes = data?.modes?.[0]?.lanes?.[0]?.items?.[0]?.unit;
+  const stockUnit = unitFromModes || (isPoly || /\.HK$/i.test(code) ? '港元/股' : '元/股');
+
+  return {
+    isPoly,
+    theme: isPoly ? 'poly' : 'gree',
+    code: code || (isPoly ? '06049.HK' : '000651.SZ'),
+    companyName: comp || (isPoly ? '保利物业' : '格力电器'),
+    stockUnit,
+    defaultBenchLabel: isPoly ? '恒生指数' : '沪深300',
+    primaryColor: isPoly ? '#146c54' : '#0e5a8a',
+    secondaryColor: '#b85d19',
+  };
+}
+
+function extractStockSeries(data, code, cutoff) {
+  const raw = Array.isArray(data?.chart) ? data.chart : [];
+  const map = new Map();
+  for (const row of raw) {
+    const d = row?.date;
+    if (!isValidDay(d) || (cutoff && d > cutoff)) continue;
+    const vals = row?.values || {};
+    let v = finiteNum(vals[code]);
+    if (v === null) {
+      const keys = Object.keys(vals);
+      if (keys.length > 0) v = finiteNum(vals[keys[0]]);
+    }
+    if (v !== null && v > 0) {
+      map.set(d, v);
+    }
+  }
+  return Array.from(map.entries())
+    .sort((a, b) => (a[0] < b[0] ? -1 : 1))
+    .map(([date, close]) => ({ date, close }));
+}
+
+function buildWindowCalendar(stockPts, cutoff, daysReq) {
+  const n = Math.max(10, Number(daysReq) || 120);
+  const endDay = isValidDay(cutoff)
+    ? cutoff
+    : (stockPts.length ? stockPts[stockPts.length - 1].date : '2026-11-18');
+
+  let startDay;
+  if (stockPts.length >= n) {
+    startDay = stockPts[stockPts.length - n].date;
+  } else {
+    const calSpan = Math.max(n, Math.round((n * 365) / 250));
+    startDay = addCalendarDays(endDay, -calSpan);
+  }
+  if (startDay > endDay) startDay = endDay;
+
+  const calendar = [];
+  const totalDays = Math.min(2000, Math.max(0, diffCalendarDays(startDay, endDay)));
+  for (let i = 0; i <= totalDays; i++) {
+    calendar.push(addCalendarDays(startDay, i));
+  }
+  return { startDay, endDay, calendar, requestedDays: n };
+}
+
+function normalizeMarketSeries(rawPoints, cutoff, requireSession = false) {
+  if (!Array.isArray(rawPoints)) return [];
+  const byDate = new Map();
+  for (const p of rawPoints) {
+    const d = p?.date;
+    const c = finiteNum(p?.close ?? p?.value);
+    if (!isValidDay(d) || (cutoff && d > cutoff) || c === null || c <= 0) continue;
+    if (requireSession && p?.session && !isValidDay(p.session)) continue;
+    byDate.set(d, {
+      date: d,
+      close: c,
+      session: isValidDay(p?.session) ? p.session : '',
+    });
+  }
+  return Array.from(byDate.values()).sort((a, b) => (a.date < b.date ? -1 : 1));
+}
+
+function computeNormalizedComparison(stockWin, benchWin) {
+  const benchMap = new Map(benchWin.map((p) => [p.date, p.close]));
+  const commonDates = [];
+  for (const sp of stockWin) {
+    if (benchMap.has(sp.date)) {
+      commonDates.push(sp.date);
+    }
+  }
+  if (commonDates.length === 0) {
+    return {
+      hasCommon: false,
+      baseDate: '',
+      latestCommonDate: '',
+      stockBase: null,
+      benchBase: null,
+      stockNorm: [],
+      benchNorm: [],
+      spreadMap: new Map(),
+      latestSpread: null,
+    };
+  }
+  const baseDate = commonDates[0];
+  const stockMap = new Map(stockWin.map((p) => [p.date, p.close]));
+  const stockBase = stockMap.get(baseDate);
+  const benchBase = benchMap.get(baseDate);
+
+  const stockNorm = stockWin
+    .filter((p) => p.date >= baseDate)
+    .map((p) => ({
+      date: p.date,
+      close: p.close,
+      norm: (p.close / stockBase) * 100,
+    }));
+  const benchNorm = benchWin
+    .filter((p) => p.date >= baseDate)
+    .map((p) => ({
+      date: p.date,
+      close: p.close,
+      norm: (p.close / benchBase) * 100,
+    }));
+
+  const spreadMap = new Map();
+  for (const d of commonDates) {
+    const sn = (stockMap.get(d) / stockBase) * 100;
+    const bn = (benchMap.get(d) / benchBase) * 100;
+    spreadMap.set(d, {
+      date: d,
+      stockNorm: sn,
+      benchNorm: bn,
+      spread: sn - bn,
+      stockClose: stockMap.get(d),
+      benchClose: benchMap.get(d),
+    });
+  }
+  const latestCommonDate = commonDates[commonDates.length - 1];
+  const latestSpread = spreadMap.get(latestCommonDate) || null;
+
+  return {
+    hasCommon: true,
+    baseDate,
+    latestCommonDate,
+    stockBase,
+    benchBase,
+    stockNorm,
+    benchNorm,
+    spreadMap,
+    latestSpread,
+  };
+}
+
+function parsePeriodInfo(periodStr) {
+  const s = String(periodStr || '').trim();
+  let m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (m) {
+    const y = Number(m[1]);
+    const mo = Number(m[2]);
+    return { year: y, month: mo, key: `${y}-${String(mo).padStart(2, '0')}`, raw: s, kind: 'report' };
+  }
+  m = s.match(/^(\d{4})-(\d{2})$/);
+  if (m) {
+    const y = Number(m[1]);
+    const mo = Number(m[2]);
+    return { year: y, month: mo, key: `${y}-${String(mo).padStart(2, '0')}`, raw: s, kind: 'month' };
+  }
+  m = s.match(/^(\d{4})\s*Q([1-4])$/i);
+  if (m) {
+    const y = Number(m[1]);
+    const mo = Number(m[2]) * 3;
+    return { year: y, month: mo, key: `${y}-${String(mo).padStart(2, '0')}`, raw: s, kind: 'quarter' };
+  }
+  m = s.match(/^(\d{4})\s*H([1-2])$/i);
+  if (m) {
+    const y = Number(m[1]);
+    const mo = Number(m[2]) * 6;
+    return { year: y, month: mo, key: `${y}-${String(mo).padStart(2, '0')}`, raw: s, kind: 'half' };
+  }
+  m = s.match(/^(\d{4})$/);
+  if (m) {
+    const y = Number(m[1]);
+    return { year: y, month: 12, key: `${y}-12`, raw: s, kind: 'annual' };
+  }
+  return { year: null, month: null, key: s, raw: s, kind: 'other' };
+}
+
+function isMacroStepGap(prevPt, currPt) {
+  const p1 = parsePeriodInfo(prevPt.period);
+  const p2 = parsePeriodInfo(currPt.period);
+  if (p1.year !== null && p2.year !== null && p1.month !== null && p2.month !== null) {
+    const diffMonths = (p2.year - p1.year) * 12 + (p2.month - p1.month);
+    // NBS merges Jan-Feb: Dec (12) -> Feb (2) is 2 months, treated as continuous (not a missing gap)
+    if (p1.month === 12 && p2.month === 2 && p2.year === p1.year + 1) {
+      return false;
+    }
+    if (p1.kind === 'annual' && p2.kind === 'annual') {
+      return p2.year - p1.year > 1;
+    }
+    if (diffMonths > 1) {
+      // Allow semi-annual/quarterly macro metrics if period kind indicates it
+      if ((p1.kind === 'half' || p2.kind === 'half') && diffMonths <= 6) return false;
+      if ((p1.kind === 'quarter' || p2.kind === 'quarter') && diffMonths <= 3) return false;
+      return true;
     }
     return false;
   }
-  const distance = monthIndex(b.period) - monthIndex(a.period);
-  // NBS publishes January and February together after the Spring Festival.
-  if (cadence === 1 && a.period.endsWith('-12') && b.period.endsWith('-02') && distance === 2) return false;
-  return distance > cadence;
+  return diffCalendarDays(prevPt.published, currPt.published) > 75;
 }
 
-function seriesPath(item, from, to, x, y) {
-  const points = item.points;
-  const parts = [], dots = [], known = [];
-  for (let i = 0; i < points.length; i++) {
-    const p = points[i], at = ms(p.published), py = y(p.value);
-    const next = points[i + 1];
-    if (at >= from && at <= to && item.cadence) {
-      dots.push(`<circle cx="${x(at)}" cy="${py}" r="3.1"/>`);
-    }
-    if (item.cadence) {
-      const gap = next && missedRelease(p, next, item.cadence);
-      const end = gap ? at : Math.min(to, next ? ms(next.published) : to);
-      if (gap && at <= to && ms(next.published) >= from) {
-        known.push(`M${x(Math.max(at, from))} ${py}H${x(Math.min(ms(next.published), to))}`);
+function isMicroStepGap(prevPt, currPt, cadenceMonths) {
+  const p1 = parsePeriodInfo(prevPt.period);
+  const p2 = parsePeriodInfo(currPt.period);
+  const cad = Number(cadenceMonths) || 3;
+  if (p1.year !== null && p2.year !== null && p1.month !== null && p2.month !== null) {
+    const diffMonths = (p2.year - p1.year) * 12 + (p2.month - p1.month);
+    return diffMonths > cad + 1;
+  }
+  const maxDays = cad >= 12 ? 410 : (cad >= 6 ? 225 : 135);
+  return diffCalendarDays(prevPt.published, currPt.published) > maxDays;
+}
+
+function preparePublishedSeries(rawPoints, cutoff, gapChecker) {
+  if (!Array.isArray(rawPoints)) return [];
+  const valid = [];
+  for (const p of rawPoints) {
+    const pub = isValidDay(p?.published) ? p.published : (isValidDay(p?.date) ? p.date : '');
+    const val = finiteNum(p?.value);
+    if (!pub || (cutoff && pub > cutoff) || val === null) continue;
+    valid.push({
+      period: String(p?.period || pub),
+      published: pub,
+      value: val,
+      url: p?.url || '',
+      source: p?.source || '',
+      page: p?.page ?? '',
+      metric: p?.metric || '',
+    });
+  }
+  valid.sort((a, b) => {
+    if (a.published !== b.published) return a.published < b.published ? -1 : 1;
+    return a.period < b.period ? -1 : (a.period > b.period ? 1 : 0);
+  });
+
+  // Deduplicate same published date by keeping the latest period disclosed that day, while preserving history for YoY/QoQ
+  const enriched = valid.map((item, idx) => {
+    const prev = idx > 0 ? valid[idx - 1] : null;
+    const isGap = prev ? Boolean(gapChecker(prev, item)) : false;
+
+    const pInfo = parsePeriodInfo(item.period);
+    let yoy = null;
+    if (pInfo.year !== null && pInfo.month !== null) {
+      const targetYear = pInfo.year - 1;
+      for (let j = idx - 1; j >= 0; j--) {
+        const cand = parsePeriodInfo(valid[j].period);
+        if (cand.year === targetYear && cand.month === pInfo.month) {
+          const baseVal = valid[j].value;
+          const diff = item.value - baseVal;
+          const pct = Math.abs(baseVal) > 1e-9 ? (diff / Math.abs(baseVal)) * 100 : null;
+          yoy = { basePeriod: valid[j].period, baseValue: baseVal, diff, pct };
+          break;
+        }
       }
-      if (at > to || end < from) continue;
-      parts.push(`M${x(Math.max(at, from))} ${py}H${x(end)}`);
-      if (next && !gap && ms(next.published) <= to) parts.push(`V${y(next.value)}`);
-    } else if (at >= from && at <= to) {
-      const prev = i && points[i - 1];
-      parts.push(`${!prev || ms(prev.published) < from || missedRelease(prev, p, 0) ? 'M' : 'L'}${x(at)} ${py}`);
-      if (points.length === 1) dots.push(`<circle cx="${x(at)}" cy="${py}" r="2.5"/>`);
+    }
+    let qoq = null;
+    if (prev) {
+      const diff = item.value - prev.value;
+      const pct = Math.abs(prev.value) > 1e-9 ? (diff / Math.abs(prev.value)) * 100 : null;
+      qoq = { prevPeriod: prev.period, prevValue: prev.value, diff, pct, isGap };
+    }
+    return { ...item, isGapFromPrev: isGap, qoq, yoy };
+  });
+
+  return enriched;
+}
+
+function activeDisclosedAt(points, targetDay) {
+  if (!points || !points.length) return null;
+  const idx = binaryFloorIndex(points, 'published', targetDay);
+  return idx >= 0 ? { point: points[idx], index: idx } : null;
+}
+
+function buildStepGeometry(points, startDay, endDay, xOf, yOf) {
+  if (!points || !points.length) return { segments: [], dots: [], carryLeft: null };
+  const uptoEnd = points.filter((p) => p.published <= endDay);
+  if (!uptoEnd.length) return { segments: [], dots: [], carryLeft: null };
+
+  const preIdx = binaryFloorIndex(uptoEnd, 'published', startDay);
+  let carryPoint = null;
+  let firstInWinIdx = 0;
+
+  if (preIdx >= 0) {
+    carryPoint = uptoEnd[preIdx];
+    firstInWinIdx = preIdx + 1;
+    // If multiple points published on exact startDay, carry is the last one on startDay
+    if (carryPoint.published === startDay) {
+      carryPoint = null;
+      firstInWinIdx = preIdx;
+      while (firstInWinIdx > 0 && uptoEnd[firstInWinIdx - 1].published === startDay) {
+        firstInWinIdx--;
+      }
+      if (firstInWinIdx > 0) {
+        carryPoint = uptoEnd[firstInWinIdx - 1];
+      }
     }
   }
-  return `<g fill="${item.color}"><path data-driver-series="${esc(item.label)}" d="${parts.join(' ')}" fill="none" stroke="${item.color}" stroke-width="2" vector-effect="non-scaling-stroke"/>${known.length ? `<path d="${known.join(' ')}" fill="none" stroke="${item.color}" stroke-dasharray="3 5" opacity=".55" vector-effect="non-scaling-stroke"/>` : ''}${dots.join('')}</g>`;
+
+  const inWin = uptoEnd.slice(firstInWinIdx);
+  const segments = [];
+  const dots = [];
+
+  let currVal = carryPoint ? carryPoint.value : null;
+  let currX = xOf(startDay);
+
+  for (const pt of inWin) {
+    const px = xOf(pt.published);
+    const py = yOf(pt.value);
+    if (currVal !== null) {
+      const prevY = yOf(currVal);
+      segments.push({
+        x1: currX,
+        y1: prevY,
+        x2: px,
+        y2: prevY,
+        dashed: pt.isGapFromPrev,
+      });
+      segments.push({
+        x1: px,
+        y1: prevY,
+        x2: px,
+        y2: py,
+        dashed: pt.isGapFromPrev,
+      });
+    }
+    dots.push({ x: px, y: py, point: pt });
+    currVal = pt.value;
+    currX = px;
+  }
+
+  if (currVal !== null) {
+    const endX = xOf(endDay);
+    const py = yOf(currVal);
+    if (endX > currX) {
+      segments.push({
+        x1: currX,
+        y1: py,
+        x2: endX,
+        y2: py,
+        dashed: false,
+      });
+    }
+  }
+
+  return {
+    segments,
+    dots,
+    carryLeft: carryPoint ? { y: yOf(carryPoint.value), point: carryPoint } : null,
+  };
+}
+
+function buildDailyLineSegments(points, calendarIndexMap, xOf, yOf, valueKey = 'close', allowBridgeWeekend = true) {
+  if (!points || !points.length) return { paths: [], singleDots: [], pointLookup: new Map() };
+  const pointLookup = new Map();
+  for (const p of points) {
+    if (calendarIndexMap.has(p.date)) {
+      pointLookup.set(p.date, p);
+    }
+  }
+
+  const winPts = points.filter((p) => calendarIndexMap.has(p.date));
+  if (!winPts.length) return { paths: [], singleDots: [], pointLookup };
+
+  const runs = [];
+  let currentRun = [winPts[0]];
+
+  for (let i = 1; i < winPts.length; i++) {
+    const prev = winPts[i - 1];
+    const curr = winPts[i];
+    const dPrev = prev.date;
+    const dCurr = curr.date;
+    const gapDays = diffCalendarDays(dPrev, dCurr);
+
+    let hasMissingWeekday = false;
+    if (gapDays > 1) {
+      if (!allowBridgeWeekend) {
+        hasMissingWeekday = true;
+      } else {
+        for (let step = 1; step < gapDays; step++) {
+          const midDay = addCalendarDays(dPrev, step);
+          if (!isWeekendDay(midDay)) {
+            hasMissingWeekday = true;
+            break;
+          }
+        }
+      }
+    }
+
+    if (hasMissingWeekday) {
+      runs.push(currentRun);
+      currentRun = [curr];
+    } else {
+      currentRun.push(curr);
+    }
+  }
+  runs.push(currentRun);
+
+  const paths = [];
+  const singleDots = [];
+  for (const run of runs) {
+    if (run.length === 1) {
+      const p = run[0];
+      singleDots.push({ x: xOf(p.date), y: yOf(p[valueKey]), point: p });
+    } else {
+      const dStr = run
+        .map((p, i) => `${i === 0 ? 'M' : 'L'}${xOf(p.date).toFixed(2)},${yOf(p[valueKey]).toFixed(2)}`)
+        .join(' ');
+      paths.push(dStr);
+    }
+  }
+  return { paths, singleDots, pointLookup };
+}
+
+function computeNiceScale(values, padRatio = 0.12) {
+  const clean = values.filter((v) => typeof v === 'number' && Number.isFinite(v));
+  if (!clean.length) return { min: 0, max: 100, ticks: [0, 50, 100] };
+  let min = Math.min(...clean);
+  let max = Math.max(...clean);
+  if (Math.abs(max - min) < 1e-6) {
+    const delta = Math.abs(max) > 1e-4 ? Math.abs(max) * 0.05 : 1;
+    min -= delta;
+    max += delta;
+  } else {
+    const span = max - min;
+    min -= span * padRatio;
+    max += span * padRatio;
+  }
+  const mid = (min + max) / 2;
+  return { min, max, ticks: [max, mid, min] };
+}
+
+function pickAxisDates(calendar) {
+  if (!calendar.length) return [];
+  if (calendar.length <= 5) return [calendar[0], calendar[calendar.length - 1]];
+  const idxs = [
+    0,
+    Math.round((calendar.length - 1) * 0.25),
+    Math.round((calendar.length - 1) * 0.5),
+    Math.round((calendar.length - 1) * 0.75),
+    calendar.length - 1,
+  ];
+  const uniq = Array.from(new Set(idxs));
+  return uniq.map((i) => calendar[i]);
+}
+
+function readableMacroMetric(rawMetric, fallbackLabel, isPoly) {
+  const m = String(rawMetric || '').trim();
+  if (m && /[\u4e00-\u9fff]/.test(m) && !/行业零售\/产量/.test(m)) {
+    return m;
+  }
+  if (fallbackLabel && /[\u4e00-\u9fff]/.test(fallbackLabel) && !/^(appliances|housing)$/i.test(fallbackLabel.trim())) {
+    return fallbackLabel;
+  }
+  return isPoly ? '国家统计局全国房地产竣工面积同比' : '国家统计局家电和音像零售';
+}
+
+function formatChangeSummary(activeItem, unit = '', cadence = 0) {
+  if (!activeItem) return '窗口截止前尚无已披露记录';
+  const isRateSeries = String(unit).trim() === '%';
+  const parts = [];
+  if (isRateSeries) {
+    if (activeItem.qoq) {
+      const tag = activeItem.qoq.isGap ? '跨期较前值' : '较上期';
+      parts.push(`${tag} ${fmtSigned(activeItem.qoq.diff, 2, ' 个百分点')}`);
+    }
+    if (activeItem.yoy) {
+      parts.push(`较上年同期 ${fmtSigned(activeItem.yoy.diff, 2, ' 个百分点')}`);
+    }
+    return parts.length ? parts.join(' ｜ ') : '首期统计记录（无更早对比期）';
+  }
+  const uTxt = unit ? ` ${unit}` : '';
+  if (activeItem.yoy) {
+    const yoyTag = Number(cadence) === 3 ? '同季同比' : '较上年同期';
+    const pctStr = activeItem.yoy.pct !== null ? ` (${fmtSigned(activeItem.yoy.pct, 1, '%')})` : '';
+    parts.push(`${yoyTag} ${fmtSigned(activeItem.yoy.diff, 2)}${uTxt}${pctStr}`);
+  }
+  if (activeItem.qoq) {
+    const qoqTag = activeItem.qoq.isGap ? `跨期较前值(${activeItem.qoq.prevPeriod})` : `较上期(${activeItem.qoq.prevPeriod})`;
+    const pctStr = activeItem.qoq.pct !== null ? ` (${fmtSigned(activeItem.qoq.pct, 1, '%')})` : '';
+    parts.push(`${qoqTag} ${fmtSigned(activeItem.qoq.diff, 2)}${uTxt}${pctStr}`);
+  }
+  return parts.length ? parts.join(' ｜ ') : '首期披露记录（无更早对比期）';
+}
+
+function buildClueCardsHtml(model, cursorDay) {
+  const { profile, macroSeries, macroMeta, microSeriesList, normComp, benchMeta, dxySeries } = model;
+  const activeMacro = activeDisclosedAt(macroSeries, cursorDay)?.point || null;
+  const activeDxyIdx = binaryFloorIndex(dxySeries, 'date', cursorDay);
+  const activeDxy = activeDxyIdx >= 0 ? dxySeries[activeDxyIdx] : null;
+
+  let activeSpread = null;
+  if (normComp.hasCommon) {
+    for (let i = model.calendar.length - 1; i >= 0; i--) {
+      const d = model.calendar[i];
+      if (d > cursorDay) continue;
+      if (normComp.spreadMap.has(d)) {
+        activeSpread = normComp.spreadMap.get(d);
+        break;
+      }
+    }
+  }
+
+  const cards = [];
+
+  if (!profile.isPoly) {
+    cards.push({
+      label: '国家统计局家电和音像零售',
+      sub: macroMeta.loaded ? (activeMacro ? `统计期 ${activeMacro.period}` : '统计局月度同比') : '加载中',
+      val: activeMacro ? `${fmtSigned(activeMacro.value, 1, macroMeta.unit || '%')}` : (macroMeta.loaded ? '暂无已披露值' : '同步中…'),
+      meta: activeMacro
+        ? escText(`${activeMacro.published} 发布｜${formatChangeSummary(activeMacro, macroMeta.unit || '%')}。国家统计局社零家电和音像器材类增速不等于格力自身收入增速。`)
+        : escText(macroMeta.statusText),
+    });
+
+    const greeTargets = microSeriesList.length
+      ? microSeriesList
+      : [{ label: '合并存货', unit: '亿元', points: [] }, { label: '合并合同负债', unit: '亿元', points: [] }];
+
+    greeTargets.forEach((s) => {
+      const pt = activeDisclosedAt(s.points, cursorDay)?.point || null;
+      const roleTag = /存货/.test(s.label) ? '公司备货' : (/合同负债|预收/.test(s.label) ? '渠道预收' : '定期报告');
+      const sUnit = s.unit || '亿元';
+      cards.push({
+        label: `${s.label}（${roleTag}）`,
+        sub: pt ? `报告期 ${pt.period} · ${sUnit}` : `单位：${sUnit}`,
+        val: pt ? `${fmtNum(pt.value, 2)} ${sUnit}` : '所选日尚无已披露财报',
+        meta: pt
+          ? escText(`${pt.published} 披露｜${formatChangeSummary(pt, sUnit, model.cadence)}`)
+          : '仅显示 <= 选中日的已公开定期报告余额',
+      });
+    });
+  } else {
+    const arSeries = microSeriesList[0] || null;
+    const arPt = arSeries ? activeDisclosedAt(arSeries.points, cursorDay)?.point : null;
+    const arUnit = arSeries?.unit || '亿元';
+
+    cards.push({
+      label: readableMacroMetric('', macroMeta.label, true),
+      sub: macroMeta.loaded ? (activeMacro ? `统计期 ${activeMacro.period}` : '统计局月度同比') : '加载中',
+      val: activeMacro ? `${fmtSigned(activeMacro.value, 1, macroMeta.unit || '%')}` : (macroMeta.loaded ? '暂无已披露值' : '同步中…'),
+      meta: activeMacro
+        ? escText(`${activeMacro.published} 发布｜${formatChangeSummary(activeMacro, macroMeta.unit || '%')}。全国地产统计仅反映外部交付环境，不等于保利在管面积增速。`)
+        : escText(macroMeta.statusText),
+    });
+
+    cards.push({
+      label: `${arSeries?.label || '贸易应收款项及票据净额'}（回款占用）`,
+      sub: arPt ? `报告期 ${arPt.period} · ${arUnit}` : `单位：${arUnit}`,
+      val: arPt ? `${fmtNum(arPt.value, 2)} ${arUnit}` : '所选日尚无已披露财报',
+      meta: arPt
+        ? escText(`${arPt.published} 披露｜${formatChangeSummary(arPt, arUnit, model.cadence)}。随在管项目规模、业主及关联方结算节奏变动，已扣除坏账减值准备，反映期末回款资金占用而非当期实际坏账损失。`)
+        : '半年/年度披露指标不插值，仅显示 <= 选中日的已公开原值。',
+    });
+  }
+
+  cards.push({
+    label: `相对${benchMeta.label}区间价差`,
+    sub: normComp.hasCommon ? `共同首日 ${normComp.baseDate}=100` : '相对基准表现',
+    val: activeSpread
+      ? `${fmtSigned(activeSpread.spread, 2, ' 百分点')}`
+      : (macroMeta.loaded ? (normComp.hasCommon ? '早于共同首日' : '暂无共同交易日') : '基准加载中…'),
+    meta: activeSpread
+      ? escText(`截至共同交易日 ${activeSpread.date}：个股归一 ${fmtNum(activeSpread.stockNorm, 2)} vs ${benchMeta.label}归一 ${fmtNum(activeSpread.benchNorm, 2)}（相对基准区间价差 ${fmtSigned(activeSpread.spread, 2, ' 百分点')}）。`)
+      : escText(normComp.hasCommon ? `选中日早于窗口内首个共同交易日 ${normComp.baseDate}。` : `等待 ${benchMeta.label} 日线返回或当前窗口无共同交易日。`),
+  });
+
+  const winFirstDxyIdx = dxySeries.findIndex((p) => p.date >= model.startDay && p.date <= cursorDay);
+  const winFirstDxy = winFirstDxyIdx >= 0 ? dxySeries[winFirstDxyIdx] : null;
+  const dxyDelta = (activeDxy && winFirstDxy && activeDxy.date !== winFirstDxy.date)
+    ? activeDxy.close - winFirstDxy.close
+    : null;
+
+  cards.push({
+    label: 'ICE 美元指数 (DXY) · 美元强弱观察',
+    sub: activeDxy ? `香港可用日 ${activeDxy.date}` : 'ICE 美元指数',
+    val: activeDxy ? `${fmtNum(activeDxy.close, 2)} 点` : (macroMeta.loaded ? '暂无可用收盘' : 'DXY 加载中…'),
+    meta: activeDxy
+      ? escText(`对应纽约 ${activeDxy.session || '前一交易日'} 完整收盘${dxyDelta !== null ? `（较窗口首日 ${fmtSigned(dxyDelta, 2)} 点）` : ''}。仅作美元强弱观察，与公司经营及股价关系需另做验证。`)
+      : '严格隔离盘中未完结柱，按纽约收盘次日香港可用对齐。',
+  });
+
+  return cards
+    .map(
+      (c) => `
+      <div class="er-mo-kpi">
+        <div class="er-mo-kpi-label">
+          <span>${escText(c.label)}</span>
+          <span>${escText(c.sub)}</span>
+        </div>
+        <div class="er-mo-kpi-val">${escText(c.val)}</div>
+        <div class="er-mo-kpi-meta">${c.meta}</div>
+      </div>`
+    )
+    .join('');
+}
+
+function renderTrack0Svg(model, width = 860, height = 132) {
+  const padL = 52;
+  const padR = 54;
+  const padT = 12;
+  const padB = 22;
+  const plotW = width - padL - padR;
+  const plotH = height - padT - padB;
+  const xOf = (day) => {
+    const idx = model.calendarIndexMap.get(day) ?? 0;
+    const denom = Math.max(1, model.calendar.length - 1);
+    return padL + (idx / denom) * plotW;
+  };
+
+  if (!model.stockWin.length) {
+    return `<div class="er-mo-empty">当前窗口（截至 ${escText(model.endDay)}）内无个股有效收盘记录</div>`;
+  }
+
+  const useNorm = model.normComp.hasCommon;
+  const rawPriceScale = computeNiceScale(model.stockWin.map((p) => p.close), 0.1);
+
+  let leftScale;
+  let stockDrawPts;
+  let benchDrawPts = [];
+
+  if (useNorm) {
+    const allNormVals = [
+      ...model.normComp.stockNorm.map((p) => p.norm),
+      ...model.normComp.benchNorm.map((p) => p.norm),
+      100,
+    ];
+    leftScale = computeNiceScale(allNormVals, 0.1);
+    stockDrawPts = model.normComp.stockNorm;
+    benchDrawPts = model.normComp.benchNorm;
+  } else {
+    leftScale = rawPriceScale;
+    stockDrawPts = model.stockWin;
+  }
+
+  const yOfLeft = (v) => padT + ((leftScale.max - v) / Math.max(1e-9, leftScale.max - leftScale.min)) * plotH;
+  const stockValKey = useNorm ? 'norm' : 'close';
+  const stockGeom = buildDailyLineSegments(stockDrawPts, model.calendarIndexMap, xOf, yOfLeft, stockValKey, true);
+  const benchGeom = useNorm
+    ? buildDailyLineSegments(benchDrawPts, model.calendarIndexMap, xOf, yOfLeft, 'norm', true)
+    : { paths: [], singleDots: [] };
+
+  const axisColor = useNorm ? '#475569' : model.profile.primaryColor;
+  const gridLines = leftScale.ticks
+    .map((t) => {
+      const y = yOfLeft(t).toFixed(2);
+      const leftLabel = useNorm ? fmtNum(t, 1) : fmtNum(t, 2);
+      return `
+        <line x1="${padL}" y1="${y}" x2="${width - padR}" y2="${y}" stroke="#e5e9f0" stroke-width="1" />
+        <text x="${padL - 6}" y="${Number(y) + 3.5}" text-anchor="end" font-size="10" fill="${axisColor}">${escText(leftLabel)}</text>
+      `;
+    })
+    .join('');
+
+  const baseline100 = useNorm && leftScale.min < 100 && leftScale.max > 100
+    ? `<line x1="${padL}" y1="${yOfLeft(100).toFixed(2)}" x2="${width - padR}" y2="${yOfLeft(100).toFixed(2)}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,3" /><text x="${width - padR + 5}" y="${(yOfLeft(100) + 3.5).toFixed(2)}" text-anchor="start" font-size="9.5" fill="#64748b">首日=100</text>`
+    : '';
+
+  const axisDates = pickAxisDates(model.calendar)
+    .map((d) => {
+      const x = xOf(d).toFixed(2);
+      return `<text x="${x}" y="${height - 5}" text-anchor="middle" font-size="10" fill="#768295">${escText(d.slice(5))}</text>`;
+    })
+    .join('');
+
+  const benchPaths = benchGeom.paths
+    .map((d) => `<path d="${d}" fill="none" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3" />`)
+    .join('');
+  const benchDots = benchGeom.singleDots
+    .map((pt) => `<circle cx="${pt.x.toFixed(2)}" cy="${pt.y.toFixed(2)}" r="2.6" fill="#64748b" />`)
+    .join('');
+
+  const stockPaths = stockGeom.paths
+    .map((d) => `<path d="${d}" fill="none" stroke="${model.profile.primaryColor}" stroke-width="2" />`)
+    .join('');
+  const stockDots = stockGeom.singleDots
+    .map((pt) => `<circle cx="${pt.x.toFixed(2)}" cy="${pt.y.toFixed(2)}" r="3" fill="${model.profile.primaryColor}" />`)
+    .join('');
+
+  return `
+    <svg class="er-mo-svg" viewBox="0 0 ${width} ${height}" data-svg-track="0" data-pad-l="${padL}" data-pad-r="${padR}" data-width="${width}">
+      ${gridLines}
+      ${baseline100}
+      ${benchPaths}
+      ${benchDots}
+      ${stockPaths}
+      ${stockDots}
+      <line data-cursor-line="1" x1="${padL}" y1="${padT}" x2="${padL}" y2="${height - padB}" stroke="#1e293b" stroke-width="1" stroke-dasharray="2,2" visibility="hidden" />
+      <circle data-cursor-dot="stock" cx="0" cy="0" r="3.8" fill="${model.profile.primaryColor}" stroke="#fff" stroke-width="1.2" visibility="hidden" />
+      <circle data-cursor-dot="bench" cx="0" cy="0" r="3.3" fill="#64748b" stroke="#fff" stroke-width="1.2" visibility="hidden" />
+      ${axisDates}
+    </svg>
+  `;
+}
+
+function renderStepTrackSvg(model, trackIdx, seriesList, width = 860, height = 104) {
+  const padL = 52;
+  const padR = 54;
+  const padT = 12;
+  const padB = 20;
+  const plotW = width - padL - padR;
+  const plotH = height - padT - padB;
+  const xOf = (day) => {
+    const idx = model.calendarIndexMap.get(day) ?? 0;
+    const denom = Math.max(1, model.calendar.length - 1);
+    return padL + (idx / denom) * plotW;
+  };
+
+  if (trackIdx === 1 && !model.macroMeta.loaded) {
+    return `<div class="er-mo-empty">正在同步国家统计局/行业宏观与跨市场序列…</div>`;
+  }
+
+  const visibleVals = [];
+  for (const s of seriesList) {
+    const upto = s.points.filter((p) => p.published <= model.endDay);
+    const preIdx = binaryFloorIndex(upto, 'published', model.startDay);
+    if (preIdx >= 0) visibleVals.push(upto[preIdx].value);
+    for (const p of upto) {
+      if (p.published >= model.startDay) visibleVals.push(p.value);
+    }
+  }
+
+  if (!visibleVals.length) {
+    const emptyMsg = trackIdx === 1
+      ? (model.macroMeta.message || '当前截止日前暂无可用行业宏观序列数据')
+      : '当前截止日前暂无已公开的公司定期报告数据';
+    return `<div class="er-mo-empty">${escText(emptyMsg)}</div>`;
+  }
+
+  if (trackIdx === 1) {
+    visibleVals.push(0);
+  }
+  const scale = computeNiceScale(visibleVals, 0.15);
+  const yOf = (v) => padT + ((scale.max - v) / Math.max(1e-9, scale.max - scale.min)) * plotH;
+
+  const gridLines = scale.ticks
+    .map((t) => {
+      const y = yOf(t).toFixed(2);
+      const lbl = fmtNum(t, trackIdx === 1 ? 1 : 2);
+      return `
+        <line x1="${padL}" y1="${y}" x2="${width - padR}" y2="${y}" stroke="#e5e9f0" stroke-width="1" />
+        <text x="${padL - 6}" y="${Number(y) + 3.5}" text-anchor="end" font-size="10" fill="#64748b">${escText(lbl)}</text>
+      `;
+    })
+    .join('');
+
+  const zeroLine = scale.min < 0 && scale.max > 0
+    ? `<line x1="${padL}" y1="${yOf(0).toFixed(2)}" x2="${width - padR}" y2="${yOf(0).toFixed(2)}" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3,3" />`
+    : '';
+
+  let geomSvg = '';
+  seriesList.forEach((s, sIdx) => {
+    const geom = buildStepGeometry(s.points, model.startDay, model.endDay, xOf, yOf);
+    s._yOf = yOf;
+    if (geom.carryLeft) {
+      geomSvg += `<polygon points="${padL - 5},${geom.carryLeft.y.toFixed(2)} ${padL},${(geom.carryLeft.y - 3.5).toFixed(2)} ${padL},${(geom.carryLeft.y + 3.5).toFixed(2)}" fill="${s.color}" opacity="0.85" />`;
+    }
+    for (const seg of geom.segments) {
+      const dash = seg.dashed ? ' stroke-dasharray="4,3"' : '';
+      geomSvg += `<line x1="${seg.x1.toFixed(2)}" y1="${seg.y1.toFixed(2)}" x2="${seg.x2.toFixed(2)}" y2="${seg.y2.toFixed(2)}" stroke="${s.color}" stroke-width="1.85"${dash} />`;
+    }
+    for (const d of geom.dots) {
+      geomSvg += `<circle cx="${d.x.toFixed(2)}" cy="${d.y.toFixed(2)}" r="3.4" fill="#ffffff" stroke="${s.color}" stroke-width="2" />`;
+    }
+    geomSvg += `<circle data-cursor-dot="s${sIdx}" cx="0" cy="0" r="3.6" fill="${s.color}" stroke="#fff" stroke-width="1.2" visibility="hidden" />`;
+  });
+
+  const axisDates = pickAxisDates(model.calendar)
+    .map((d) => `<text x="${xOf(d).toFixed(2)}" y="${height - 4}" text-anchor="middle" font-size="10" fill="#768295">${escText(d.slice(5))}</text>`)
+    .join('');
+
+  return `
+    <svg class="er-mo-svg" viewBox="0 0 ${width} ${height}" data-svg-track="${trackIdx}" data-pad-l="${padL}" data-pad-r="${padR}" data-width="${width}">
+      ${gridLines}
+      ${zeroLine}
+      ${geomSvg}
+      <line data-cursor-line="1" x1="${padL}" y1="${padT}" x2="${padL}" y2="${height - padB}" stroke="#1e293b" stroke-width="1" stroke-dasharray="2,2" visibility="hidden" />
+      ${axisDates}
+    </svg>
+  `;
+}
+
+function renderTrack3DxySvg(model, width = 860, height = 98) {
+  const padL = 52;
+  const padR = 54;
+  const padT = 12;
+  const padB = 20;
+  const plotW = width - padL - padR;
+  const plotH = height - padT - padB;
+  const xOf = (day) => {
+    const idx = model.calendarIndexMap.get(day) ?? 0;
+    const denom = Math.max(1, model.calendar.length - 1);
+    return padL + (idx / denom) * plotW;
+  };
+
+  if (!model.macroMeta.loaded) {
+    return `<div class="er-mo-empty">正在载入 ICE 美元指数 (DXY) 完整日线…</div>`;
+  }
+
+  if (!model.dxyWin.length) {
+    const msg = model.dxyMeta.error || '当前窗口（<= 截止日）暂无可用 ICE 美元指数完整日线记录';
+    return `<div class="er-mo-empty">${escText(msg)}</div>`;
+  }
+
+  const scale = computeNiceScale(model.dxyWin.map((p) => p.close), 0.12);
+  const yOf = (v) => padT + ((scale.max - v) / Math.max(1e-9, scale.max - scale.min)) * plotH;
+  model._dxyYOf = yOf;
+
+  // DXY Hong Kong availability dates are Tue..Sat (for Mon..Fri NY sessions); bridge Sun-Mon non-session calendar days cleanly
+  const dxyRuns = [];
+  let run = [model.dxyWin[0]];
+  for (let i = 1; i < model.dxyWin.length; i++) {
+    const prev = model.dxyWin[i - 1];
+    const curr = model.dxyWin[i];
+    const gap = diffCalendarDays(prev.date, curr.date);
+    // Normal weekend gap between Saturday HK available (Fri NY) and Tuesday HK available (Mon NY) is 3 days
+    const prevWd = new Date(parseUtcMs(prev.date)).getUTCDay();
+    const normalWeekendBridge = prevWd === 6 && gap <= 3;
+    if (gap === 1 || normalWeekendBridge) {
+      run.push(curr);
+    } else {
+      dxyRuns.push(run);
+      run = [curr];
+    }
+  }
+  dxyRuns.push(run);
+
+  let lineSvg = '';
+  for (const r of dxyRuns) {
+    if (r.length === 1) {
+      lineSvg += `<circle cx="${xOf(r[0].date).toFixed(2)}" cy="${yOf(r[0].close).toFixed(2)}" r="2.8" fill="#8f3d26" />`;
+    } else {
+      const dPath = r
+        .map((p, idx) => `${idx === 0 ? 'M' : 'L'}${xOf(p.date).toFixed(2)},${yOf(p.close).toFixed(2)}`)
+        .join(' ');
+      lineSvg += `<path d="${dPath}" fill="none" stroke="#8f3d26" stroke-width="1.8" />`;
+    }
+  }
+
+  const gridLines = scale.ticks
+    .map((t) => {
+      const y = yOf(t).toFixed(2);
+      return `
+        <line x1="${padL}" y1="${y}" x2="${width - padR}" y2="${y}" stroke="#e5e9f0" stroke-width="1" />
+        <text x="${padL - 6}" y="${Number(y) + 3.5}" text-anchor="end" font-size="10" fill="#8f3d26">${escText(fmtNum(t, 2))}</text>
+      `;
+    })
+    .join('');
+
+  const axisDates = pickAxisDates(model.calendar)
+    .map((d) => `<text x="${xOf(d).toFixed(2)}" y="${height - 4}" text-anchor="middle" font-size="10" fill="#768295">${escText(d.slice(5))}</text>`)
+    .join('');
+
+  return `
+    <svg class="er-mo-svg" viewBox="0 0 ${width} ${height}" data-svg-track="3" data-pad-l="${padL}" data-pad-r="${padR}" data-width="${width}">
+      ${gridLines}
+      ${lineSvg}
+      <line data-cursor-line="1" x1="${padL}" y1="${padT}" x2="${padL}" y2="${height - padB}" stroke="#1e293b" stroke-width="1" stroke-dasharray="2,2" visibility="hidden" />
+      <circle data-cursor-dot="dxy" cx="0" cy="0" r="3.6" fill="#8f3d26" stroke="#fff" stroke-width="1.2" visibility="hidden" />
+      ${axisDates}
+    </svg>
+  `;
+}
+
+function buildTrackReadouts(model, cursorDay, isHoverOrPinned) {
+  // Track 0: Stock + Benchmark
+  const exactStock = model.stockMap.get(cursorDay) ?? null;
+  const floorStockIdx = binaryFloorIndex(model.stockAll, 'date', cursorDay);
+  const latestStock = floorStockIdx >= 0 ? model.stockAll[floorStockIdx] : null;
+
+  const exactBench = model.benchMap.get(cursorDay) ?? null;
+  const floorBenchIdx = binaryFloorIndex(model.benchAll, 'date', cursorDay);
+  const latestBench = floorBenchIdx >= 0 ? model.benchAll[floorBenchIdx] : null;
+
+  let stockHtml = '';
+  if (exactStock !== null) {
+    stockHtml = `<span><i class="er-mo-swatch" style="background:${model.profile.primaryColor}"></i>${escText(model.profile.companyName)} <strong>${fmtNum(exactStock, 2)}</strong> ${escText(model.profile.stockUnit)}</span>`;
+  } else if (!isHoverOrPinned && latestStock) {
+    stockHtml = `<span><i class="er-mo-swatch" style="background:${model.profile.primaryColor}"></i>截止日休市/无收盘，最近真实收盘 <strong>${fmtNum(latestStock.close, 2)}</strong> ${escText(model.profile.stockUnit)}（${escText(latestStock.date)}）</span>`;
+  } else {
+    const fallbackNote = latestStock ? `（前最近 ${latestStock.date}: ${fmtNum(latestStock.close, 2)}）` : '';
+    stockHtml = `<span><i class="er-mo-swatch" style="background:${model.profile.primaryColor}"></i><strong>${escText(cursorDay)} 无股票收盘</strong>${escText(fallbackNote)}</span>`;
+  }
+
+  let benchHtml = '';
+  if (!model.macroMeta.loaded) {
+    benchHtml = `<span><i class="er-mo-swatch-dash"></i>${escText(model.benchMeta.label)} 同步中…</span>`;
+  } else if (exactBench !== null) {
+    const sp = model.normComp.spreadMap.get(cursorDay);
+    const spTxt = sp
+      ? `｜归一 ${fmtNum(sp.stockNorm, 2)} vs ${fmtNum(sp.benchNorm, 2)}，相对基准区间价差 <strong>${fmtSigned(sp.spread, 2, ' 百分点')}</strong>`
+      : '';
+    benchHtml = `<span><i class="er-mo-swatch-dash"></i>${escText(model.benchMeta.label)} <strong>${fmtNum(exactBench, 2)}</strong> 点${spTxt}</span>`;
+  } else if (model.benchAll.length > 0) {
+    if (!isHoverOrPinned && latestBench) {
+      const sp = model.normComp.latestSpread && model.normComp.latestCommonDate <= cursorDay
+        ? `｜共同最新日(${escText(model.normComp.latestCommonDate)})区间价差 <strong>${fmtSigned(model.normComp.latestSpread.spread, 2, ' 百分点')}</strong>`
+        : '';
+      benchHtml = `<span><i class="er-mo-swatch-dash"></i>${escText(model.benchMeta.label)} 当日无收盘，最近 <strong>${fmtNum(latestBench.close, 2)}</strong> 点（${escText(latestBench.date)}）${sp}</span>`;
+    } else {
+      benchHtml = `<span><i class="er-mo-swatch-dash"></i>${escText(model.benchMeta.label)} 当日无收盘${latestBench ? `（前值 ${latestBench.date}: ${fmtNum(latestBench.close, 2)}）` : ''}</span>`;
+    }
+  } else {
+    benchHtml = `<span><i class="er-mo-swatch-dash"></i>${escText(model.benchMeta.label)} 暂不可用</span>`;
+  }
+
+  const covLink = model.stockCoverageUrl
+    ? renderLink(model.stockCoverageUrl, model.stockCoverageSource || '股票行情源')
+    : '';
+  const bmLink = model.benchMeta.url
+    ? renderLink(model.benchMeta.url, model.benchMeta.source || '腾讯证券')
+    : '';
+  const t0Links = [covLink, bmLink].filter(Boolean).join(' · ');
+
+  // Track 1: Industry Macro
+  let t1Html = '';
+  if (!model.macroMeta.loaded) {
+    t1Html = '<span>载入国家统计局宏观序列中…</span>';
+  } else if (!model.macroSeries.length) {
+    t1Html = `<span>${escText(model.macroMeta.message || '暂无 <= 截止日宏观数据')}</span>`;
+  } else {
+    const act = activeDisclosedAt(model.macroSeries, cursorDay)?.point;
+    if (!act) {
+      t1Html = `<span>截至 ${escText(cursorDay)} 尚无已发布记录</span>`;
+    } else {
+      const link = act.url ? ` · ${renderLink(act.url, '统计局/原件')}` : '';
+      const statName = readableMacroMetric(act.metric, model.macroMeta.label, model.profile.isPoly);
+      const gapBadge = act.isGapFromPrev ? ' · [跨期虚线延续]' : '';
+      t1Html = `<span><i class="er-mo-swatch" style="background:#5b4b8a"></i>${escText(statName)} <strong>${fmtSigned(act.value, 2, model.macroMeta.unit || '%')}</strong>（统计期 ${escText(act.period)}，${escText(act.published)} 发布${escText(gapBadge)}）｜${escText(formatChangeSummary(act, model.macroMeta.unit || '%'))}${link}</span>`;
+    }
+  }
+
+  // Track 2: Company Micro Financials
+  let t2Html = '';
+  if (!model.microSeriesList.length) {
+    t2Html = '<span>暂无公司财务驱动序列</span>';
+  } else {
+    const parts = model.microSeriesList.map((s) => {
+      const act = activeDisclosedAt(s.points, cursorDay)?.point;
+      if (!act) {
+        return `<span><i class="er-mo-swatch" style="background:${s.color}"></i>${escText(s.label)}：截至 ${escText(cursorDay)} 未披露</span>`;
+      }
+      const pageTxt = act.page ? ` P.${act.page}` : '';
+      const srcLabel = `${act.source || '定期报告原件'}${pageTxt}`;
+      const link = act.url ? ` · ${renderLink(act.url, srcLabel)}` : (act.source ? ` · ${escText(srcLabel)}` : '');
+      return `<span><i class="er-mo-swatch" style="background:${s.color}"></i>${escText(s.label)} <strong>${fmtNum(act.value, 2)}</strong> ${escText(s.unit)}（报告期 ${escText(act.period)}，${escText(act.published)} 披露｜${escText(formatChangeSummary(act, s.unit, model.cadence))}）${link}</span>`;
+    });
+    t2Html = parts.join(' ');
+  }
+
+  // Track 3: ICE US Dollar Index DXY
+  let t3Html = '';
+  if (!model.macroMeta.loaded) {
+    t3Html = '<span>载入 ICE 美元指数 (DXY) 中…</span>';
+  } else if (!model.dxySeries.length) {
+    t3Html = `<span>${escText(model.dxyMeta.error || '暂无可用 DXY 历史日线')}</span>`;
+  } else {
+    const exactDxy = model.dxyMap.get(cursorDay) ?? null;
+    const floorIdx = binaryFloorIndex(model.dxySeries, 'date', cursorDay);
+    const latestDxy = floorIdx >= 0 ? model.dxySeries[floorIdx] : null;
+    const yLink = model.dxyMeta.url ? renderLink(model.dxyMeta.url, 'Yahoo历史日线') : '';
+    const iceLink = model.dxyMeta.spec_url ? renderLink(model.dxyMeta.spec_url, 'ICE指数口径') : '';
+    const links = [yLink, iceLink].filter(Boolean).join(' · ');
+
+    if (exactDxy) {
+      t3Html = `<span><i class="er-mo-swatch" style="background:#8f3d26"></i>DXY <strong>${fmtNum(exactDxy.close, 2)}</strong> 点（香港可用日 ${escText(exactDxy.date)}，对应纽约交易日 ${escText(exactDxy.session || '前一交易日')} 完整收盘） ${links}</span>`;
+    } else if (latestDxy) {
+      const prefix = isHoverOrPinned ? `${escText(cursorDay)} 无新完结纽约日线，沿用最近可用` : '最近已完结可用';
+      t3Html = `<span><i class="er-mo-swatch" style="background:#8f3d26"></i>${prefix} <strong>${fmtNum(latestDxy.close, 2)}</strong> 点（香港可用日 ${escText(latestDxy.date)} / 纽约交易日 ${escText(latestDxy.session || '—')} 收盘） ${links}</span>`;
+    } else {
+      t3Html = `<span><i class="er-mo-swatch" style="background:#8f3d26"></i>截至 ${escText(cursorDay)} 尚无可用纽约完整日线 ${links}</span>`;
+    }
+  }
+
+  return {
+    t0: `${stockHtml} ${benchHtml} ${t0Links ? `<span>${t0Links}</span>` : ''}`,
+    t1: t1Html,
+    t2: t2Html,
+    t3: t3Html,
+  };
+}
+
+function updateCursorVisuals(host, model, state) {
+  const cursorDay = state.cursorDay;
+  const isInteractive = state.pinned || state.hovering;
+  const idx = model.calendarIndexMap.get(cursorDay) ?? (model.calendar.length - 1);
+  const denom = Math.max(1, model.calendar.length - 1);
+
+  // Day badges
+  const dayNodes = host.querySelectorAll('[data-driver-day]');
+  dayNodes.forEach((node) => {
+    node.textContent = cursorDay;
+    if (node.classList.contains('er-mo-day-pill')) {
+      node.setAttribute('data-pinned', state.pinned ? '1' : '0');
+      node.textContent = state.pinned
+        ? `选中日 ${cursorDay}（已固定，点击或按 Esc 解除）`
+        : `选中日 ${cursorDay}${cursorDay === model.endDay && !state.hovering ? '（截止日）' : ''}`;
+    }
+  });
+
+  // Clue KPI cards update dynamically with cursorDay (respecting <= cursorDay disclosure!)
+  const kpiBox = host.querySelector('[data-role="kpi-grid"]');
+  if (kpiBox) {
+    kpiBox.innerHTML = buildClueCardsHtml(model, cursorDay);
+  }
+
+  // Track value readouts
+  const readouts = buildTrackReadouts(model, cursorDay, isInteractive);
+  const val0 = host.querySelector('[data-driver-track="0"] [data-driver-value]');
+  const val1 = host.querySelector('[data-driver-track="1"] [data-driver-value]');
+  const val2 = host.querySelector('[data-driver-track="2"] [data-driver-value]');
+  const val3 = host.querySelector('[data-driver-track="3"] [data-driver-value]');
+  if (val0) val0.innerHTML = readouts.t0;
+  if (val1) val1.innerHTML = readouts.t1;
+  if (val2) val2.innerHTML = readouts.t2;
+  if (val3) val3.innerHTML = readouts.t3;
+
+  // SVG cursor hairlines & active dots
+  const svgs = host.querySelectorAll('svg[data-svg-track]');
+  svgs.forEach((svg) => {
+    const padL = Number(svg.getAttribute('data-pad-l')) || 52;
+    const padR = Number(svg.getAttribute('data-pad-r')) || 54;
+    const width = Number(svg.getAttribute('data-width')) || 860;
+    const x = padL + (idx / denom) * (width - padL - padR);
+
+    const line = svg.querySelector('[data-cursor-line]');
+    if (line) {
+      line.setAttribute('x1', x.toFixed(2));
+      line.setAttribute('x2', x.toFixed(2));
+      line.setAttribute('visibility', 'visible');
+      line.setAttribute('stroke', state.pinned ? '#b45309' : '#1e293b');
+    }
+
+    const tId = svg.getAttribute('data-svg-track');
+    if (tId === '0') {
+      const dotStock = svg.querySelector('[data-cursor-dot="stock"]');
+      const dotBench = svg.querySelector('[data-cursor-dot="bench"]');
+      if (dotStock) {
+        const useNorm = model.normComp.hasCommon;
+        const rawClose = model.stockMap.get(cursorDay);
+        if (rawClose !== undefined && (!useNorm || cursorDay >= model.normComp.baseDate)) {
+          const val = useNorm ? (rawClose / model.normComp.stockBase) * 100 : rawClose;
+          const allVals = useNorm
+            ? [...model.normComp.stockNorm.map((p) => p.norm), ...model.normComp.benchNorm.map((p) => p.norm), 100]
+            : model.stockWin.map((p) => p.close);
+          const sc = computeNiceScale(allVals, 0.1);
+          const y = 12 + ((sc.max - val) / Math.max(1e-9, sc.max - sc.min)) * (132 - 12 - 22);
+          dotStock.setAttribute('cx', x.toFixed(2));
+          dotStock.setAttribute('cy', y.toFixed(2));
+          dotStock.setAttribute('visibility', 'visible');
+        } else {
+          dotStock.setAttribute('visibility', 'hidden');
+        }
+      }
+      if (dotBench) {
+        const rawBench = model.benchMap.get(cursorDay);
+        if (model.normComp.hasCommon && rawBench !== undefined && cursorDay >= model.normComp.baseDate) {
+          const val = (rawBench / model.normComp.benchBase) * 100;
+          const allVals = [...model.normComp.stockNorm.map((p) => p.norm), ...model.normComp.benchNorm.map((p) => p.norm), 100];
+          const sc = computeNiceScale(allVals, 0.1);
+          const y = 12 + ((sc.max - val) / Math.max(1e-9, sc.max - sc.min)) * (132 - 12 - 22);
+          dotBench.setAttribute('cx', x.toFixed(2));
+          dotBench.setAttribute('cy', y.toFixed(2));
+          dotBench.setAttribute('visibility', 'visible');
+        } else {
+          dotBench.setAttribute('visibility', 'hidden');
+        }
+      }
+    } else if (tId === '1' || tId === '2') {
+      const list = tId === '1' ? model.track1SeriesObj : model.microSeriesList;
+      list.forEach((s, sIdx) => {
+        const dot = svg.querySelector(`[data-cursor-dot="s${sIdx}"]`);
+        if (!dot || !s._yOf) return;
+        const act = activeDisclosedAt(s.points, cursorDay)?.point;
+        if (act) {
+          dot.setAttribute('cx', x.toFixed(2));
+          dot.setAttribute('cy', s._yOf(act.value).toFixed(2));
+          dot.setAttribute('visibility', 'visible');
+        } else {
+          dot.setAttribute('visibility', 'hidden');
+        }
+      });
+    } else if (tId === '3') {
+      const dotDxy = svg.querySelector('[data-cursor-dot="dxy"]');
+      if (dotDxy && model._dxyYOf) {
+        const exact = model.dxyMap.get(cursorDay);
+        if (exact) {
+          dotDxy.setAttribute('cx', x.toFixed(2));
+          dotDxy.setAttribute('cy', model._dxyYOf(exact.close).toFixed(2));
+          dotDxy.setAttribute('visibility', 'visible');
+        } else {
+          dotDxy.setAttribute('visibility', 'hidden');
+        }
+      }
+    }
+  });
+}
+
+function buildDataModel(data, macro, days) {
+  const profile = detectCompanyProfile(data);
+  const cutoff = isValidDay(data?.cutoff) ? data.cutoff : '';
+  const stockAll = extractStockSeries(data, profile.code, cutoff);
+  const { startDay, endDay, calendar, requestedDays } = buildWindowCalendar(stockAll, cutoff, days);
+
+  const calendarIndexMap = new Map();
+  calendar.forEach((d, idx) => calendarIndexMap.set(d, idx));
+
+  const stockWin = stockAll.filter((p) => p.date >= startDay && p.date <= endDay);
+  const stockMap = new Map(stockAll.map((p) => [p.date, p.close]));
+
+  const cov0 = Array.isArray(data?.coverage) && data.coverage.length ? data.coverage[0] : null;
+  const stockCoverageUrl = cov0?.url || '';
+  const stockCoverageSource = cov0?.source || '交易所/公开收盘';
+
+  // Macro industry fundamentals
+  const macroLoaded = macro !== null && macro !== undefined;
+  const macroUnit = macro?.unit || '%';
+  const rawMacroCandidate = [macro?.label, data?.drivers?.macro_label]
+    .find((s) => typeof s === 'string' && /[\u4e00-\u9fff]/.test(s) && !/^(appliances|housing)$/i.test(s.trim()));
+  const macroLabel = !profile.isPoly
+    ? (rawMacroCandidate && !/产量/.test(rawMacroCandidate) ? rawMacroCandidate : '国家统计局家电和音像零售')
+    : (rawMacroCandidate || '国家统计局全国房地产竣工面积同比');
+  const macroSeries = macroLoaded
+    ? preparePublishedSeries(macro?.points || [], endDay, isMacroStepGap)
+    : [];
+
+  const track1SeriesObj = [
+    {
+      label: macroLabel,
+      unit: macroUnit,
+      color: '#5b4b8a',
+      points: macroSeries,
+    },
+  ];
+
+  // Company Micro series
+  const cadence = Number(data?.drivers?.cadence) || (profile.isPoly ? 6 : 3);
+  const rawMicroList = Array.isArray(data?.drivers?.series) ? data.drivers.series : [];
+  const microColors = profile.isPoly ? ['#146c54', '#b85d19'] : ['#0e5a8a', '#b85d19'];
+  const microSeriesList = rawMicroList.map((s, idx) => ({
+    label: String(s?.label || `财务序列 ${idx + 1}`),
+    unit: String(s?.unit || '亿元'),
+    color: microColors[idx % microColors.length],
+    points: preparePublishedSeries(s?.points || [], endDay, (a, b) => isMicroStepGap(a, b, cadence)),
+  }));
+
+  // Market Linkage: Benchmark + DXY
+  const mkt = macro?.market || null;
+  const bmNode = mkt?.benchmark || null;
+  const benchMeta = {
+    label: bmNode?.label || profile.defaultBenchLabel,
+    unit: bmNode?.unit || '点',
+    url: bmNode?.url || (profile.isPoly ? 'https://gu.qq.com/hkHSI' : 'https://gu.qq.com/sh000300'),
+    source: bmNode?.source || '腾讯证券',
+    error: bmNode?.error || '',
+  };
+  const benchAll = normalizeMarketSeries(bmNode?.points || [], endDay, false);
+  const benchWin = benchAll.filter((p) => p.date >= startDay && p.date <= endDay);
+  const benchMap = new Map(benchAll.map((p) => [p.date, p.close]));
+  const normComp = computeNormalizedComparison(stockWin, benchWin);
+
+  const dxyNode = mkt?.dxy || null;
+  const dxyMeta = {
+    label: dxyNode?.label || 'ICE 美元指数 (DXY)',
+    unit: dxyNode?.unit || '点',
+    url: dxyNode?.url || 'https://finance.yahoo.com/quote/DX-Y.NYB/history/',
+    spec_url: dxyNode?.spec_url || 'https://developer.ice.com/fixed-income-data-services/catalog/ice-data-indices-currency-indices',
+    source: dxyNode?.source || 'Yahoo Finance / ICE Data Indices',
+    error: dxyNode?.error || '',
+  };
+  const dxySeries = normalizeMarketSeries(dxyNode?.points || [], endDay, true);
+  const dxyWin = dxySeries.filter((p) => p.date >= startDay && p.date <= endDay);
+  const dxyMap = new Map(dxySeries.map((p) => [p.date, p]));
+
+  const statusMessages = [];
+  if (macro?.message) statusMessages.push(String(macro.message));
+  if (mkt?.message) statusMessages.push(String(mkt.message));
+  const hasError = Boolean(benchMeta.error || dxyMeta.error);
+
+  return {
+    profile,
+    cutoff: endDay,
+    startDay,
+    endDay,
+    calendar,
+    calendarIndexMap,
+    requestedDays,
+    cadence,
+    stockAll,
+    stockWin,
+    stockMap,
+    stockCoverageUrl,
+    stockCoverageSource,
+    benchMeta,
+    benchAll,
+    benchWin,
+    benchMap,
+    normComp,
+    macroMeta: {
+      loaded: macroLoaded,
+      label: macroLabel,
+      unit: macroUnit,
+      message: macro?.message || '',
+      note: data?.drivers?.macro_note || '',
+      statusText: macroLoaded ? (macro?.message || '无可用宏观记录') : '正在请求 /market-context/macro …',
+    },
+    macroSeries,
+    track1SeriesObj,
+    microNote: data?.drivers?.micro_note || '',
+    microSeriesList,
+    dxyMeta,
+    dxySeries,
+    dxyWin,
+    dxyMap,
+    combinedStatus: statusMessages.join(' ｜ '),
+    hasError,
+  };
 }
 
 export function renderDriverChart(host, data, macro, days) {
-  const end = ms(data.cutoff);
-  const prices = data.chart.slice(-days);
-  const start = prices.length >= days ? ms(prices[0].date) : end - Math.round(days * 7 / 5) * DAY;
-  const x = t => left + (t - start) / Math.max(DAY, end - start) * (right - left);
-  const profile = data.drivers, quote = data.coverage[0];
-  const micro = profile.series.map((item, i) => ({...item, color: palette[2 + i], cadence: profile.cadence}));
-  const macroItem = {label: profile.macro_label, unit: '%', points: macro?.points || [], color: palette[1], cadence: 1};
-  const stock = {label: data.company, color: palette[0], unit: data.modes[0].lanes[0].items[0].unit, cadence: 0,
-    points: prices.map(row => ({published: row.date, period: row.date, value: row.values[quote.code], url: quote.url, source: quote.source}))};
-  const lanes = [
-    {name: '股价', title: '未复权收盘', items: [stock], note: ''},
-    {name: '宏观', title: profile.macro_label, items: [macroItem], note: [profile.macro_note, macro?.message].filter(Boolean).join(' '), zero: true,
-      empty: macro ? (macro.message || '截至所选日期，已收录的原表中暂无可用数据。') : '正在读取国家统计局原表…'},
-    {name: '微观', title: micro.length === 1 ? micro[0].label : data.company + '经营指标', items: micro, note: profile.micro_note},
-  ];
-  let focusDay = host.dataset.focusDay || data.cutoff;
-  let pinned = host.dataset.pinned === 'yes';
+  if (!host || !(host instanceof HTMLElement)) return;
+  injectStyles();
 
-  function track(lane, index) {
-    const visible = lane.items.flatMap(s => {
-      const prior = s.cadence ? s.points.filter(p => ms(p.published) < start).at(-1) : null;
-      return [...(prior ? [prior] : []), ...s.points.filter(p => ms(p.published) >= start && ms(p.published) <= end)];
-    });
-    const empty = !visible.length;
-    const values = visible.map(p => p.value);
-    if (lane.zero) values.push(0);
-    const min = Math.min(...values), max = Math.max(...values);
-    const pad = Math.max((max - min) * .12, Math.abs(max) * .015, .1);
-    const low = min - pad, high = max + pad;
-    const y = v => top + (high - v) / (high - low) * (bottom - top);
-    const unit = lane.items[0]?.unit || '';
-    const ticks = [max, (min + max) / 2, min].filter((v, i, a) => !i || v !== a[i - 1]);
-    const grid = ticks.map(v => `<line x1="${left}" x2="${right}" y1="${y(v)}" y2="${y(v)}" class="driver-grid"/><text x="${left-9}" y="${y(v)+4}" text-anchor="end">${v.toFixed(unit === '%' ? 1 : 2)}</text>`).join('');
-    const chart = empty ? `<p class="market-note">${esc(lane.empty || '截至所选日期尚无可定位的原始数据。')}</p>` :
-      `<svg data-driver-plot viewBox="0 0 925 114" aria-label="${esc(lane.title)}，单位${esc(unit)}">
-        ${grid}${lane.zero && low < 0 && high > 0 ? `<line class="driver-zero" x1="${left}" x2="${right}" y1="${y(0)}" y2="${y(0)}"/>` : ''}
-        ${lane.items.map(s => seriesPath(s,start,end,x,y)).join('')}
-        <line data-driver-guide class="driver-guide" x1="${right}" x2="${right}" y1="5" y2="${bottom+4}"/>
-        <text x="${left}" y="111">${iso(start)}</text><text x="${right}" y="111" text-anchor="end">${data.cutoff}</text></svg>`;
-    return `<section class="driver-track" data-driver-track="${index}"><header><div><span class="driver-kicker">${lane.name}</span>
-      <h3>${esc(lane.title)}</h3></div><div data-driver-value></div></header>${chart}
-      ${lane.note ? `<p class="driver-note">${esc(lane.note)}</p>` : ''}</section>`;
+  // Clean up previous event listeners on this host before re-rendering
+  const prevState = STATE_MAP.get(host);
+  if (prevState && prevState.abortController) {
+    prevState.abortController.abort();
   }
-  host.innerHTML = `<div class="driver-board" tabindex="0" aria-label="三轨对照图，可用左右方向键选择日期">
-    <div class="driver-guidebar"><span>按公开日对齐 · 各轨独立刻度</span><span data-driver-day></span></div>
-    ${lanes.map(track).join('')}<p class="driver-help">移动指针查看当日已知值，点击固定或解锁。圆点标记实际披露，虚线延续缺报期间最后已知值。点击读数下的日期可打开来源。</p></div>`;
-  const board = host.firstElementChild;
-  function inspect(day, showLatest = false) {
-    focusDay = host.dataset.focusDay = day;
-    host.dataset.pinned = pinned ? 'yes' : 'no';
-    board.querySelector('[data-driver-day]').textContent = day + (pinned ? ' · 已固定' : '');
-    for (const guide of board.querySelectorAll('[data-driver-guide]')) {
-      guide.setAttribute('x1',x(ms(day))); guide.setAttribute('x2',x(ms(day)));
-    }
-    for (const [i,lane] of lanes.entries()) {
-      const readout = board.querySelector(`[data-driver-track="${i}"] [data-driver-value]`);
-      readout.innerHTML = lane.items.map(item => {
-        const p = item.cadence || showLatest ? item.points.filter(point => point.published <= day).at(-1) : item.points.find(point => point.published === day);
-        if (!p) return `<span class="driver-reading">${esc(item.label)} · ${item.cadence ? '尚无披露' : '当日无收盘'}</span>`;
-        const url = sourceURL(p.url);
-        const period = item.unit === '%' ? `${p.period.slice(0,4)}年1—${Number(p.period.slice(5,7))}月` : p.period;
-        const ref = item.cadence ? `${period} · ${p.published} 公开` : `${p.published} ${showLatest && p.published < day ? '最近收盘' : '收盘'}`;
-        return `<span class="driver-reading"><b style="color:${item.color}">${lane.items.length>1 ? esc(item.label)+' ' : ''}${esc(number(p.value,item.unit))}</b>
-          ${url ? `<a href="${url}" target="_blank" rel="noopener">${esc(ref)} ↗</a>` : esc(ref)}</span>`;
-      }).join('');
-    }
+
+  const model = buildDataModel(data || {}, macro, days);
+  const abortController = new AbortController();
+  const { signal } = abortController;
+
+  // Preserve cursorDay and pinned state across the two-pass render (macro=null -> macro=loaded) on the same host & cutoff/window
+  let cursorDay = model.endDay;
+  let pinned = false;
+  if (
+    prevState &&
+    prevState.companyCode === model.profile.code &&
+    prevState.cutoff === model.endDay &&
+    isValidDay(prevState.cursorDay) &&
+    model.calendarIndexMap.has(prevState.cursorDay)
+  ) {
+    cursorDay = prevState.cursorDay;
+    pinned = Boolean(prevState.pinned);
   }
-  for (const svg of board.querySelectorAll('[data-driver-plot]')) {
-    const pointed = event => {
-      const box = svg.getBoundingClientRect(), fraction = ((event.clientX - box.left) * 925 / box.width - left) / (right - left);
-      return iso(start + Math.round(Math.max(0, Math.min(1, fraction)) * (end - start) / DAY) * DAY);
-    };
-    svg.onpointermove = e => { if (!pinned) inspect(pointed(e)); };
-    svg.onclick = e => { pinned = !pinned; inspect(pointed(e)); };
-  }
-  board.onkeydown = e => {
-    if (!['ArrowLeft','ArrowRight','Escape'].includes(e.key)) return;
-    e.preventDefault(); pinned = e.key !== 'Escape';
-    inspect(pinned ? iso(Math.max(start, Math.min(end, ms(focusDay) + (e.key === 'ArrowRight' ? DAY : -DAY)))) : data.cutoff);
+
+  const state = {
+    companyCode: model.profile.code,
+    cutoff: model.endDay,
+    days: model.requestedDays,
+    cursorDay,
+    pinned,
+    hovering: false,
+    abortController,
   };
-  inspect(focusDay, !pinned && focusDay === data.cutoff);
+  STATE_MAP.set(host, state);
+
+  const clueHeading = model.profile.isPoly
+    ? '保利物业经营与市场对照线索：外部地产交付环境 × 贸易应收回款占用 × 相对恒生指数表现 × DXY美元强弱观察'
+    : '格力电器经营与市场对照线索：国家统计局家电和音像零售 × 合并存货与合同负债各自变动 × 相对沪深300表现 × DXY美元强弱观察';
+
+  const track0AxisDesc = model.normComp.hasCommon
+    ? `同轴归一化刻度（共同首日 ${model.normComp.baseDate} = 100）｜ 原币收盘（${model.profile.stockUnit}）与相对基准区间价差见右上角读数`
+    : `纵轴：${model.profile.companyName}未复权原币收盘（${model.profile.stockUnit}，当前窗口无共同基准交易日）`;
+
+  const track0LegendDesc = model.normComp.hasCommon
+    ? `实线：${model.profile.companyName}归一化（${model.normComp.baseDate}=100）｜虚线：${model.benchMeta.label}归一化（${model.normComp.baseDate}=100）；自首个共同交易日起绘，区间价差仅按共同交易日计算`
+    : `实线：${model.profile.companyName}未复权原币日收盘（${model.profile.stockUnit}，工作日缺失自动断线，孤立点单绘）`;
+
+  const cadenceDesc = model.cadence === 6
+    ? '半年报/年报披露阶梯（不插值，按实际公告发布日跳变）'
+    : '季报/年报披露阶梯（不插值，按实际公告发布日跳变）';
+
+  host.innerHTML = `
+    <section class="er-mo-wb" data-theme="${escText(model.profile.theme)}">
+      <header class="er-mo-top">
+        <div class="er-mo-title-group">
+          <span class="er-mo-badge">${escText(model.profile.code)}</span>
+          <h3 class="er-mo-heading">${escText(model.profile.companyName)} · 四轨市场联动与基本面工作台</h3>
+          <span class="er-mo-subtag">窗口 ${escText(model.startDay)} 至 ${escText(model.endDay)}（${escText(String(model.requestedDays))}交易日档 / 历史截止日锁死）</span>
+        </div>
+        <div class="er-mo-cursor-bar">
+          <span class="er-mo-day-pill" data-driver-day data-pinned="${state.pinned ? '1' : '0'}">${escText(state.cursorDay)}</span>
+          <button type="button" class="er-mo-btn" data-action="reset-cursor">回到截止日</button>
+        </div>
+      </header>
+
+      <div class="er-mo-clue-box">
+        <div class="er-mo-clue-head">
+          <span class="er-mo-clue-title">${escText(clueHeading)}</span>
+          <span class="er-mo-clue-rule">悬停看日明细 · 单击固定日期 · 左右方向键逐日核查（严格仅显示 &lt;= 选中日已公开数据）</span>
+        </div>
+        <div class="er-mo-kpi-grid" data-role="kpi-grid"></div>
+      </div>
+
+      <div class="er-mo-tracks">
+        <article class="er-mo-track" data-driver-track="0">
+          <div class="er-mo-track-hdr">
+            <div class="er-mo-track-lhs">
+              <span class="er-mo-track-tag">轨 0 · 市场相对联动</span>
+              <span class="er-mo-track-name">${escText(model.profile.companyName)} 与 ${escText(model.benchMeta.label)}</span>
+              <span class="er-mo-track-unit">${escText(track0AxisDesc)}</span>
+            </div>
+            <div class="er-mo-track-val" data-driver-value></div>
+          </div>
+          <div class="er-mo-plot" data-driver-plot tabindex="0" role="application" aria-label="股票与市场基准联动轨迹，支持左右键切换日期">
+            ${renderTrack0Svg(model)}
+          </div>
+          <div class="er-mo-track-foot">
+            <span>${escText(track0LegendDesc)}</span>
+            <span>时效标签：已收盘日线历史数据（&lt;= ${escText(model.endDay)}）</span>
+          </div>
+        </article>
+
+        <article class="er-mo-track" data-driver-track="1">
+          <div class="er-mo-track-hdr">
+            <div class="er-mo-track-lhs">
+              <span class="er-mo-track-tag">轨 1 · 行业宏观环境</span>
+              <span class="er-mo-track-name">${escText(model.macroMeta.label)}</span>
+              <span class="er-mo-track-unit">单位：${escText(model.macroMeta.unit)} ｜ 按国家统计局实际发布日阶梯延续（1–2月合并发布不断档，缺期虚线）</span>
+            </div>
+            <div class="er-mo-track-val" data-driver-value></div>
+          </div>
+          <div class="er-mo-plot" data-driver-plot tabindex="0" role="application" aria-label="行业宏观阶梯序列">
+            ${renderStepTrackSvg(model, 1, model.track1SeriesObj)}
+          </div>
+          <div class="er-mo-track-foot">
+            <span>${escText(model.macroMeta.note || '左轴三角标表示窗口起点前最近一次已公开前值延续；圆点为当期真实发布日。')}</span>
+            <span>口径边界：行业宏观增速≠公司自身收入或面积增速</span>
+          </div>
+        </article>
+
+        <article class="er-mo-track" data-driver-track="2">
+          <div class="er-mo-track-hdr">
+            <div class="er-mo-track-lhs">
+              <span class="er-mo-track-tag">轨 2 · 公司经营披露</span>
+              <span class="er-mo-track-name">${escText(model.microSeriesList.map((s) => s.label).join(' / ') || '核心资产负债经营科目')}</span>
+              <span class="er-mo-track-unit">单位：${escText(model.microSeriesList[0]?.unit || '亿元')} ｜ ${escText(cadenceDesc)}</span>
+            </div>
+            <div class="er-mo-track-val" data-driver-value></div>
+          </div>
+          <div class="er-mo-plot" data-driver-plot tabindex="0" role="application" aria-label="公司财报经营序列">
+            ${renderStepTrackSvg(model, 2, model.microSeriesList)}
+          </div>
+          <div class="er-mo-track-foot">
+            <span>${escText(model.microNote || (model.profile.isPoly ? '贸易应收款项及票据净额受在管项目规模、结算节奏与坏账减值准备共同影响，反映期末回款资金占用而非当期实际坏账损失。' : '合并存货（公司备货）与合并合同负债（渠道预收）分别独立展示各自期末余额与同季同比/较上期变化。'))}</span>
+            <span>披露对齐：严格以定期报告公告日入图，杜绝按报告期末日提前穿越</span>
+          </div>
+        </article>
+
+        <article class="er-mo-track" data-driver-track="3">
+          <div class="er-mo-track-hdr">
+            <div class="er-mo-track-lhs">
+              <span class="er-mo-track-tag">轨 3 · 美元强弱观察</span>
+              <span class="er-mo-track-name">${escText(model.dxyMeta.label)}</span>
+              <span class="er-mo-track-unit">单位：${escText(model.dxyMeta.unit)}（ICE DX-Y.NYB 原生指数，非期货/汇率中间价代理）</span>
+            </div>
+            <div class="er-mo-track-val" data-driver-value></div>
+          </div>
+          <div class="er-mo-plot" data-driver-plot tabindex="0" role="application" aria-label="ICE美元指数日线轨迹">
+            ${renderTrack3DxySvg(model)}
+          </div>
+          <div class="er-mo-track-foot">
+            <span>跨时区防穿越标签：仅取纽约零点完整收盘日线（剔除盘中实时柱），按保守约定于香港下一自然日标示可用；悬停同时列出香港可用日与纽约交易日。</span>
+            <span>含义界定：仅供跨市场美元强弱观察，与公司经营及股价走势的关系需另做独立统计验证</span>
+          </div>
+        </article>
+      </div>
+
+      <div class="er-mo-status-strip" data-warn="${model.hasError ? '1' : '0'}">
+        <strong>数据覆盖与源状态：</strong>${escText(model.combinedStatus || (model.macroMeta.loaded ? '股票、基准指数、宏观与定期报告均已按 <= 截止日对齐。' : '股票与财报已就绪，正在后台加载宏观、基准指数与 DXY 序列…'))}
+      </div>
+
+      <footer class="er-mo-guardrails">
+        <span>研究纪律说明：① 曲线同向波动不代表因果关系；② 国家统计局零售/地产增速不等于公司自身增速；③ 保利应收净额受项目规模、结算节奏与减值计提影响，反映回款资金占用而非已发生坏账；④ DXY 仅表征美元强弱，与经营及股价关系需另做验证。</span>
+        <span>交互支持：鼠标跨四轨同步游标 / 单击锁定 / 方向键微调</span>
+      </footer>
+    </section>
+  `;
+
+  updateCursorVisuals(host, model, state);
+
+  // Bind interactive cursor events cleanly inside host
+  const plots = host.querySelectorAll('[data-driver-plot]');
+  const dayFromPointerEvent = (evt, plotEl) => {
+    const svg = plotEl.querySelector('svg[data-svg-track]');
+    if (!svg) return null;
+    const rect = svg.getBoundingClientRect();
+    if (!rect.width) return null;
+    const vbWidth = Number(svg.getAttribute('data-width')) || 860;
+    const padL = Number(svg.getAttribute('data-pad-l')) || 52;
+    const padR = Number(svg.getAttribute('data-pad-r')) || 54;
+    const relX = ((evt.clientX - rect.left) / rect.width) * vbWidth;
+    const ratio = Math.max(0, Math.min(1, (relX - padL) / Math.max(1, vbWidth - padL - padR)));
+    const idx = Math.round(ratio * (model.calendar.length - 1));
+    return model.calendar[idx] || model.endDay;
+  };
+
+  plots.forEach((plotEl) => {
+    plotEl.addEventListener(
+      'mousemove',
+      (evt) => {
+        if (state.pinned) return;
+        const d = dayFromPointerEvent(evt, plotEl);
+        if (!d) return;
+        state.hovering = true;
+        if (state.cursorDay !== d) {
+          state.cursorDay = d;
+        }
+        updateCursorVisuals(host, model, state);
+      },
+      { signal }
+    );
+
+    plotEl.addEventListener(
+      'mouseleave',
+      () => {
+        if (state.pinned) return;
+        state.hovering = false;
+        state.cursorDay = model.endDay;
+        updateCursorVisuals(host, model, state);
+      },
+      { signal }
+    );
+
+    plotEl.addEventListener(
+      'click',
+      (evt) => {
+        // Ignore clicks on external links if any ever existed inside plot
+        if (evt.target && evt.target.closest && evt.target.closest('a')) return;
+        const d = dayFromPointerEvent(evt, plotEl);
+        if (!d) return;
+        if (state.pinned && state.cursorDay === d) {
+          state.pinned = false;
+          state.hovering = true;
+        } else {
+          state.cursorDay = d;
+          state.pinned = true;
+        }
+        updateCursorVisuals(host, model, state);
+      },
+      { signal }
+    );
+
+    plotEl.addEventListener(
+      'keydown',
+      (evt) => {
+        const currIdx = model.calendarIndexMap.get(state.cursorDay) ?? (model.calendar.length - 1);
+        let nextIdx = currIdx;
+        if (evt.key === 'ArrowLeft') {
+          nextIdx = Math.max(0, currIdx - (evt.shiftKey ? 5 : 1));
+        } else if (evt.key === 'ArrowRight') {
+          nextIdx = Math.min(model.calendar.length - 1, currIdx + (evt.shiftKey ? 5 : 1));
+        } else if (evt.key === 'Home') {
+          nextIdx = 0;
+        } else if (evt.key === 'End') {
+          nextIdx = model.calendar.length - 1;
+        } else if (evt.key === 'Escape') {
+          state.pinned = false;
+          state.hovering = false;
+          state.cursorDay = model.endDay;
+          updateCursorVisuals(host, model, state);
+          evt.preventDefault();
+          return;
+        } else {
+          return;
+        }
+        evt.preventDefault();
+        state.cursorDay = model.calendar[nextIdx];
+        state.pinned = true;
+        updateCursorVisuals(host, model, state);
+      },
+      { signal }
+    );
+  });
+
+  const resetBtn = host.querySelector('[data-action="reset-cursor"]');
+  if (resetBtn) {
+    resetBtn.addEventListener(
+      'click',
+      () => {
+        state.pinned = false;
+        state.hovering = false;
+        state.cursorDay = model.endDay;
+        updateCursorVisuals(host, model, state);
+      },
+      { signal }
+    );
+  }
 }

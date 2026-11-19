@@ -19,6 +19,7 @@ from market_context import MarketService
 import market_observation
 import company_market_observation
 import market_nbs
+import market_factors
 import market_atlas
 from market_observation_update import ObservationUpdater
 from industry_monitor.service import MonitorService
@@ -214,14 +215,20 @@ class Handler(BaseHTTPRequestHandler):
             m=re.fullmatch(r'/api/companies/([\w-]+)/market-context/macro',p)
             if m:
                 company=self.server.store.company(m[1])
-                profile=company_market_observation.DRIVERS.get(company_market_observation.stock_code(company))
+                code=company_market_observation.stock_code(company)
+                profile=company_market_observation.DRIVERS.get(code)
                 if not profile:
                     return self.send(404,encode({'error':'该公司尚未配置行业统计指标'}))
                 selected=company_market_observation.selected_edition(self.server.store,company,q.get('edition'))
                 cutoff=market_observation.observation_cutoff(q.get('as_of'))
                 limit=company_market_observation.historical_limit(selected)
-                return self.send(200,encode(market_nbs.series(self.server.store.directory,profile['macro'],
-                                                            min(cutoff,limit) if limit else cutoff)))
+                cutoff=min(cutoff,limit) if limit else cutoff
+                directory=self.server.store.directory
+                result=market_nbs.series(directory,profile['macro'],cutoff)
+                benchmark=profile.get('benchmark')
+                if benchmark:
+                    result['market']=market_factors.series(directory,benchmark,cutoff)
+                return self.send(200,encode(result))
             m=re.fullmatch(r'/api/companies/([\w-]+)/market-context',p)
             if m:
                 company=self.server.store.company(m[1])

@@ -71,17 +71,3 @@
 .observation-card dd{font-weight:650;text-align:right;margin:0}.observation-card p{font-size:12px}
 .observation-sources{display:flex;gap:10px;flex-wrap:wrap;font-size:12px}
 .observation-figure{margin:10px 0}.observation-figure img{width:min(100%,850px);height:auto;display:block}
-
-.driver-board{margin:16px 0 4px;border-top:2px solid #384d4a;color:#243b39;font-variant-numeric:tabular-nums}
-.driver-guidebar,.driver-track header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.driver-guidebar{padding:10px 0;color:#566968;font-size:12px}
-.driver-track{padding:14px 0 9px;border-top:1px solid #d4dfdb}
-.driver-track h3{display:inline;font-size:16px;margin:0;font-weight:650}
-.driver-kicker{margin-right:10px;font-size:12px;color:#526863}
-.driver-track [data-driver-value]{display:flex;flex-wrap:wrap;gap:16px}
-.driver-reading{display:grid;text-align:right;font-size:12px}
-.driver-reading b{font-size:16px;line-height:1.4}.driver-reading a{color:#516966}
-.driver-track svg{display:block;width:100%;cursor:crosshair;margin-top:7px}
-.driver-track svg text{fill:#546865;font:12px system-ui,sans-serif}
-.driver-grid{stroke:#e3eae7}.driver-zero{stroke:#9cadaa;stroke-dasharray:4 4}.driver-guide{stroke:#6c817a;stroke-dasharray:3 4}
-.driver-note,.driver-help{font-size:12px;color:#526660;line-height:1.5;margin:4px 0}.driver-help{padding-top:7px;border-top:1px solid #d4dfdb}
